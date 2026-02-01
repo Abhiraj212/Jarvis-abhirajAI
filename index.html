@@ -1,76 +1,70 @@
-// MINIMAL WORKING APP.JS - TEST VERSION
-(function() {
-    'use strict';
-    
-    console.log('=== JARVIS STARTUP ===');
-    console.log('JarvisCore:', typeof window.JarvisCore);
-    console.log('JarvisFeatures:', typeof window.JarvisFeatures);
-    console.log('JarvisVoiceVision:', typeof window.JarvisVoiceVision);
-    
-    // Check if modules loaded
-    if (!window.JarvisCore || !window.JarvisFeatures || !window.JarvisVoiceVision) {
-        document.getElementById('boot-status').textContent = 'ERROR: Modules failed to load';
-        document.getElementById('boot-log').innerHTML = 
-            '<div style="color:red">Check console (F12) for errors</div>';
-        return;
-    }
-    
-    // Simple working version
-    var app = {
-        init: function() {
-            console.log('App initializing...');
-            
-            // Hide boot, show app
-            document.getElementById('boot-sequence').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-            
-            // Setup basic chat
-            var self = this;
-            document.getElementById('main-send-btn').onclick = function() {
-                self.handleInput();
-            };
-            
-            document.getElementById('main-input').onkeydown = function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    self.handleInput();
-                }
-            };
-            
-            console.log('App ready!');
-        },
-        
-        handleInput: function() {
-            var input = document.getElementById('main-input');
-            var text = input.value.trim();
-            if (!text) return;
-            
-            this.addMessage('user', text);
-            input.value = '';
-            
-            // Simple response
-            var self = this;
-            setTimeout(function() {
-                self.addMessage('jarvis', 'I received: ' + text);
-            }, 500);
-        },
-        
-        addMessage: function(sender, text) {
-            var chat = document.getElementById('chat-messages');
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JARVIS Debug</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #000; color: #0f0; }
+        .ok { color: #0f0; }
+        .error { color: #f00; }
+        .info { color: #0ff; }
+        pre { background: #111; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>JARVIS Diagnostic</h1>
+    <div id="output"></div>
+
+    <script>
+        function log(msg, type) {
             var div = document.createElement('div');
-            div.className = 'message message-' + sender;
-            div.innerHTML = '<div class="message-bubble">' + text + '</div>';
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
+            div.className = type || 'info';
+            div.textContent = new Date().toLocaleTimeString() + ' - ' + msg;
+            document.getElementById('output').appendChild(div);
+            console.log(msg);
         }
-    };
+
+        log('Page loaded, checking scripts...', 'info');
+
+        // Check before loading
+        log('Before scripts - JarvisCore: ' + typeof window.JarvisCore, typeof window.JarvisCore === 'undefined' ? 'error' : 'ok');
+    </script>
+
+    <!-- Try to load each script with error checking -->
+    <script>
+        log('Attempting to load core.js...', 'info');
+    </script>
+    <script src="core.js" onload="log('core.js loaded successfully', 'ok')" onerror="log('FAILED to load core.js - file not found or error', 'error')"></script>
     
-    // Start when DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() { app.init(); });
-    } else {
-        app.init();
-    }
+    <script>
+        log('After core.js - JarvisCore: ' + typeof window.JarvisCore, typeof window.JarvisCore === 'undefined' ? 'error' : 'ok');
+        log('Attempting to load features.js...', 'info');
+    </script>
+    <script src="features.js" onload="log('features.js loaded successfully', 'ok')" onerror="log('FAILED to load features.js', 'error')"></script>
     
-    window.jarvis = app;
-})();
+    <script>
+        log('After features.js - JarvisFeatures: ' + typeof window.JarvisFeatures, typeof window.JarvisFeatures === 'undefined' ? 'error' : 'ok');
+        log('Attempting to load voice_vision.js...', 'info');
+    </script>
+    <script src="voice_vision.js" onload="log('voice_vision.js loaded successfully', 'ok')" onerror="log('FAILED to load voice_vision.js', 'error')"></script>
+    
+    <script>
+        log('After voice_vision.js - JarvisVoiceVision: ' + typeof window.JarvisVoiceVision, typeof window.JarvisVoiceVision === 'undefined' ? 'error' : 'ok');
+        log('Attempting to load app.js...', 'info');
+    </script>
+    <script src="app.js" onload="log('app.js loaded successfully', 'ok')" onerror="log('FAILED to load app.js', 'error')"></script>
+
+    <script>
+        log('=== FINAL CHECK ===', 'info');
+        log('JarvisCore: ' + typeof window.JarvisCore, typeof window.JarvisCore === 'undefined' ? 'error' : 'ok');
+        log('JarvisFeatures: ' + typeof window.JarvisFeatures, typeof window.JarvisFeatures === 'undefined' ? 'error' : 'ok');
+        log('JarvisVoiceVision: ' + typeof window.JarvisVoiceVision, typeof window.JarvisVoiceVision === 'undefined' ? 'error' : 'ok');
+        
+        if (window.JarvisCore && window.JarvisFeatures && window.JarvisVoiceVision) {
+            log('ALL MODULES LOADED - SUCCESS!', 'ok');
+        } else {
+            log('SOME MODULES FAILED - Check errors above', 'error');
+        }
+    </script>
+</body>
+</html>
