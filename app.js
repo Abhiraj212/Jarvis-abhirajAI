@@ -1,6 +1,6 @@
 // ============================================
 // J.A.R.V.I.S. MAIN APPLICATION CONTROLLER
-// Glues all modules together - NO ES IMPORTS
+// FIXED VERSION - Better error handling
 // ============================================
 
 (function() {
@@ -8,16 +8,35 @@
 
     // Wait for all scripts to load
     window.addEventListener('DOMContentLoaded', function() {
-        // Verify all modules loaded
-        if (!window.JarvisCore || !window.JarvisFeatures || !window.JarvisVoiceVision) {
-            console.error('Required modules not loaded!');
-            alert('Failed to load J.A.R.V.I.S. modules. Check console.');
+        console.log('DOM loaded, checking modules...');
+        
+        // Check modules with better error messages
+        var missing = [];
+        if (!window.JarvisCore) missing.push('JarvisCore (core.js)');
+        if (!window.JarvisFeatures) missing.push('JarvisFeatures (features.js)');
+        if (!window.JarvisVoiceVision) missing.push('JarvisVoiceVision (voice_vision.js)');
+        
+        if (missing.length > 0) {
+            console.error('Missing modules:', missing);
+            showBootError('Failed to load: ' + missing.join(', '));
             return;
         }
 
-        // Initialize J.A.R.V.I.S. Application
+        console.log('All modules found, starting...');
         window.jarvis = new JarvisApp();
     });
+
+    function showBootError(msg) {
+        var status = document.getElementById('boot-status');
+        var log = document.getElementById('boot-log');
+        if (status) status.textContent = 'ERROR: ' + msg;
+        if (log) {
+            var entry = document.createElement('div');
+            entry.style.color = '#ff0055';
+            entry.textContent = '[ERROR] ' + msg;
+            log.appendChild(entry);
+        }
+    }
 
     // ============================================
     // MAIN APPLICATION CLASS
@@ -25,23 +44,13 @@
     function JarvisApp() {
         this.version = '2.0.0';
         this.initialized = false;
-        this.currentTheme = 'jarvis';
-        this.userPreferences = {};
         
-        // Core Systems (from JarvisCore)
+        // Core Systems
         this.brain = null;
         this.memory = null;
-        this.intent = null;
-        this.response = null;
-        this.learning = null;
         this.emotion = null;
-        
-        // Feature Systems (from JarvisFeatures)
         this.modules = null;
-        
-        // Voice/Vision (from JarvisVoiceVision)
         this.voice = null;
-        this.wakeWord = null;
         this.vision = null;
         
         // UI References
@@ -54,7 +63,6 @@
             sendBtn: document.getElementById('main-send-btn')
         };
         
-        // Conversation Context
         this.conversationContext = {
             history: [],
             currentTopic: null,
@@ -67,26 +75,32 @@
     }
 
     JarvisApp.prototype.init = async function() {
-        console.log('🚀 J.A.R.V.I.S. v' + this.version + ' Initializing...');
+        console.log('J.A.R.V.I.S. v' + this.version + ' Initializing...');
         
-        await this.performBootSequence();
-        await this.initializeCoreSystems();
-        await this.initializeFeatures();
-        await this.initializeVoiceVision();
-        this.setupEventListeners();
-        this.startSystemLoops();
-        this.completeInitialization();
+        try {
+            await this.performBootSequence();
+            await this.initializeCoreSystems();
+            await this.initializeFeatures();
+            await this.initializeVoiceVision();
+            this.setupEventListeners();
+            this.startSystemLoops();
+            this.completeInitialization();
+        } catch (error) {
+            console.error('Initialization failed:', error);
+            showBootError('Init failed: ' + error.message);
+        }
     };
 
     JarvisApp.prototype.performBootSequence = async function() {
+        var self = this;
         var steps = [
-            { msg: 'Loading kernel modules...', progress: 10, delay: 200 },
-            { msg: 'Initializing memory banks...', progress: 25, delay: 300 },
-            { msg: 'Mounting emotional core...', progress: 40, delay: 250 },
-            { msg: 'Calibrating voice synthesis...', progress: 55, delay: 400 },
-            { msg: 'Establishing secure connection...', progress: 70, delay: 300 },
-            { msg: 'Loading user preferences...', progress: 85, delay: 200 },
-            { msg: 'System ready. Awaiting command.', progress: 100, delay: 500 }
+            { msg: 'Loading kernel modules...', progress: 10 },
+            { msg: 'Initializing memory banks...', progress: 25 },
+            { msg: 'Mounting emotional core...', progress: 40 },
+            { msg: 'Calibrating voice synthesis...', progress: 55 },
+            { msg: 'Establishing secure connection...', progress: 70 },
+            { msg: 'Loading user preferences...', progress: 85 },
+            { msg: 'System ready. Awaiting command.', progress: 100 }
         ];
 
         var bootLog = document.getElementById('boot-log');
@@ -95,51 +109,85 @@
 
         for (var i = 0; i < steps.length; i++) {
             var step = steps[i];
-            bootStatus.textContent = step.msg;
-            bootBar.style.width = step.progress + '%';
             
-            var logEntry = document.createElement('div');
-            logEntry.textContent = '[' + new Date().toLocaleTimeString() + '] ' + step.msg;
-            bootLog.appendChild(logEntry);
-            bootLog.scrollTop = bootLog.scrollHeight;
+            if (bootStatus) bootStatus.textContent = step.msg;
+            if (bootBar) bootBar.style.width = step.progress + '%';
             
-            await this.sleep(step.delay);
+            if (bootLog) {
+                var logEntry = document.createElement('div');
+                logEntry.textContent = '[' + new Date().toLocaleTimeString() + '] ' + step.msg;
+                bootLog.appendChild(logEntry);
+                bootLog.scrollTop = bootLog.scrollHeight;
+            }
+            
+            // Shorter delay for faster boot
+            await this.sleep(100);
         }
 
-        await this.sleep(500);
+        await this.sleep(200);
     };
 
     JarvisApp.prototype.initializeCoreSystems = async function() {
-        // Initialize Memory
-        this.memory = new JarvisCore.MemoryManager({
-            maxFacts: 10000,
-            maxHistory: 1000,
-            compressionEnabled: true
-        });
-        await this.memory.initialize();
+        console.log('Initializing core systems...');
+        
+        // Initialize Memory with timeout
+        try {
+            this.memory = new JarvisCore.MemoryManager({
+                maxFacts: 1000,
+                maxHistory: 100,
+                compressionEnabled: false // Disable for compatibility
+            });
+            
+            // Add timeout to memory init
+            var memInit = this.memory.initialize();
+            var memTimeout = new Promise(function(_, reject) {
+                setTimeout(function() { reject(new Error('Memory init timeout')); }, 5000);
+            });
+            
+            await Promise.race([memInit, memTimeout]);
+            console.log('Memory initialized');
+        } catch (e) {
+            console.warn('Memory init failed, using fallback:', e);
+            // Create minimal fallback memory
+            this.memory = {
+                getFact: async function() { return null; },
+                setFact: async function() {},
+                getPreferences: function() { 
+                    var prefs = localStorage.getItem('jarvis_prefs');
+                    return prefs ? JSON.parse(prefs) : {};
+                },
+                setPreference: function(key, val) {
+                    var prefs = this.getPreferences();
+                    prefs[key] = val;
+                    localStorage.setItem('jarvis_prefs', JSON.stringify(prefs));
+                },
+                save: function() {},
+                getStats: function() { return { facts: 0, preferences: 0, conversations: 0 }; }
+            };
+        }
 
-        // Initialize Emotional Core
+        // Initialize Emotion
         this.emotion = new JarvisCore.EmotionalCore({
             baseline: 'neutral',
             volatility: 0.3,
             empathyLevel: 0.8
         });
 
-        // Initialize Intent Processor
+        // Initialize Intent
         this.intent = new JarvisCore.IntentProcessor({
             fuzzyMatching: true,
-            confidenceThreshold: 0.7,
+            confidenceThreshold: 0.6,
             useContext: true
         });
 
-        // Initialize Learning Engine
+        // Initialize Learning
         this.learning = new JarvisCore.LearningEngine({
             autoLearn: true,
             confirmationRequired: false,
             maxConfidence: 1.0
         });
 
-        // Initialize Response Generator
+        // Initialize Response
         this.response = new JarvisCore.ResponseGenerator({
             personality: 'professional',
             useEmojis: true,
@@ -158,28 +206,29 @@
 
         var self = this;
         this.brain.on('status', function(status) {
-            self.updateStatus(status);
-        });
-        
-        this.brain.on('typing', function(isTyping) {
-            if (isTyping) self.showTypingIndicator();
-            else self.hideTypingIndicator();
+            console.log('Brain status:', status);
         });
         
         this.brain.on('speak', function(text) {
             self.addMessage('jarvis', text);
-            if (self.userPreferences.voiceEnabled) {
+            if (self.userPreferences && self.userPreferences.voiceEnabled) {
                 self.speak(text);
             }
         });
+        
+        console.log('Core systems ready');
     };
 
     JarvisApp.prototype.initializeFeatures = async function() {
+        console.log('Initializing features...');
         JarvisFeatures.init(this.memory);
         this.modules = JarvisFeatures;
+        console.log('Features ready');
     };
 
     JarvisApp.prototype.initializeVoiceVision = async function() {
+        console.log('Initializing voice & vision...');
+        
         JarvisVoiceVision.init({
             voice: {
                 language: 'en-US',
@@ -188,7 +237,7 @@
                 volume: 1.0
             },
             wake: {
-                keywords: ['hey jarvis', 'jarvis', 'okay jarvis'],
+                keywords: ['hey jarvis', 'jarvis'],
                 sensitivity: 0.8
             },
             vision: {
@@ -200,6 +249,8 @@
         this.voice = JarvisVoiceVision.voice;
         this.wakeWord = JarvisVoiceVision.wakeWord;
         this.vision = JarvisVoiceVision.vision;
+        
+        console.log('Voice & vision ready');
     };
 
     JarvisApp.prototype.setupEventListeners = function() {
@@ -207,49 +258,69 @@
 
         // Boot transition
         setTimeout(function() {
-            self.ui.bootScreen.style.opacity = '0';
-            setTimeout(function() {
-                self.ui.bootScreen.classList.add('hidden');
-                self.ui.appContainer.classList.remove('hidden');
-                self.speak("All systems operational. Welcome back, sir.");
-            }, 500);
+            if (self.ui.bootScreen) {
+                self.ui.bootScreen.style.opacity = '0';
+                setTimeout(function() {
+                    self.ui.bootScreen.classList.add('hidden');
+                    if (self.ui.appContainer) {
+                        self.ui.appContainer.classList.remove('hidden');
+                    }
+                    self.speak("All systems operational. Welcome back.");
+                }, 500);
+            }
         }, 500);
 
         // Input handling
-        this.ui.mainInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                self.handleUserInput();
-            }
-            self.autoResizeTextarea();
-        });
+        if (this.ui.mainInput) {
+            this.ui.mainInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    self.handleUserInput();
+                }
+                self.autoResizeTextarea();
+            });
+        }
 
-        this.ui.sendBtn.addEventListener('click', function() {
-            self.handleUserInput();
-        });
+        if (this.ui.sendBtn) {
+            this.ui.sendBtn.addEventListener('click', function() {
+                self.handleUserInput();
+            });
+        }
 
         // Mic button
-        this.ui.micBtn.addEventListener('click', function() {
-            self.toggleVoiceInput();
-        });
+        if (this.ui.micBtn) {
+            this.ui.micBtn.addEventListener('click', function() {
+                self.toggleVoiceInput();
+            });
+        }
 
         // Panel toggles
         document.querySelectorAll('.panel-toggle').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
-                var panel = e.target.closest('.panel').querySelector('.panel-content');
-                panel.classList.toggle('collapsed');
-                e.target.textContent = panel.classList.contains('collapsed') ? '+' : '−';
+                var panel = e.target.closest('.panel');
+                if (panel) {
+                    var content = panel.querySelector('.panel-content');
+                    if (content) {
+                        content.classList.toggle('collapsed');
+                        e.target.textContent = content.classList.contains('collapsed') ? '+' : '−';
+                    }
+                }
             });
         });
 
-        // Settings modal
-        document.getElementById('btn-settings').addEventListener('click', function() {
-            document.getElementById('settings-modal').classList.remove('hidden');
-        });
+        // Settings
+        var settingsBtn = document.getElementById('btn-settings');
+        var settingsModal = document.getElementById('settings-modal');
+        if (settingsBtn && settingsModal) {
+            settingsBtn.addEventListener('click', function() {
+                settingsModal.classList.remove('hidden');
+            });
+        }
 
         document.querySelectorAll('.modal-close').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
-                e.target.closest('.modal-overlay').classList.add('hidden');
+                var overlay = e.target.closest('.modal-overlay');
+                if (overlay) overlay.classList.add('hidden');
             });
         });
 
@@ -257,68 +328,54 @@
         document.querySelectorAll('.settings-tab').forEach(function(tab) {
             tab.addEventListener('click', function(e) {
                 var targetPanel = e.target.dataset.tab;
+                if (!targetPanel) return;
                 
-                document.querySelectorAll('.settings-tab').forEach(function(t) { t.classList.remove('active'); });
-                document.querySelectorAll('.settings-panel').forEach(function(p) { p.classList.remove('active'); });
+                document.querySelectorAll('.settings-tab').forEach(function(t) { 
+                    t.classList.remove('active'); 
+                });
+                document.querySelectorAll('.settings-panel').forEach(function(p) { 
+                    p.classList.remove('active'); 
+                });
                 
                 e.target.classList.add('active');
-                document.querySelector('.settings-panel[data-panel="' + targetPanel + '"]').classList.add('active');
+                var panel = document.querySelector('.settings-panel[data-panel="' + targetPanel + '"]');
+                if (panel) panel.classList.add('active');
             });
-        });
-
-        // Theme switching
-        document.getElementById('setting-theme').addEventListener('change', function(e) {
-            self.setTheme(e.target.value);
         });
 
         // Quick actions
         document.querySelectorAll('.quick-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
-                self.executeQuickAction(e.target.dataset.action);
+                var action = e.target.dataset.action;
+                if (action) self.executeQuickAction(action);
             });
         });
 
         // Vision modal
-        document.getElementById('btn-vision').addEventListener('click', function() {
-            document.getElementById('vision-modal').classList.remove('hidden');
-            self.vision.start();
-        });
+        var visionBtn = document.getElementById('btn-vision');
+        var visionModal = document.getElementById('vision-modal');
+        if (visionBtn && visionModal) {
+            visionBtn.addEventListener('click', function() {
+                visionModal.classList.remove('hidden');
+                if (self.vision) self.vision.start();
+            });
+        }
 
         // Purge data
-        document.getElementById('btn-purge-all').addEventListener('click', function() {
-            if (confirm('Purge all data? This cannot be undone.')) {
-                self.memory.clear();
-                location.reload();
-            }
-        });
-
-        // Context menu
-        document.addEventListener('contextmenu', function(e) {
-            if (e.target.closest('.message-bubble')) {
-                e.preventDefault();
-                self.showContextMenu(e, e.target.closest('.message'));
-            }
-        });
-
-        document.addEventListener('click', function() {
-            document.getElementById('context-menu').classList.add('hidden');
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'k') {
-                    e.preventDefault();
-                    self.ui.mainInput.focus();
-                } else if (e.key === 'm') {
-                    e.preventDefault();
-                    self.toggleVoiceInput();
-                } else if (e.key === ',') {
-                    e.preventDefault();
-                    document.getElementById('settings-modal').classList.remove('hidden');
+        var purgeBtn = document.getElementById('btn-purge-all');
+        if (purgeBtn) {
+            purgeBtn.addEventListener('click', function() {
+                if (confirm('Purge all data?')) {
+                    if (self.memory && self.memory.clear) {
+                        self.memory.clear();
+                    }
+                    localStorage.clear();
+                    location.reload();
                 }
-            }
-        });
+            });
+        }
+
+        console.log('Event listeners attached');
     };
 
     JarvisApp.prototype.startSystemLoops = function() {
@@ -326,9 +383,20 @@
         
         setInterval(function() { self.updateClock(); }, 1000);
         setInterval(function() { self.updateResourceMonitor(); }, 2000);
-        setInterval(function() { self.emotion.decay(); }, 5000);
-        setInterval(function() { self.memory.save(); }, 30000);
+        
+        if (this.emotion) {
+            setInterval(function() { self.emotion.decay(); }, 5000);
+        }
+        
+        setInterval(function() { 
+            if (self.memory && self.memory.save) {
+                self.memory.save(); 
+            }
+        }, 30000);
+        
         setInterval(function() { self.checkConnection(); }, 10000);
+        
+        console.log('System loops started');
     };
 
     JarvisApp.prototype.completeInitialization = function() {
@@ -336,22 +404,29 @@
         this.loadUserPreferences();
         this.updateMemoryDisplay();
         
-        this.modules.notifications.show({
-            title: 'System Online',
-            message: 'J.A.R.V.I.S. is ready to assist you.',
-            type: 'success',
-            duration: 3000
-        });
+        if (this.modules && this.modules.notifications) {
+            this.modules.notifications.show({
+                title: 'System Online',
+                message: 'J.A.R.V.I.S. is ready.',
+                type: 'success',
+                duration: 3000
+            });
+        }
+        
+        console.log('Initialization complete');
     };
 
     JarvisApp.prototype.handleUserInput = function(text) {
-        var input = text || this.ui.mainInput.value.trim();
+        var input = text || (this.ui.mainInput ? this.ui.mainInput.value.trim() : '');
         if (!input) return;
 
-        if (!text) this.ui.mainInput.value = '';
+        if (!text && this.ui.mainInput) {
+            this.ui.mainInput.value = '';
+        }
         this.autoResizeTextarea();
 
         this.addMessage('user', input);
+        
         this.conversationContext.history.push({ 
             role: 'user', 
             content: input, 
@@ -362,9 +437,15 @@
 
         var self = this;
         
+        if (!this.brain) {
+            this.hideTypingIndicator();
+            this.addMessage('jarvis', 'System not ready. Please wait.');
+            return;
+        }
+        
         this.brain.process(input, {
             context: this.conversationContext,
-            emotion: this.emotion.getState(),
+            emotion: this.emotion ? this.emotion.getState() : { current: 'neutral' },
             memory: this.memory
         }).then(function(response) {
             self.hideTypingIndicator();
@@ -381,12 +462,14 @@
             self.updateMemoryDisplay();
         }).catch(function(error) {
             self.hideTypingIndicator();
-            self.addMessage('jarvis', 'I apologize, but I encountered an error processing your request.');
             console.error('Processing error:', error);
+            self.addMessage('jarvis', 'I encountered an error. Please try again.');
         });
     };
 
     JarvisApp.prototype.addMessage = function(sender, text, metadata) {
+        if (!this.ui.chatMessages) return;
+        
         var messageDiv = document.createElement('div');
         messageDiv.className = 'message message-' + sender;
         
@@ -434,6 +517,8 @@
     };
 
     JarvisApp.prototype.showTypingIndicator = function() {
+        if (!this.ui.chatMessages) return;
+        
         var indicator = document.createElement('div');
         indicator.className = 'message message-jarvis typing-message';
         indicator.id = 'typing-indicator';
@@ -453,20 +538,27 @@
     JarvisApp.prototype.toggleVoiceInput = function() {
         var self = this;
         
+        if (!this.voice) {
+            this.addMessage('jarvis', 'Voice system not available.');
+            return;
+        }
+        
         if (this.voice.isListening) {
             this.voice.stop();
-            this.ui.micBtn.classList.remove('recording');
+            if (this.ui.micBtn) this.ui.micBtn.classList.remove('recording');
         } else {
-            this.ui.micBtn.classList.add('recording');
+            if (this.ui.micBtn) this.ui.micBtn.classList.add('recording');
             
             this.voice.start(function(transcript) {
                 self.handleUserInput(transcript);
-                self.ui.micBtn.classList.remove('recording');
+                if (self.ui.micBtn) self.ui.micBtn.classList.remove('recording');
             });
         }
     };
 
     JarvisApp.prototype.speak = function(text) {
+        if (!this.voice) return;
+        
         var cleanText = text
             .replace(/```[\s\S]*?```/g, 'Code block.')
             .replace(/[#*_`]/g, '');
@@ -475,112 +567,130 @@
 
     JarvisApp.prototype.updateClock = function() {
         var now = new Date();
-        var timeStr = this.userPreferences.timeFormat === '24' 
-            ? now.toLocaleTimeString('en-GB')
-            : now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+        var clockEl = document.getElementById('system-clock');
+        var dateEl = document.getElementById('system-date');
         
-        document.getElementById('system-clock').textContent = timeStr;
-        document.getElementById('system-date').textContent = now.toLocaleDateString('en-US', { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+        if (clockEl) {
+            clockEl.textContent = this.userPreferences && this.userPreferences.timeFormat === '24' 
+                ? now.toLocaleTimeString('en-GB')
+                : now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+        }
+        
+        if (dateEl) {
+            dateEl.textContent = now.toLocaleDateString('en-US', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+        }
     };
 
     JarvisApp.prototype.updateResourceMonitor = function() {
         var cpu = Math.floor(Math.random() * 30) + 10;
         var mem = Math.floor(Math.random() * 200) + 100;
         
-        document.getElementById('cpu-bar').style.width = cpu + '%';
-        document.getElementById('cpu-text').textContent = cpu + '%';
-        document.getElementById('mem-bar').style.width = ((mem/512)*100) + '%';
-        document.getElementById('mem-text').textContent = mem + 'MB';
+        var cpuBar = document.getElementById('cpu-bar');
+        var cpuText = document.getElementById('cpu-text');
+        var memBar = document.getElementById('mem-bar');
+        var memText = document.getElementById('mem-text');
+        
+        if (cpuBar) cpuBar.style.width = cpu + '%';
+        if (cpuText) cpuText.textContent = cpu + '%';
+        if (memBar) memBar.style.width = ((mem/512)*100) + '%';
+        if (memText) memText.textContent = mem + 'MB';
     };
 
     JarvisApp.prototype.updateEmotionDisplay = function() {
+        if (!this.emotion) return;
         var state = this.emotion.getState();
-        document.getElementById('current-emotion').textContent = state.emoji;
+        var el = document.getElementById('current-emotion');
+        if (el) el.textContent = state.emoji;
     };
 
     JarvisApp.prototype.updateMemoryDisplay = function() {
+        if (!this.memory) return;
         var stats = this.memory.getStats();
-        document.getElementById('mem-facts').textContent = stats.facts;
+        var factsEl = document.getElementById('mem-facts');
+        if (factsEl) factsEl.textContent = stats.facts;
     };
 
     JarvisApp.prototype.checkConnection = function() {
         var isOnline = navigator.onLine;
         var connStatus = document.getElementById('connection-status');
+        if (!connStatus) return;
+        
         var connText = connStatus.querySelector('.conn-text');
         var connDot = connStatus.querySelector('.conn-dot');
         
         if (isOnline) {
-            connText.textContent = 'ONLINE';
+            if (connText) connText.textContent = 'ONLINE';
             connStatus.style.borderColor = 'var(--success)';
             connStatus.style.color = 'var(--success)';
-            connDot.style.background = 'var(--success)';
+            if (connDot) connDot.style.background = 'var(--success)';
         } else {
-            connText.textContent = 'OFFLINE';
+            if (connText) connText.textContent = 'OFFLINE';
             connStatus.style.borderColor = 'var(--warning)';
             connStatus.style.color = 'var(--warning)';
-            connDot.style.background = 'var(--warning)';
+            if (connDot) connDot.style.background = 'var(--warning)';
         }
     };
 
     JarvisApp.prototype.executeQuickAction = function(action) {
         switch(action) {
             case 'weather':
-                this.handleUserInput("What's the weather like?");
+                this.handleUserInput("What's the weather?");
                 break;
             case 'news':
-                this.handleUserInput("Show me today's headlines");
+                this.handleUserInput("Show me news");
                 break;
             case 'reminder':
-                this.ui.mainInput.value = "Remind me to ";
-                this.ui.mainInput.focus();
+                if (this.ui.mainInput) {
+                    this.ui.mainInput.value = "Remind me to ";
+                    this.ui.mainInput.focus();
+                }
                 break;
             case 'calculate':
-                document.querySelector('.calc-panel').scrollIntoView({ behavior: 'smooth' });
+                var calcPanel = document.querySelector('.calc-panel');
+                if (calcPanel) calcPanel.scrollIntoView({ behavior: 'smooth' });
                 break;
         }
+    };
+
+    JarvisApp.prototype.loadUserPreferences = function() {
+        var prefs = {};
+        if (this.memory && this.memory.getPreferences) {
+            prefs = this.memory.getPreferences();
+        }
+        
+        this.userPreferences = {
+            voiceEnabled: prefs.voiceEnabled !== undefined ? prefs.voiceEnabled : true,
+            theme: prefs.theme || 'jarvis',
+            timeFormat: prefs.timeFormat || '24',
+            language: prefs.language || 'en-US'
+        };
+        
+        this.setTheme(this.userPreferences.theme);
     };
 
     JarvisApp.prototype.setTheme = function(themeName) {
         document.documentElement.setAttribute('data-theme', themeName);
         this.currentTheme = themeName;
-        this.memory.setPreference('theme', themeName);
-    };
-
-    JarvisApp.prototype.showContextMenu = function(e, messageElement) {
-        var menu = document.getElementById('context-menu');
-        menu.style.left = e.pageX + 'px';
-        menu.style.top = e.pageY + 'px';
-        menu.classList.remove('hidden');
+        if (this.memory && this.memory.setPreference) {
+            this.memory.setPreference('theme', themeName);
+        }
     };
 
     JarvisApp.prototype.autoResizeTextarea = function() {
+        if (!this.ui.mainInput) return;
         var textarea = this.ui.mainInput;
         textarea.style.height = 'auto';
         textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
     };
 
     JarvisApp.prototype.sleep = function(ms) {
-        return new Promise(function(resolve) { setTimeout(resolve, ms); });
+        return new Promise(function(resolve) { 
+            setTimeout(resolve, ms); 
+        });
     };
 
-    JarvisApp.prototype.loadUserPreferences = function() {
-        var prefs = this.memory.getPreferences();
-        this.userPreferences = Object.assign({
-            voiceEnabled: true,
-            theme: 'jarvis',
-            timeFormat: '24',
-            language: 'en-US'
-        }, prefs);
-        
-        this.setTheme(this.userPreferences.theme);
-        
-        var usernameInput = document.getElementById('setting-username');
-        if (usernameInput) usernameInput.value = prefs.userName || '';
-    };
-
-    // Public API methods
     JarvisApp.prototype.copyCode = function(btn) {
         var code = btn.closest('.code-block').querySelector('code').textContent;
         navigator.clipboard.writeText(code);
@@ -588,5 +698,5 @@
         setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
     };
 
-    console.log('✅ App.js loaded');
+    console.log('App.js parsed and ready');
 })();
