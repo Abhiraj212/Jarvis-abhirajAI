@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#000000">
     <title>J.A.R.V.I.S. | Just A Rather Very Intelligent System</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSi5BLlIuVi5JLlMuIiwic2hvcnRfbmFtZSI6IkphcnZpcyIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDAwMDAwIiwidGhlbWVfY29sb3IiOiIjMDBmMGZmIn0=">
     <link rel="stylesheet" href="style.css">
-    <!-- External Libraries -->
+    <!-- External Libraries ONLY -->
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.5/marked.min.js"></script>
 </head>
 <body>
 
@@ -124,9 +122,7 @@
                             <div class="emotion-orbit surprise" data-emotion="surprise">😲</div>
                             <div class="emotion-orbit trust" data-emotion="trust">🤝</div>
                         </div>
-                        <div class="emotion-metrics" id="emotion-metrics">
-                            <!-- Dynamic emotion bars -->
-                        </div>
+                        <div class="emotion-metrics" id="emotion-metrics"></div>
                     </div>
                 </div>
 
@@ -276,17 +272,6 @@
                             <label><input type="checkbox" checked data-level="error"> Error</label>
                         </div>
                         <div class="log-container" id="system-logs"></div>
-                    </div>
-                </div>
-
-                <!-- KNOWLEDGE GRAPH -->
-                <div class="panel knowledge-panel">
-                    <div class="panel-header">
-                        <span class="panel-title">🕸️ Knowledge Graph</span>
-                        <button class="panel-toggle" data-panel="knowledge">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div id="knowledge-viz"></div>
                     </div>
                 </div>
 
@@ -556,7 +541,10 @@
         <div class="context-item danger" data-action="delete">Delete</div>
     </div>
 
-    <!-- MODULE LOADER -->
-    <script type="module" src="app.js"></script>
+    <!-- LOAD SCRIPTS IN CORRECT ORDER (NO MODULES) -->
+    <script src="core.js"></script>
+    <script src="features.js"></script>
+    <script src="voice_vision.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
