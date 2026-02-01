@@ -2018,3 +2018,132 @@ body {
     background: var(--primary-dim);
     color: var(--text-primary);
 }
+/* ============================================
+   MOBILE RESPONSIVE FIXES
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Stack layout vertically */
+    .workspace {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+    
+    /* Hide sidebars by default, show as overlays */
+    .sidebar {
+        position: fixed;
+        top: 80px;
+        bottom: 60px;
+        width: 80%;
+        z-index: 100;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.right-panel {
+        right: 0;
+        left: auto;
+        transform: translateX(100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    /* Smaller HUD */
+    .main-hud {
+        padding: 10px;
+        font-size: 0.8rem;
+    }
+    
+    .jarvis-logo {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .logo-text {
+        font-size: 0.5rem;
+    }
+    
+    /* Touch-friendly buttons */
+    .control-btn, .quick-btn, .tool-btn, .action-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Larger touch targets */
+    .calc-btn {
+        min-height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    /* Chat input area */
+    .input-container {
+        padding: 8px;
+    }
+    
+    #main-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* Modal full screen on mobile */
+    .modal {
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+    }
+    
+    /* Bottom bar more compact */
+    .control-bar {
+        padding: 10px;
+    }
+    
+    .btn-label {
+        display: none; /* Hide text, show only icons */
+    }
+    
+    .control-btn {
+        padding: 10px;
+    }
+}
+
+/* Touch device optimizations */
+@media (pointer: coarse) {
+    /* Larger touch targets */
+    button, .panel-toggle, .filter-btn, .chat-tab {
+        min-height: 44px;
+    }
+    
+    /* Remove hover effects on touch */
+    .control-btn:hover, .quick-btn:hover {
+        transform: none;
+    }
+    
+    /* Add active state for touch feedback */
+    button:active, .control-btn:active {
+        opacity: 0.7;
+        transform: scale(0.95);
+    }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+    .boot-logo {
+        font-size: 2rem;
+        letter-spacing: 10px;
+    }
+    
+    .hud-section.left, .hud-section.right {
+        display: none; /* Hide on very small screens */
+    }
+    
+    .main-hud {
+        justify-content: center;
+    }
+    
+    .mode-indicator {
+        padding: 8px 15px;
+        font-size: 0.7rem;
+    }
+}
