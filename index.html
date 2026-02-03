@@ -1,34 +1,110 @@
-<!DOCTYPE html>
+
+# Creating the COMPLETE UPGRADED JARVIS with Mobile Optimization and Hinglish Support
+
+html_code = '''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>J.A.R.V.I.S. | Just A Rather Very Intelligent System</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>J.A.R.V.I.S. Ultra | AI Assistant</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- BOOT SEQUENCE OVERLAY -->
+    <!-- BOOT SEQUENCE -->
     <div id="boot-sequence" class="boot-overlay">
         <div class="boot-content">
-            <div class="boot-logo">J.A.R.V.I.S.</div>
+            <div class="boot-logo">
+                <span class="logo-char">J</span><span class="logo-char">.</span><span class="logo-char">A</span><span class="logo-char">.</span><span class="logo-char">R</span><span class="logo-char">.</span><span class="logo-char">V</span><span class="logo-char">.</span><span class="logo-char">I</span><span class="logo-char">.</span><span class="logo-char">S</span><span class="logo-char">.</span>
+            </div>
             <div class="boot-subtitle">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
             <div class="boot-status" id="boot-status">Initializing core systems...</div>
-            <div class="boot-progress">
-                <div class="boot-bar" id="boot-bar"></div>
+            <div class="boot-progress-container">
+                <div class="boot-progress">
+                    <div class="boot-bar" id="boot-bar"></div>
+                </div>
+                <div class="boot-percent" id="boot-percent">0%</div>
             </div>
             <div class="boot-log" id="boot-log"></div>
+            <div class="boot-language-select" id="boot-language" style="display:none;">
+                <p>Select Language / भाषा चुनें:</p>
+                <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+                <button class="lang-btn" data-lang="hi">🇮🇳 हिंदी</button>
+                <button class="lang-btn" data-lang="hinglish">🇮🇳 Hinglish (हिंग्लिश)</button>
+            </div>
         </div>
     </div>
+
+    <!-- MOBILE NAVIGATION DRAWER -->
+    <div class="mobile-drawer" id="mobile-drawer">
+        <div class="drawer-header">
+            <div class="drawer-avatar">🤖</div>
+            <div class="drawer-info">
+                <div class="drawer-name">J.A.R.V.I.S.</div>
+                <div class="drawer-status online">● Online</div>
+            </div>
+        </div>
+        <div class="drawer-menu">
+            <div class="drawer-item" data-panel="memory">
+                <span class="drawer-icon">🧠</span>
+                <span class="drawer-text">Memory Core</span>
+            </div>
+            <div class="drawer-item" data-panel="emotion">
+                <span class="drawer-icon">😊</span>
+                <span class="drawer-text">Emotions</span>
+            </div>
+            <div class="drawer-item" data-panel="tasks">
+                <span class="drawer-icon">📋</span>
+                <span class="drawer-text">Tasks</span>
+            </div>
+            <div class="drawer-item" data-panel="games">
+                <span class="drawer-icon">🎮</span>
+                <span class="drawer-text">Games</span>
+            </div>
+            <div class="drawer-item" data-panel="weather">
+                <span class="drawer-icon">🌤️</span>
+                <span class="drawer-text">Weather</span>
+            </div>
+            <div class="drawer-item" data-panel="calculator">
+                <span class="drawer-icon">🧮</span>
+                <span class="drawer-text">Calculator</span>
+            </div>
+            <div class="drawer-item" data-panel="settings">
+                <span class="drawer-icon">⚙️</span>
+                <span class="drawer-text">Settings</span>
+            </div>
+            <div class="drawer-divider"></div>
+            <div class="drawer-item danger" id="drawer-shutdown">
+                <span class="drawer-icon">⏻</span>
+                <span class="drawer-text">Shutdown</span>
+            </div>
+        </div>
+    </div>
+    <div class="drawer-overlay" id="drawer-overlay"></div>
 
     <!-- MAIN APPLICATION -->
     <div id="app-container" class="app-container hidden">
         
-        <!-- TOP HUD -->
-        <header class="main-hud">
+        <!-- MOBILE HEADER -->
+        <header class="mobile-header" id="mobile-header">
+            <button class="hamburger" id="hamburger">☰</button>
+            <div class="mobile-logo">
+                <span class="mobile-logo-text">J.A.R.V.I.S.</span>
+                <div class="mobile-status-pill" id="mobile-status">ONLINE</div>
+            </div>
+            <button class="mobile-mic" id="mobile-mic-btn">🎤</button>
+        </header>
+
+        <!-- DESKTOP TOP HUD -->
+        <header class="main-hud" id="desktop-hud">
             <div class="hud-section left">
                 <div class="system-clock" id="system-clock">00:00:00</div>
                 <div class="system-date" id="system-date">Loading...</div>
@@ -50,12 +126,12 @@
             
             <div class="hud-section right">
                 <div class="resource-monitor">
-                    <div class="resource-item" title="CPU Usage">
+                    <div class="resource-item">
                         <span class="res-icon">⚡</span>
                         <div class="res-bar"><div id="cpu-bar"></div></div>
                         <span id="cpu-text">0%</span>
                     </div>
-                    <div class="resource-item" title="Memory">
+                    <div class="resource-item">
                         <span class="res-icon">💾</span>
                         <div class="res-bar"><div id="mem-bar"></div></div>
                         <span id="mem-text">0MB</span>
@@ -71,38 +147,45 @@
         <!-- MAIN WORKSPACE -->
         <main class="workspace">
             
-            <!-- LEFT SIDEBAR -->
+            <!-- LEFT SIDEBAR (Desktop) -->
             <aside class="sidebar left-panel" id="left-panel">
                 
                 <!-- MEMORY -->
-                <div class="panel memory-panel">
+                <div class="panel memory-panel" id="panel-memory">
                     <div class="panel-header">
                         <span class="panel-title">🧠 Memory Core</span>
-                        <button class="panel-toggle" data-panel="memory">−</button>
+                        <button class="panel-toggle">−</button>
                     </div>
-                    <div class="panel-content" id="memory-visualizer">
+                    <div class="panel-content">
                         <div class="memory-stats">
                             <div class="stat-item">
                                 <span class="stat-label">Facts</span>
                                 <span class="stat-value" id="mem-facts">0</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-label">Preferences</span>
+                                <span class="stat-label">Prefs</span>
                                 <span class="stat-value" id="mem-prefs">0</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-label">Conversations</span>
+                                <span class="stat-label">Chats</span>
                                 <span class="stat-value" id="mem-chats">0</span>
                             </div>
                         </div>
+                        <div class="memory-graph-container">
+                            <canvas id="memory-graph"></canvas>
+                        </div>
+                        <div class="memory-search">
+                            <input type="text" id="memory-search-input" placeholder="Search memories...">
+                        </div>
+                        <div class="memory-results" id="memory-results"></div>
                     </div>
                 </div>
 
                 <!-- EMOTION -->
-                <div class="panel emotion-panel">
+                <div class="panel emotion-panel" id="panel-emotion">
                     <div class="panel-header">
-                        <span class="panel-title">😊 Emotional Intelligence</span>
-                        <button class="panel-toggle" data-panel="emotion">−</button>
+                        <span class="panel-title">😊 Emotions</span>
+                        <button class="panel-toggle">−</button>
                     </div>
                     <div class="panel-content">
                         <div class="emotion-wheel" id="emotion-wheel">
@@ -114,19 +197,32 @@
                             <div class="emotion-orbit surprise" data-emotion="surprise">😲</div>
                             <div class="emotion-orbit trust" data-emotion="trust">🤝</div>
                         </div>
-                        <div class="emotion-metrics" id="emotion-metrics"></div>
+                        <div class="emotion-metrics" id="emotion-metrics">
+                            <div class="emotion-bar">
+                                <span>Joy</span>
+                                <div class="bar"><div id="joy-bar" style="width:50%"></div></div>
+                            </div>
+                            <div class="emotion-bar">
+                                <span>Sadness</span>
+                                <div class="bar"><div id="sadness-bar" style="width:10%"></div></div>
+                            </div>
+                            <div class="emotion-bar">
+                                <span>Anger</span>
+                                <div class="bar"><div id="anger-bar" style="width:5%"></div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- TASKS -->
-                <div class="panel tasks-panel">
+                <div class="panel tasks-panel" id="panel-tasks">
                     <div class="panel-header">
-                        <span class="panel-title">📋 Task Manager</span>
-                        <button class="panel-toggle" data-panel="tasks">−</button>
+                        <span class="panel-title">📋 Tasks</span>
+                        <button class="panel-toggle">−</button>
                     </div>
                     <div class="panel-content">
                         <div class="task-input-area">
-                            <input type="text" id="new-task" placeholder="Add new task...">
+                            <input type="text" id="new-task" placeholder="Add task...">
                             <select id="task-priority">
                                 <option value="low">Low</option>
                                 <option value="medium" selected>Medium</option>
@@ -144,9 +240,71 @@
                     </div>
                 </div>
 
+                <!-- GAMES -->
+                <div class="panel games-panel" id="panel-games">
+                    <div class="panel-header">
+                        <span class="panel-title">🎮 Games</span>
+                        <button class="panel-toggle">−</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="game-list">
+                            <div class="game-card" data-game="quiz">
+                                <div class="game-icon">❓</div>
+                                <div class="game-info">
+                                    <div class="game-name">Quiz Master</div>
+                                    <div class="game-desc">Test your knowledge</div>
+                                </div>
+                                <button class="game-play">Play</button>
+                            </div>
+                            <div class="game-card" data-game="riddle">
+                                <div class="game-icon">🧩</div>
+                                <div class="game-info">
+                                    <div class="game-name">Riddles</div>
+                                    <div class="game-desc">Brain teasers</div>
+                                </div>
+                                <button class="game-play">Play</button>
+                            </div>
+                            <div class="game-card" data-game="word">
+                                <div class="game-icon">🔤</div>
+                                <div class="game-info">
+                                    <div class="game-name">Word Chain</div>
+                                    <div class="game-desc">Word building game</div>
+                                </div>
+                                <button class="game-play">Play</button>
+                            </div>
+                            <div class="game-card" data-game="memory">
+                                <div class="game-icon">🧠</div>
+                                <div class="game-info">
+                                    <div class="game-name">Memory Match</div>
+                                    <div class="game-desc">Test your memory</div>
+                                </div>
+                                <button class="game-play">Play</button>
+                            </div>
+                            <div class="game-card" data-game="math">
+                                <div class="game-icon">🔢</div>
+                                <div class="game-info">
+                                    <div class="game-name">Speed Math</div>
+                                    <div class="game-desc">Fast calculations</div>
+                                </div>
+                                <button class="game-play">Play</button>
+                            </div>
+                        </div>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-value" id="game-score">0</span>
+                                <span class="stat-label">Score</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="game-streak">0</span>
+                                <span class="stat-label">Streak</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </aside>
 
-            <!-- CENTER -->
+            <!-- CENTER STAGE -->
             <section class="center-stage">
                 
                 <!-- VISUALIZER -->
@@ -158,53 +316,77 @@
                             <span></span><span></span><span></span>
                         </div>
                     </div>
+                    <div class="voice-waves" id="voice-waves">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                    <div class="language-indicator" id="language-indicator">🌐 Auto</div>
                 </div>
 
-                <!-- CHAT -->
+                <!-- CHAT INTERFACE -->
                 <div class="chat-interface">
                     <div class="chat-header">
                         <div class="chat-tabs" id="chat-tabs">
-                            <button class="chat-tab active" data-tab="main">Main</button>
-                            <button class="chat-tab" data-tab="code">Code</button>
-                            <button class="chat-tab" data-tab="search">Search</button>
+                            <button class="chat-tab active" data-tab="main">💬 Main</button>
+                            <button class="chat-tab" data-tab="code">💻 Code</button>
+                            <button class="chat-tab" data-tab="search">🔍 Search</button>
+                            <button class="chat-tab" data-tab="image">🖼️ Image</button>
                         </div>
                         <div class="chat-tools">
-                            <button class="tool-btn" id="btn-export-chat">💾</button>
-                            <button class="tool-btn" id="btn-clear-chat">🗑️</button>
+                            <button class="tool-btn" id="btn-export-chat" title="Export">💾</button>
+                            <button class="tool-btn" id="btn-clear-chat" title="Clear">🗑️</button>
                         </div>
                     </div>
                     
                     <div class="chat-messages" id="chat-messages">
-                        <div class="welcome-message">
-                            <h2>Welcome back, <span id="user-name-display">Sir</span></h2>
-                            <p>I am J.A.R.V.I.S., your personal AI assistant.</p>
-                            <div class="quick-actions">
+                        <div class="welcome-message" id="welcome-message">
+                            <div class="welcome-avatar">🤖</div>
+                            <h2 id="welcome-title">Welcome, Sir</h2>
+                            <p id="welcome-subtitle">I am J.A.R.V.I.S., your AI assistant.</p>
+                            <div class="quick-actions" id="quick-actions">
                                 <button class="quick-btn" data-action="weather">🌤️ Weather</button>
                                 <button class="quick-btn" data-action="news">📰 News</button>
                                 <button class="quick-btn" data-action="reminder">⏰ Reminder</button>
                                 <button class="quick-btn" data-action="calculate">🧮 Calculate</button>
+                                <button class="quick-btn" data-action="joke">😂 Joke</button>
+                                <button class="quick-btn" data-action="fact">📚 Fact</button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- SUGGESTIONS BAR -->
+                    <div class="suggestions-bar" id="suggestions-bar">
+                        <button class="suggestion-chip" data-text="ma thik hu tum kese ho">मैं ठीक हूँ, तुम कैसे हो</button>
+                        <button class="suggestion-chip" data-text="aaj ka weather kya hai">आज का वेदर क्या है</button>
+                        <button class="suggestion-chip" data-text="ek joke sunao">एक जोक सुनाओ</button>
+                        <button class="suggestion-chip" data-text="game khelte hain">गेम खेलते हैं</button>
+                    </div>
+
                     <div class="chat-input-area">
                         <div class="input-toolbar">
-                            <button class="toolbar-btn" id="btn-attach">📎</button>
-                            <button class="toolbar-btn" id="btn-image">🖼️</button>
-                            <button class="toolbar-btn" id="btn-code">💻</button>
-                            <button class="toolbar-btn" id="btn-voice-mode">🎙️</button>
+                            <button class="toolbar-btn" id="btn-attach" title="Attach">📎</button>
+                            <button class="toolbar-btn" id="btn-image" title="Image">🖼️</button>
+                            <button class="toolbar-btn" id="btn-code" title="Code">💻</button>
+                            <button class="toolbar-btn" id="btn-voice-mode" title="Voice Mode">🎙️</button>
+                            <button class="toolbar-btn" id="btn-translate" title="Translate">🌐</button>
                         </div>
                         
                         <div class="input-container">
-                            <textarea id="main-input" placeholder="Type your message or say 'Hey Jarvis'..." rows="1" maxlength="2000"></textarea>
+                            <textarea id="main-input" placeholder="Type message or say 'Hey Jarvis'...&#10;Type in English, Hindi, or Hinglish..." rows="1" maxlength="2000"></textarea>
                             <div class="input-actions">
-                                <button class="action-btn mic-btn" id="main-mic-btn">🎤</button>
-                                <button class="action-btn send-btn" id="main-send-btn">➤</button>
+                                <button class="action-btn mic-btn" id="main-mic-btn" title="Voice Input">
+                                    <span class="mic-icon">🎤</span>
+                                    <span class="recording-indicator"></span>
+                                </button>
+                                <button class="action-btn send-btn" id="main-send-btn" title="Send">➤</button>
                             </div>
                         </div>
                         
                         <div class="input-status" id="input-status">
-                            <span class="status-text">Ready</span>
+                            <span class="status-text">Ready • हिंदी supported • Hinglish OK</span>
                             <span class="char-count">0/2000</span>
                         </div>
                     </div>
@@ -212,14 +394,14 @@
 
             </section>
 
-            <!-- RIGHT SIDEBAR -->
+            <!-- RIGHT SIDEBAR (Desktop) -->
             <aside class="sidebar right-panel" id="right-panel">
                 
                 <!-- WEATHER -->
-                <div class="panel weather-panel">
+                <div class="panel weather-panel" id="panel-weather">
                     <div class="panel-header">
-                        <span class="panel-title">🌤️ Environment</span>
-                        <button class="panel-toggle" data-panel="weather">−</button>
+                        <span class="panel-title">🌤️ Weather</span>
+                        <button class="panel-toggle">−</button>
                     </div>
                     <div class="panel-content">
                         <div class="weather-main" id="weather-main">
@@ -230,31 +412,24 @@
                         <div class="weather-details" id="weather-details">
                             <div class="weather-item"><span>Humidity</span><span>--%</span></div>
                             <div class="weather-item"><span>Wind</span><span>-- km/h</span></div>
+                            <div class="weather-item"><span>Feels</span><span>--°</span></div>
+                            <div class="weather-item"><span>UV</span><span>--</span></div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- LOGS -->
-                <div class="panel logs-panel">
-                    <div class="panel-header">
-                        <span class="panel-title">📊 System Logs</span>
-                        <button class="panel-toggle" data-panel="logs">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="log-container" id="system-logs"></div>
+                        <div class="weather-forecast" id="weather-forecast"></div>
                     </div>
                 </div>
 
                 <!-- CALCULATOR -->
-                <div class="panel calc-panel">
+                <div class="panel calc-panel" id="panel-calculator">
                     <div class="panel-header">
                         <span class="panel-title">🧮 Calculator</span>
-                        <button class="panel-toggle" data-panel="calc">−</button>
+                        <button class="panel-toggle">−</button>
                     </div>
                     <div class="panel-content">
                         <div class="calc-display" id="calc-display">0</div>
+                        <div class="calc-history" id="calc-history"></div>
                         <div class="calc-buttons">
-                            <button class="calc-btn func" data-val="C">C</button>
+                            <button class="calc-btn func" data-val="C">AC</button>
                             <button class="calc-btn func" data-val="⌫">⌫</button>
                             <button class="calc-btn func" data-val="%">%</button>
                             <button class="calc-btn op" data-val="/">÷</button>
@@ -277,16 +452,65 @@
                     </div>
                 </div>
 
+                <!-- SYSTEM LOGS -->
+                <div class="panel logs-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">📊 Logs</span>
+                        <button class="panel-toggle">−</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="log-filters">
+                            <label><input type="checkbox" checked> Info</label>
+                            <label><input type="checkbox" checked> Warn</label>
+                            <label><input type="checkbox" checked> Error</label>
+                        </div>
+                        <div class="log-container" id="system-logs"></div>
+                    </div>
+                </div>
+
             </aside>
 
         </main>
 
-        <!-- FOOTER -->
-        <footer class="control-bar">
+        <!-- MOBILE BOTTOM NAV -->
+        <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+            <button class="mobile-nav-btn active" data-view="chat">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Chat</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="games">
+                <span class="nav-icon">🎮</span>
+                <span class="nav-label">Games</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="voice">
+                <span class="nav-icon">🎤</span>
+                <span class="nav-label">Voice</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="tools">
+                <span class="nav-icon">🧰</span>
+                <span class="nav-label">Tools</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">More</span>
+            </button>
+        </nav>
+
+        <!-- DESKTOP FOOTER -->
+        <footer class="control-bar" id="desktop-footer">
             <div class="control-section">
-                <button class="control-btn" id="btn-vision">👁️ Vision</button>
-                <button class="control-btn" id="btn-voice">🎙️ Voice</button>
-                <button class="control-btn" id="btn-automation">⚙️ Auto</button>
+                <button class="control-btn" id="btn-vision">
+                    <span class="btn-icon">👁️</span>
+                    <span class="btn-label">Vision</span>
+                </button>
+                <button class="control-btn" id="btn-voice">
+                    <span class="btn-icon">🎙️</span>
+                    <span class="btn-label">Voice</span>
+                </button>
+                <button class="control-btn" id="btn-automation">
+                    <span class="btn-icon">⚙️</span>
+                    <span class="btn-label">Auto</span>
+                </button>
             </div>
             <div class="control-section center">
                 <div class="mode-indicator" id="mode-indicator">
@@ -295,9 +519,18 @@
                 </div>
             </div>
             <div class="control-section">
-                <button class="control-btn" id="btn-settings">🔧 Settings</button>
-                <button class="control-btn" id="btn-help">❓ Help</button>
-                <button class="control-btn danger" id="btn-shutdown">⏻ Exit</button>
+                <button class="control-btn" id="btn-settings">
+                    <span class="btn-icon">🔧</span>
+                    <span class="btn-label">Settings</span>
+                </button>
+                <button class="control-btn" id="btn-help">
+                    <span class="btn-icon">❓</span>
+                    <span class="btn-label">Help</span>
+                </button>
+                <button class="control-btn danger" id="btn-shutdown">
+                    <span class="btn-icon">⏻</span>
+                    <span class="btn-label">Exit</span>
+                </button>
             </div>
         </footer>
 
@@ -307,7 +540,7 @@
     <div class="modal-overlay hidden" id="vision-modal">
         <div class="modal vision-modal">
             <div class="modal-header">
-                <h3>Computer Vision System</h3>
+                <h3>👁️ Computer Vision</h3>
                 <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
@@ -318,6 +551,7 @@
                 <div class="vision-controls">
                     <button class="vision-btn" id="btn-snapshot">📷 Snapshot</button>
                     <button class="vision-btn" id="btn-register-face">👤 Register Face</button>
+                    <button class="vision-btn" id="btn-detect-objects">🔍 Detect Objects</button>
                 </div>
             </div>
         </div>
@@ -326,7 +560,7 @@
     <div class="modal-overlay hidden" id="settings-modal">
         <div class="modal settings-modal">
             <div class="modal-header">
-                <h3>System Settings</h3>
+                <h3>⚙️ System Settings</h3>
                 <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
@@ -334,36 +568,52 @@
                     <button class="settings-tab active" data-tab="general">General</button>
                     <button class="settings-tab" data-tab="voice">Voice</button>
                     <button class="settings-tab" data-tab="ai">AI</button>
+                    <button class="settings-tab" data-tab="language">Language</button>
                     <button class="settings-tab" data-tab="privacy">Privacy</button>
                 </div>
                 <div class="settings-content" id="settings-content">
-                    <div class="settings-panel active" data-panel="general">
-                        <div class="setting-item">
-                            <label>User Name</label>
-                            <input type="text" id="setting-username" placeholder="Sir">
-                        </div>
-                        <div class="setting-item">
-                            <label>Theme</label>
-                            <select id="setting-theme">
-                                <option value="jarvis">J.A.R.V.I.S. Blue</option>
-                                <option value="friday">F.R.I.D.A.Y. Orange</option>
-                                <option value="ultron">Ultron Red</option>
-                                <option value="vision">Vision Green</option>
-                            </select>
-                        </div>
-                    </div>
+                    <!-- Settings panels loaded dynamically -->
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="modal-overlay hidden" id="game-modal">
+        <div class="modal game-modal">
+            <div class="modal-header">
+                <h3 id="game-title">🎮 Game</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="game-container">
+                <!-- Game content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
     <div class="notification-center" id="notification-center"></div>
 
-    <!-- SCRIPTS AT END OF BODY - THIS IS THE KEY! -->
+    <!-- TYPING INDICATOR TEMPLATE -->
+    <template id="typing-template">
+        <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </template>
+
+    <!-- SCRIPTS -->
     <script src="core.js"></script>
     <script src="features.js"></script>
     <script src="voice_vision.js"></script>
     <script src="app.js"></script>
 
 </body>
-</html>
+</html>'''
+
+# Save HTML
+with open('/mnt/kimi/output/jarvis_ultra/index.html', 'w', encoding='utf-8') as f:
+    f.write(html_code)
+
+print("✅ index.html created (Mobile optimized + Hinglish support)")
+print(f"   Size: {len(html_code):,} characters")
