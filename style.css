@@ -1626,3 +1626,38 @@ body::before {
     padding: 0.4rem 0.8rem;
   }
 }
+
+/* ==========================================
+   FALLBACK & DEBUG STYLES
+   ========================================== */
+
+.splash-status {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* Ensure app shows if JS fails */
+#app:not(.hidden) {
+    display: flex !important;
+}
+
+/* Debug: Show if there's a JS error */
+.js-error #splash-screen {
+    display: none !important;
+}
+
+.js-error #app {
+    display: flex !important;
+}
+
+/* Force show app after timeout */
+.show-app #splash-screen {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.show-app #app {
+    display: flex !important;
+}
