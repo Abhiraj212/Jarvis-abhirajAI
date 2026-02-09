@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>J.A.R.V.I.S. AI</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -26,30 +28,30 @@
         
         <!-- TOP BAR -->
         <header class="top-bar">
-            <button class="menu-btn" id="btn-left-menu">☰</button>
+            <button class="menu-btn" id="btn-left-menu" aria-label="Memory">☰</button>
             <div class="logo-mini">J.A.R.V.I.S.</div>
-            <button class="menu-btn" id="btn-right-menu">⚙️</button>
+            <button class="menu-btn" id="btn-right-menu" aria-label="Settings">⚙️</button>
         </header>
 
-        <!-- LEFT SIDEBAR -->
+        <!-- LEFT SIDEBAR (MEMORY) -->
         <aside class="sidebar left" id="sidebar-left">
             <div class="sidebar-header">
                 <h3>🧠 Memory Core</h3>
-                <button class="close-sidebar" id="btn-close-left">×</button>
+                <button class="close-sidebar" id="btn-close-left" aria-label="Close">×</button>
             </div>
             
             <div class="memory-stats-real">
                 <div class="stat-card">
                     <div class="stat-value" id="mem-usage">0 KB</div>
-                    <div class="stat-label">Storage Used</div>
+                    <div class="stat-label">Storage</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="mem-facts">0</div>
-                    <div class="stat-label">Facts Stored</div>
+                    <div class="stat-label">Facts</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="mem-convos">0</div>
-                    <div class="stat-label">Conversations</div>
+                    <div class="stat-label">Chats</div>
                 </div>
             </div>
 
@@ -118,30 +120,30 @@
                     <div class="quick-chips">
                         <button class="chip-btn" data-message="What can you do?">What can you do?</button>
                         <button class="chip-btn" data-message="Remember my name is Tony">Set my name</button>
-                        <button class="chip-btn" data-message="Open calculator">Calculator</button>
-                        <button class="chip-btn" data-message="Open notebook">Notebook</button>
+                        <button class="chip-btn" data-action="openCalculator">Calculator</button>
+                        <button class="chip-btn" data-action="openNotebook">Notebook</button>
                     </div>
                 </div>
             </div>
 
             <div class="input-section">
                 <div class="input-box">
-                    <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
-                    <button class="send-btn" id="btn-send">➤</button>
+                    <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off" enterkeyhint="send">
+                    <button class="send-btn" id="btn-send" aria-label="Send">➤</button>
                 </div>
                 <div class="input-actions">
-                    <button class="action-btn" id="btn-voice">🎤</button>
-                    <button class="action-btn" id="btn-camera">📷</button>
-                    <button class="action-btn" id="btn-apps">📱</button>
+                    <button class="action-btn" id="btn-voice" aria-label="Voice">🎤</button>
+                    <button class="action-btn" id="btn-camera" aria-label="Camera">📷</button>
+                    <button class="action-btn" id="btn-apps" aria-label="Apps">📱</button>
                 </div>
             </div>
         </main>
 
-        <!-- RIGHT SIDEBAR -->
+        <!-- RIGHT SIDEBAR (SETTINGS) -->
         <aside class="sidebar right" id="sidebar-right">
             <div class="sidebar-header">
                 <h3>⚙️ Settings</h3>
-                <button class="close-sidebar" id="btn-close-right">×</button>
+                <button class="close-sidebar" id="btn-close-right" aria-label="Close">×</button>
             </div>
 
             <div class="settings-section">
@@ -156,7 +158,7 @@
             </div>
 
             <div class="settings-section">
-                <h4>🔊 Voice Settings</h4>
+                <h4>🔊 Voice</h4>
                 <label class="toggle-label">
                     <span>Text-to-Speech</span>
                     <input type="checkbox" id="tts-toggle" checked>
@@ -175,40 +177,44 @@
             </div>
 
             <div class="api-section">
-                <h4>🔌 API Configuration</h4>
+                <h4>🔌 OpenRouter API</h4>
                 
                 <div class="api-card">
                     <div class="api-header">
-                        <span>🌐 OpenRouter</span>
+                        <span>🌐 API Status</span>
                         <span class="api-badge" id="badge-openrouter">OFFLINE</span>
                     </div>
-                    <input type="password" id="api-openrouter" placeholder="sk-or-v1-...">
-                    <select id="openrouter-model">
-                        <option value="deepseek/deepseek-chat">DeepSeek V3</option>
-                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
-                        <option value="openai/gpt-4o">GPT-4o</option>
-                        <option value="google/gemini-pro">Gemini Pro</option>
-                        <option value="meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B</option>
-                    </select>
-                    <button class="api-test-btn" data-api="openrouter">Test & Save</button>
+                    <input type="password" id="api-openrouter" placeholder="Enter your API key (sk-or-v1-...)">
+                    
+                    <div class="model-section">
+                        <label>Model ID</label>
+                        <input type="text" id="model-id" placeholder="e.g., deepseek/deepseek-chat" value="deepseek/deepseek-chat">
+                        <small class="model-help">Enter any OpenRouter model ID</small>
+                    </div>
+                    
+                    <button id="btn-test-api">Connect API</button>
                 </div>
 
-                <div class="api-card">
-                    <div class="api-header">
-                        <span>🧠 DeepSeek</span>
-                        <span class="api-badge" id="badge-deepseek">OFFLINE</span>
-                    </div>
-                    <input type="password" id="api-deepseek" placeholder="sk-...">
-                    <button class="api-test-btn" data-api="deepseek">Test & Save</button>
+                <div class="api-info">
+                    <p>💡 <strong>How to get API key:</strong></p>
+                    <ol>
+                        <li>Go to <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a></li>
+                        <li>Create a free account</li>
+                        <li>Copy your API key</li>
+                        <li>Paste it here securely</li>
+                    </ol>
+                    <p>🔒 Your key is stored locally on your device only.</p>
                 </div>
+            </div>
 
-                <div class="api-card">
-                    <div class="api-header">
-                        <span>🌤️ Weather</span>
-                        <span class="api-badge" id="badge-weather">OFFLINE</span>
-                    </div>
-                    <input type="password" id="api-weather" placeholder="API key">
-                    <button class="api-test-btn" data-api="weather">Test & Save</button>
+            <div class="settings-section">
+                <h4>⚠️ Capabilities</h4>
+                <div class="limitation-list">
+                    <div class="limit-item"><span>✅</span><span>AI Chat with OpenRouter</span></div>
+                    <div class="limit-item"><span>✅</span><span>Voice Input/Output</span></div>
+                    <div class="limit-item"><span>✅</span><span>Notebook & Tasks</span></div>
+                    <div class="limit-item"><span>✅</span><span>Camera Access</span></div>
+                    <div class="limit-item"><span>✅</span><span>Local Data Storage</span></div>
                 </div>
             </div>
 
@@ -219,6 +225,7 @@
 
     <!-- OVERLAYS -->
     
+    <!-- CAMERA -->
     <div class="camera-overlay hidden" id="camera-overlay">
         <video id="camera-video" autoplay playsinline muted></video>
         <div class="camera-controls">
@@ -227,12 +234,13 @@
         </div>
     </div>
 
+    <!-- APPS DRAWER -->
     <div class="apps-drawer hidden" id="apps-drawer">
         <div class="apps-grid">
-            <button class="app-icon" data-app="calc">🧮<span>Calculator</span></button>
+            <button class="app-icon" data-app="calculator">🧮<span>Calculator</span></button>
+            <button class="app-icon" data-app="notebook">📓<span>Notebook</span></button>
             <button class="app-icon" data-app="tasks">📋<span>Tasks</span></button>
             <button class="app-icon" data-app="weather">🌤️<span>Weather</span></button>
-            <button class="app-icon" data-app="notebook">📓<span>Notebook</span></button>
             <button class="app-icon" data-app="reminders">⏰<span>Reminders</span></button>
             <button class="app-icon" data-app="game">🎮<span>Game</span></button>
         </div>
@@ -241,6 +249,7 @@
 
     <!-- MINI APPS -->
     
+    <!-- Calculator -->
     <div class="mini-app hidden" id="calc-app">
         <div class="mini-app-header">
             <span>🧮 Calculator</span>
@@ -270,6 +279,7 @@
         </div>
     </div>
 
+    <!-- Notebook -->
     <div class="mini-app hidden" id="notebook-app">
         <div class="mini-app-header">
             <span>📓 Notebook</span>
@@ -287,6 +297,7 @@
         <textarea id="note-content" placeholder="Write your note here..." class="note-content-area"></textarea>
     </div>
 
+    <!-- Tasks -->
     <div class="mini-app hidden" id="tasks-app">
         <div class="mini-app-header">
             <span>📋 Tasks</span>
@@ -301,6 +312,7 @@
         </div>
     </div>
 
+    <!-- Weather -->
     <div class="mini-app hidden" id="weather-app">
         <div class="mini-app-header">
             <span>🌤️ Weather</span>
@@ -332,6 +344,7 @@
         </div>
     </div>
 
+    <!-- Reminders -->
     <div class="mini-app hidden" id="reminders-app">
         <div class="mini-app-header">
             <span>⏰ Reminders</span>
@@ -347,10 +360,17 @@
         </div>
     </div>
 
+    <!-- BACKDROP -->
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
+    <!-- ERROR TOAST -->
+    <div class="toast hidden" id="toast">
+        <span id="toast-message">Error message</span>
+        <button onclick="hideToast()">×</button>
+    </div>
+
+    <!-- FALLBACK -->
     <script>
-        // Emergency fallback
         setTimeout(function() {
             var splash = document.getElementById('splash-screen');
             var app = document.getElementById('app');
@@ -358,9 +378,12 @@
                 splash.classList.add('hidden');
                 if (app) app.classList.remove('hidden');
             }
-        }, 6000);
+        }, 8000);
     </script>
 
+    <script src="core.js"></script>
+    <script src="voice_vision.js"></script>
+    <script src="features.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
