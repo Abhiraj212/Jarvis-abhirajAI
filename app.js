@@ -1,7 +1,7 @@
-// Simple test to ensure basic functionality works
-console.log('JARVIS starting...');
+// J.A.R.V.I.S. AI - Complete Working Version
+console.log('JARVIS loading...');
 
-// Global state
+// State
 const state = {
     memory: {
         facts: [],
@@ -25,7 +25,7 @@ const state = {
     recognition: null
 };
 
-// Initialize immediately when DOM is ready
+// DOM Ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
@@ -34,7 +34,7 @@ if (document.readyState === 'loading') {
 
 function init() {
     console.log('JARVIS initializing...');
-    updateSplashStatus('Loading core systems...');
+    updateStatus('Loading systems...');
     
     try {
         loadData();
@@ -42,21 +42,16 @@ function init() {
         setupSpeech();
         updateUI();
         
-        updateSplashStatus('Systems online');
-        
-        // Hide splash after animation
-        setTimeout(() => {
-            hideSplash();
-        }, 2000);
-        
-    } catch (error) {
-        console.error('Init error:', error);
-        updateSplashStatus('Error: ' + error.message);
+        updateStatus('Ready');
+        setTimeout(hideSplash, 1500);
+    } catch (e) {
+        console.error('Init error:', e);
+        updateStatus('Error: ' + e.message);
         setTimeout(hideSplash, 1000);
     }
 }
 
-function updateSplashStatus(text) {
+function updateStatus(text) {
     const el = document.getElementById('splash-status');
     if (el) el.textContent = text;
 }
@@ -69,7 +64,110 @@ function hideSplash() {
     console.log('JARVIS ready');
 }
 
-// Sidebar functions
+// Event Listeners - FIXED
+function setupEventListeners() {
+    // Sidebars
+    document.getElementById('btn-left-menu')?.addEventListener('click', () => toggleSidebar('left'));
+    document.getElementById('btn-right-menu')?.addEventListener('click', () => toggleSidebar('right'));
+    document.getElementById('btn-close-left')?.addEventListener('click', () => toggleSidebar('left'));
+    document.getElementById('btn-close-right')?.addEventListener('click', () => toggleSidebar('right'));
+    document.getElementById('sidebar-backdrop')?.addEventListener('click', closeAllSidebars);
+    
+    // Theme
+    document.getElementById('theme-select')?.addEventListener('change', (e) => setTheme(e.target.value));
+    
+    // Toggles
+    document.getElementById('tts-toggle')?.addEventListener('change', (e) => { state.settings.tts = e.target.checked; saveData(); });
+    document.getElementById('stt-toggle')?.addEventListener('change', (e) => { state.settings.stt = e.target.checked; saveData(); });
+    document.getElementById('auto-speak-toggle')?.addEventListener('change', (e) => { state.settings.autoSpeak = e.target.checked; saveData(); });
+    
+    // API buttons
+    document.querySelectorAll('.api-test-btn').forEach(btn => {
+        btn.addEventListener('click', () => testAPI(btn.dataset.api));
+    });
+    
+    // Model select
+    document.getElementById('openrouter-model')?.addEventListener('change', (e) => {
+        state.settings.model = e.target.value;
+        saveData();
+    });
+    
+    // Clear data
+    document.getElementById('btn-clear-data')?.addEventListener('click', clearAllData);
+    
+    // Chat
+    document.getElementById('btn-send')?.addEventListener('click', sendMessage);
+    document.getElementById('chat-input')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+    
+    // Quick chips
+    document.querySelectorAll('.chip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const msg = btn.dataset.message;
+            if (msg.includes('Open')) {
+                const app = msg.split(' ')[1].toLowerCase();
+                if (app === 'calculator') openCalculator();
+                else if (app === 'notebook') openNotebook();
+            } else {
+                document.getElementById('chat-input').value = msg;
+                sendMessage();
+            }
+        });
+    });
+    
+    // Voice
+    document.getElementById('btn-voice')?.addEventListener('click', toggleVoice);
+    
+    // Camera
+    document.getElementById('btn-camera')?.addEventListener('click', toggleCamera);
+    document.getElementById('btn-close-camera')?.addEventListener('click', closeCamera);
+    document.getElementById('btn-capture')?.addEventListener('click', captureFace);
+    
+    // Apps drawer
+    document.getElementById('btn-apps')?.addEventListener('click', toggleApps);
+    document.getElementById('btn-close-apps')?.addEventListener('click', toggleApps);
+    
+    // App icons
+    document.querySelectorAll('.app-icon').forEach(icon => {
+        icon.addEventListener('click', () => {
+            const app = icon.dataset.app;
+            toggleApps();
+            if (app === 'calc') openCalculator();
+            else if (app === 'tasks') openTasks();
+            else if (app === 'weather') openWeather();
+            else if (app === 'notebook') openNotebook();
+            else if (app === 'reminders') openReminders();
+            else if (app === 'game') alert('Quiz game coming soon!');
+        });
+    });
+    
+    // Close mini apps
+    document.querySelectorAll('.close-mini').forEach(btn => {
+        btn.addEventListener('click', closeMiniApp);
+    });
+    
+    // Calculator
+    document.querySelectorAll('.calc-btn').forEach(btn => {
+        btn.addEventListener('click', () => calc(btn.dataset.val));
+    });
+    
+    // Notebook
+    document.getElementById('btn-new-note')?.addEventListener('click', newNote);
+    document.getElementById('btn-save-note')?.addEventListener('click', saveNote);
+    document.getElementById('btn-delete-note')?.addEventListener('click', deleteNote);
+    
+    // Tasks
+    document.getElementById('btn-add-task')?.addEventListener('click', addTask);
+    
+    // Weather
+    document.getElementById('btn-get-weather')?.addEventListener('click', getWeather);
+    
+    // Reminders
+    document.getElementById('btn-add-reminder')?.addEventListener('click', addReminder);
+}
+
+// Sidebar Functions
 function toggleSidebar(side) {
     const sidebar = document.getElementById('sidebar-' + side);
     const backdrop = document.getElementById('sidebar-backdrop');
@@ -80,14 +178,13 @@ function toggleSidebar(side) {
     
     if (!isActive) {
         sidebar.classList.add('active');
-        if (backdrop) backdrop.classList.add('active');
+        backdrop?.classList.add('active');
     }
 }
 
 function closeAllSidebars() {
     document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('active'));
-    const backdrop = document.getElementById('sidebar-backdrop');
-    if (backdrop) backdrop.classList.remove('active');
+    document.getElementById('sidebar-backdrop')?.classList.remove('active');
 }
 
 // Theme
@@ -97,20 +194,55 @@ function setTheme(theme) {
     saveData();
 }
 
-// Voice settings
-function toggleTTS() {
-    state.settings.tts = document.getElementById('tts-toggle').checked;
-    saveData();
+// Speech Setup
+function setupSpeech() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.log('Speech recognition not supported');
+        return;
+    }
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    state.recognition = new SpeechRecognition();
+    state.recognition.continuous = false;
+    state.recognition.interimResults = false;
+    state.recognition.lang = 'en-US';
+    
+    state.recognition.onstart = () => {
+        state.isListening = true;
+        document.getElementById('btn-voice')?.classList.add('active');
+        document.getElementById('jarvis-avatar')?.classList.add('listening');
+        const status = document.getElementById('status-text');
+        if (status) status.textContent = 'Listening...';
+    };
+    
+    state.recognition.onend = () => {
+        state.isListening = false;
+        document.getElementById('btn-voice')?.classList.remove('active');
+        document.getElementById('jarvis-avatar')?.classList.remove('listening');
+        const status = document.getElementById('status-text');
+        if (status) status.textContent = 'Tap microphone to speak';
+    };
+    
+    state.recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const input = document.getElementById('chat-input');
+        if (input) {
+            input.value = transcript;
+            sendMessage();
+        }
+    };
 }
 
-function toggleSTT() {
-    state.settings.stt = document.getElementById('stt-toggle').checked;
-    saveData();
-}
-
-function toggleAutoSpeak() {
-    state.settings.autoSpeak = document.getElementById('auto-speak-toggle').checked;
-    saveData();
+function toggleVoice() {
+    if (!state.recognition) {
+        alert('Speech recognition not supported');
+        return;
+    }
+    if (state.isListening) {
+        state.recognition.stop();
+    } else {
+        state.recognition.start();
+    }
 }
 
 // Text to Speech
@@ -136,59 +268,7 @@ function speak(text) {
     state.synth.speak(utterance);
 }
 
-// Speech Recognition
-function setupSpeech() {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        console.log('Speech recognition not supported');
-        return;
-    }
-    
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    state.recognition = new SpeechRecognition();
-    state.recognition.continuous = false;
-    state.recognition.interimResults = false;
-    state.recognition.lang = 'en-US';
-    
-    state.recognition.onstart = () => {
-        state.isListening = true;
-        document.getElementById('voice-btn')?.classList.add('active');
-        document.getElementById('jarvis-avatar')?.classList.add('listening');
-        const status = document.getElementById('status-text');
-        if (status) status.textContent = 'Listening...';
-    };
-    
-    state.recognition.onend = () => {
-        state.isListening = false;
-        document.getElementById('voice-btn')?.classList.remove('active');
-        document.getElementById('jarvis-avatar')?.classList.remove('listening');
-        const status = document.getElementById('status-text');
-        if (status) status.textContent = 'Tap to speak';
-    };
-    
-    state.recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        const input = document.getElementById('chat-input');
-        if (input) {
-            input.value = transcript;
-            sendMessage();
-        }
-    };
-}
-
-function toggleVoice() {
-    if (!state.recognition) {
-        alert('Speech recognition not supported');
-        return;
-    }
-    
-    if (state.isListening) {
-        state.recognition.stop();
-    } else {
-        state.recognition.start();
-    }
-}
-
-// Chat
+// Chat Functions
 function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input?.value.trim();
@@ -200,29 +280,22 @@ function sendMessage() {
     const status = document.getElementById('status-text');
     if (status) status.textContent = 'Thinking...';
     
-    // Get AI response
-    setTimeout(() => {
-        getAIResponse(message);
-    }, 500);
-}
-
-function quickSend(text) {
-    const input = document.getElementById('chat-input');
-    if (input) {
-        input.value = text;
-        sendMessage();
-    }
+    setTimeout(() => getAIResponse(message), 500);
 }
 
 function addMessage(text, sender) {
     const container = document.getElementById('messages-container');
     if (!container) return;
     
+    // Remove welcome message if exists
+    const welcome = container.querySelector('.welcome-msg');
+    if (welcome && sender === 'user') welcome.remove();
+    
     const div = document.createElement('div');
     div.className = 'message ' + sender;
     
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    div.innerHTML = text + '<span class="message-time">' + time + '</span>';
+    div.innerHTML = escapeHtml(text) + '<span class="message-time">' + time + '</span>';
     
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
@@ -232,15 +305,33 @@ function addMessage(text, sender) {
     saveData();
 }
 
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 async function getAIResponse(message) {
-    // Check for commands
-    if (message.toLowerCase().includes('remember my name is')) {
+    // Check commands
+    const lower = message.toLowerCase();
+    if (lower.includes('remember my name is')) {
         const name = message.split('is')[1]?.trim();
         if (name) {
             state.memory.user.name = name;
             updateUI();
             saveData();
             respond('I\'ve remembered your name, ' + name + '.');
+            return;
+        }
+    }
+    
+    if (lower.includes('my age is')) {
+        const age = message.match(/\d+/)?.[0];
+        if (age) {
+            state.memory.user.age = age;
+            updateUI();
+            saveData();
+            respond('I\'ve noted that you are ' + age + ' years old.');
             return;
         }
     }
@@ -259,7 +350,7 @@ async function getAIResponse(message) {
                 body: JSON.stringify({
                     model: state.settings.model,
                     messages: [
-                        { role: 'system', content: 'You are J.A.R.V.I.S., Tony Stark\'s AI assistant. Be helpful, witty, and concise. User: ' + state.memory.user.name },
+                        { role: 'system', content: 'You are J.A.R.V.I.S., Tony Stark\'s AI assistant. Be helpful, witty, and concise. User name: ' + state.memory.user.name },
                         { role: 'user', content: message }
                     ]
                 })
@@ -275,7 +366,7 @@ async function getAIResponse(message) {
         }
     }
     
-    // Fallback
+    // Fallback responses
     const responses = [
         "I understand. How can I assist you further?",
         "Working on it, sir.",
@@ -289,7 +380,7 @@ async function getAIResponse(message) {
 function respond(text) {
     addMessage(text, 'jarvis');
     const status = document.getElementById('status-text');
-    if (status) status.textContent = 'Tap to speak';
+    if (status) status.textContent = 'Tap microphone to speak';
     
     if (state.settings.autoSpeak) {
         speak(text);
@@ -321,6 +412,7 @@ async function testAPI(type) {
                 badge.classList.add('online');
                 state.settings.apiKeys.openrouter = key;
                 saveData();
+                speak('OpenRouter connected successfully');
             } else {
                 throw new Error('Invalid');
             }
@@ -338,19 +430,40 @@ async function testAPI(type) {
     }
 }
 
-function saveModel() {
-    const select = document.getElementById('openrouter-model');
-    if (select) {
-        state.settings.model = select.value;
-        saveData();
+// Calculator
+function openCalculator() {
+    document.getElementById('calc-app')?.classList.remove('hidden');
+}
+
+function calc(val) {
+    const display = document.getElementById('calc-display');
+    if (!display) return;
+    
+    let current = display.textContent;
+    
+    if (val === 'C') {
+        display.textContent = '0';
+    } else if (val === '⌫') {
+        display.textContent = current.length > 1 ? current.slice(0, -1) : '0';
+    } else if (val === '=') {
+        try {
+            const result = eval(current.replace('×', '*').replace('÷', '/'));
+            display.textContent = String(result).slice(0, 12);
+        } catch {
+            display.textContent = 'Error';
+        }
+    } else {
+        if (current === '0' && '0123456789'.includes(val)) {
+            display.textContent = val;
+        } else {
+            display.textContent = (current + val).slice(0, 12);
+        }
     }
 }
 
 // Notebook
 function openNotebook() {
-    showApps();
-    const app = document.getElementById('notebook-app');
-    if (app) app.classList.remove('hidden');
+    document.getElementById('notebook-app')?.classList.remove('hidden');
     renderNotes();
 }
 
@@ -364,11 +477,16 @@ function renderNotes() {
     }
     
     list.innerHTML = state.memory.notes.map((note, i) => 
-        '<div class="note-item ' + (state.currentNote === i ? 'active' : '') + '" onclick="loadNote(' + i + ')">' +
-        '<span>' + (note.title || 'Untitled') + '</span>' +
+        '<div class="note-item ' + (state.currentNote === i ? 'active' : '') + '" data-index="' + i + '">' +
+        '<span>' + escapeHtml(note.title || 'Untitled') + '</span>' +
         '<small>' + new Date(note.date).toLocaleDateString() + '</small>' +
         '</div>'
     ).join('');
+    
+    // Add click handlers
+    list.querySelectorAll('.note-item').forEach(item => {
+        item.addEventListener('click', () => loadNote(parseInt(item.dataset.index)));
+    });
 }
 
 function newNote() {
@@ -421,44 +539,9 @@ function deleteNote() {
     renderNotes();
 }
 
-// Calculator
-function openCalculator() {
-    showApps();
-    const app = document.getElementById('calc-app');
-    if (app) app.classList.remove('hidden');
-}
-
-function calc(value) {
-    const display = document.getElementById('calc-display');
-    if (!display) return;
-    
-    let current = display.textContent;
-    
-    if (value === 'C') {
-        display.textContent = '0';
-    } else if (value === '⌫') {
-        display.textContent = current.length > 1 ? current.slice(0, -1) : '0';
-    } else if (value === '=') {
-        try {
-            const result = eval(current.replace('×', '*').replace('÷', '/'));
-            display.textContent = String(result).slice(0, 12);
-        } catch {
-            display.textContent = 'Error';
-        }
-    } else {
-        if (current === '0' && '0123456789'.includes(value)) {
-            display.textContent = value;
-        } else {
-            display.textContent = (current + value).slice(0, 12);
-        }
-    }
-}
-
 // Tasks
 function openTasks() {
-    showApps();
-    const app = document.getElementById('tasks-app');
-    if (app) app.classList.remove('hidden');
+    document.getElementById('tasks-app')?.classList.remove('hidden');
     renderTasks();
 }
 
@@ -473,11 +556,19 @@ function renderTasks() {
     
     list.innerHTML = state.memory.tasks.map(task => 
         '<div class="task-item ' + (task.completed ? 'completed' : '') + '">' +
-        '<input type="checkbox" ' + (task.completed ? 'checked' : '') + ' onchange="toggleTask(' + task.id + ')">' +
-        '<span>' + task.text + '</span>' +
-        '<button onclick="deleteTask(' + task.id + ')">×</button>' +
+        '<input type="checkbox" ' + (task.completed ? 'checked' : '') + ' data-id="' + task.id + '">' +
+        '<span>' + escapeHtml(task.text) + '</span>' +
+        '<button data-id="' + task.id + '">×</button>' +
         '</div>'
     ).join('');
+    
+    // Add handlers
+    list.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => toggleTask(parseInt(cb.dataset.id)));
+    });
+    list.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => deleteTask(parseInt(btn.dataset.id)));
+    });
 }
 
 function addTask() {
@@ -508,25 +599,24 @@ function deleteTask(id) {
 
 // Weather
 function openWeather() {
-    showApps();
-    const app = document.getElementById('weather-app');
-    if (app) app.classList.remove('hidden');
+    document.getElementById('weather-app')?.classList.remove('hidden');
 }
 
 function getWeather() {
-    // Mock weather - implement real API
+    const city = document.getElementById('weather-city')?.value;
+    if (!city) return;
+    
+    // Mock data - replace with real API
     document.querySelector('.weather-icon').textContent = '☀️';
-    document.querySelector('.weather-temp').textContent = '22°';
-    document.getElementById('weather-humidity').textContent = '65%';
-    document.getElementById('weather-wind').textContent = '12 km/h';
+    document.querySelector('.weather-temp').textContent = '24°';
+    document.getElementById('weather-humidity').textContent = '60%';
+    document.getElementById('weather-wind').textContent = '15 km/h';
     document.getElementById('weather-condition').textContent = 'Sunny';
 }
 
 // Reminders
 function openReminders() {
-    showApps();
-    const app = document.getElementById('reminders-app');
-    if (app) app.classList.remove('hidden');
+    document.getElementById('reminders-app')?.classList.remove('hidden');
     renderReminders();
 }
 
@@ -545,12 +635,16 @@ function renderReminders() {
         const cls = isOverdue ? 'overdue' : (r.time - now < 3600000 ? 'due-soon' : '');
         return '<div class="reminder-item ' + cls + '">' +
             '<div class="reminder-content">' +
-            '<div class="reminder-text">' + r.text + '</div>' +
+            '<div class="reminder-text">' + escapeHtml(r.text) + '</div>' +
             '<div class="reminder-time">' + new Date(r.time).toLocaleString() + '</div>' +
             '</div>' +
-            '<button onclick="deleteReminder(' + r.id + ')">×</button>' +
+            '<button data-id="' + r.id + '">×</button>' +
             '</div>';
     }).join('');
+    
+    list.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => deleteReminder(parseInt(btn.dataset.id)));
+    });
 }
 
 function addReminder() {
@@ -573,21 +667,6 @@ function deleteReminder(id) {
     state.memory.reminders = state.memory.reminders.filter(r => r.id !== id);
     saveData();
     renderReminders();
-}
-
-// Other apps
-function openGame() {
-    showApps();
-    alert('Quiz game coming soon!');
-}
-
-function showApps() {
-    const drawer = document.getElementById('apps-drawer');
-    if (drawer) drawer.classList.toggle('hidden');
-}
-
-function closeMiniApp() {
-    document.querySelectorAll('.mini-app').forEach(app => app.classList.add('hidden'));
 }
 
 // Camera
@@ -630,6 +709,15 @@ function captureFace() {
     closeCamera();
 }
 
+// Apps
+function toggleApps() {
+    document.getElementById('apps-drawer')?.classList.toggle('hidden');
+}
+
+function closeMiniApp() {
+    document.querySelectorAll('.mini-app').forEach(app => app.classList.add('hidden'));
+}
+
 // Data Management
 function saveData() {
     try {
@@ -647,17 +735,23 @@ function loadData() {
         
         if (mem) state.memory = JSON.parse(mem);
         if (set) {
-            state.settings = JSON.parse(set);
+            const parsed = JSON.parse(set);
+            state.settings = { ...state.settings, ...parsed };
+            
             // Restore UI
-            document.getElementById('tts-toggle').checked = state.settings.tts;
-            document.getElementById('stt-toggle').checked = state.settings.stt;
-            document.getElementById('auto-speak-toggle').checked = state.settings.autoSpeak;
-            if (state.settings.model) {
-                document.getElementById('openrouter-model').value = state.settings.model;
-            }
-            if (state.settings.theme) {
-                setTheme(state.settings.theme);
-            }
+            const tts = document.getElementById('tts-toggle');
+            const stt = document.getElementById('stt-toggle');
+            const auto = document.getElementById('auto-speak-toggle');
+            const model = document.getElementById('openrouter-model');
+            const theme = document.getElementById('theme-select');
+            
+            if (tts) tts.checked = state.settings.tts;
+            if (stt) stt.checked = state.settings.stt;
+            if (auto) auto.checked = state.settings.autoSpeak;
+            if (model) model.value = state.settings.model;
+            if (theme) theme.value = state.settings.theme;
+            
+            if (state.settings.theme) setTheme(state.settings.theme);
         }
     } catch (e) {
         console.error('Load failed:', e);
@@ -683,51 +777,37 @@ function updateMemoryStats() {
     const convos = state.memory.conversations.length;
     const storage = JSON.stringify(state.memory).length;
     
-    const memUsage = document.getElementById('mem-usage');
-    const memFacts = document.getElementById('mem-facts');
-    const memConvos = document.getElementById('mem-convos');
-    const memText = document.getElementById('memory-text');
-    const memFill = document.getElementById('memory-fill');
-    const factsList = document.getElementById('facts-list');
+    const usage = document.getElementById('mem-usage');
+    const factsEl = document.getElementById('mem-facts');
+    const convosEl = document.getElementById('mem-convos');
+    const text = document.getElementById('memory-text');
+    const fill = document.getElementById('memory-fill');
+    const list = document.getElementById('facts-list');
     
-    if (memUsage) memUsage.textContent = (storage / 1024).toFixed(1) + ' KB';
-    if (memFacts) memFacts.textContent = facts;
-    if (memConvos) memConvos.textContent = convos;
+    if (usage) usage.textContent = (storage / 1024).toFixed(1) + ' KB';
+    if (factsEl) factsEl.textContent = facts;
+    if (convosEl) convosEl.textContent = convos;
     
-    const percent = Math.min(storage / 5120, 100); // 5KB = 100%
-    if (memText) memText.textContent = percent.toFixed(0) + '% used';
-    if (memFill) memFill.style.width = percent + '%';
+    const percent = Math.min(storage / 5120, 100);
+    if (text) text.textContent = percent.toFixed(0) + '% used';
+    if (fill) fill.style.width = percent + '%';
     
-    if (factsList) {
+    if (list) {
         if (facts === 0) {
-            factsList.innerHTML = '<div class="empty-facts">No facts stored yet</div>';
+            list.innerHTML = '<div class="empty-facts">No facts stored yet</div>';
         } else {
-            factsList.innerHTML = state.memory.facts.map(f => 
-                '<div class="fact-item">' + f + '</div>'
+            list.innerHTML = state.memory.facts.map(f => 
+                '<div class="fact-item">' + escapeHtml(f) + '</div>'
             ).join('');
         }
     }
 }
 
 function clearAllData() {
-    if (confirm('Clear all data?')) {
+    if (confirm('Clear all data? This cannot be undone.')) {
         localStorage.removeItem('jarvis_memory');
         localStorage.removeItem('jarvis_settings');
         location.reload();
-    }
-}
-
-function startChat() {
-    document.getElementById('chat-input')?.focus();
-}
-
-// Event Listeners
-function setupEventListeners() {
-    const input = document.getElementById('chat-input');
-    if (input) {
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
     }
 }
 
