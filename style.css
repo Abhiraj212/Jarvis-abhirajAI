@@ -1,5 +1,5 @@
 /* ==========================================
-   J.A.R.V.I.S. AI - Complete Working CSS
+   J.A.R.V.I.S. AI - Mobile-First Responsive
    ========================================== */
 
 :root {
@@ -22,18 +22,28 @@
   padding: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 html, body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg-dark);
   color: var(--text-primary);
   height: 100%;
   width: 100%;
   overflow: hidden;
   position: fixed;
+  touch-action: manipulation;
 }
 
+/* Background */
 body::before {
   content: '';
   position: fixed;
@@ -74,6 +84,7 @@ body::before {
 .splash-content {
   text-align: center;
   padding: 2rem;
+  width: 100%;
 }
 
 .splash-logo {
@@ -92,10 +103,11 @@ body::before {
 }
 
 .splash-text {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   letter-spacing: 0.3em;
   color: var(--primary);
   margin-bottom: 2rem;
+  font-weight: 300;
 }
 
 .splash-loading {
@@ -115,9 +127,9 @@ body::before {
 }
 
 .splash-status {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
-  opacity: 0.8;
+  min-height: 1.5rem;
 }
 
 @keyframes loading {
@@ -157,67 +169,72 @@ body::before {
   background: var(--glass);
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
-  height: 60px;
+  height: 56px;
   z-index: 10;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .menu-btn {
-  background: transparent;
+  background: rgba(0, 212, 255, 0.1);
   border: 1px solid var(--glass-border);
   color: var(--primary);
   font-size: 1.25rem;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
 .menu-btn:active {
   background: var(--primary-glow);
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
 .logo-mini {
-  font-size: 1rem;
-  letter-spacing: 0.2em;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
   color: var(--primary);
   font-weight: 600;
 }
 
 /* ==========================================
-   SIDEBARS
+   SIDEBARS - MOBILE SLIDE
    ========================================== */
 .sidebar {
   position: fixed;
   top: 0;
   width: 85%;
-  max-width: 340px;
+  max-width: 360px;
   height: 100%;
   height: 100dvh;
   background: var(--bg-panel);
   z-index: 100;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.875rem;
   padding: 1rem;
   overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .sidebar.left {
   left: 0;
   border-right: 1px solid var(--glass-border);
-  transform: translateX(-100%);
+  transform: translateX(-105%);
 }
 
 .sidebar.right {
   right: 0;
   border-left: 1px solid var(--glass-border);
-  transform: translateX(100%);
+  transform: translateX(105%);
 }
 
 .sidebar.active {
@@ -231,16 +248,20 @@ body::before {
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  z-index: 2;
 }
 
 .sidebar-header h3 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--primary);
   font-weight: 600;
 }
 
 .close-sidebar {
-  background: transparent;
+  background: rgba(255,255,255,0.05);
   border: none;
   color: var(--text-secondary);
   font-size: 1.5rem;
@@ -251,12 +272,13 @@ body::before {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .close-sidebar:active {
   background: rgba(255,255,255,0.1);
   color: var(--primary);
+  transform: scale(0.9);
 }
 
 .sidebar-backdrop {
@@ -265,11 +287,13 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
   z-index: 99;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .sidebar-backdrop.active {
@@ -288,29 +312,30 @@ body::before {
 .stat-card {
   background: rgba(0,0,0,0.4);
   border: 1px solid var(--glass-border);
-  border-radius: 10px;
-  padding: 0.75rem 0.5rem;
+  border-radius: 12px;
+  padding: 0.75rem 0.25rem;
   text-align: center;
 }
 
 .stat-value {
-  font-size: 1.1rem;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--primary);
+  line-height: 1;
 }
 
 .stat-label {
   font-size: 0.65rem;
   color: var(--text-secondary);
   text-transform: uppercase;
-  margin-top: 0.25rem;
+  margin-top: 0.375rem;
   letter-spacing: 0.05em;
 }
 
 /* Brain Visual */
 .memory-visual {
   background: rgba(0,0,0,0.3);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1rem;
   border: 1px solid var(--glass-border);
   flex-shrink: 0;
@@ -319,9 +344,9 @@ body::before {
 .brain-visual {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 0.75rem;
-  height: 40px;
+  gap: 12px;
+  margin-bottom: 0.875rem;
+  height: 44px;
   align-items: center;
 }
 
@@ -330,14 +355,14 @@ body::before {
   height: 12px;
   background: var(--primary);
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--primary-glow);
+  box-shadow: 0 0 15px var(--primary-glow);
   animation: nodePulse 1.5s ease-in-out infinite;
   animation-delay: var(--delay);
 }
 
 @keyframes nodePulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.4); }
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
 }
 
 .memory-bar {
@@ -359,14 +384,15 @@ body::before {
 
 .memory-text {
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
+  font-weight: 500;
 }
 
 /* User Profile */
 .user-profile-section {
   background: rgba(0,0,0,0.3);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 0.875rem;
   border: 1px solid var(--glass-border);
   flex-shrink: 0;
@@ -383,7 +409,7 @@ body::before {
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -400,7 +426,7 @@ body::before {
   font-weight: 500;
 }
 
-/* Facts List */
+/* Facts */
 .stored-facts {
   flex: 1;
   display: flex;
@@ -421,15 +447,16 @@ body::before {
   flex: 1;
   overflow-y: auto;
   background: rgba(0,0,0,0.3);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 0.75rem;
   border: 1px solid var(--glass-border);
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty-facts {
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   padding: 2rem 0;
   font-style: italic;
 }
@@ -440,8 +467,9 @@ body::before {
   padding: 0.625rem;
   margin-bottom: 0.5rem;
   border-radius: 0 8px 8px 0;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   line-height: 1.4;
+  word-break: break-word;
 }
 
 /* ==========================================
@@ -449,7 +477,7 @@ body::before {
    ========================================== */
 .settings-section {
   background: rgba(0,0,0,0.3);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 0.875rem;
   border: 1px solid var(--glass-border);
   flex-shrink: 0;
@@ -467,7 +495,7 @@ body::before {
   padding: 0.625rem;
   background: rgba(0,0,0,0.5);
   border: 1px solid var(--glass-border);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--text-primary);
   font-size: 0.9rem;
   cursor: pointer;
@@ -492,19 +520,20 @@ body::before {
 }
 
 .toggle {
-  width: 44px;
-  height: 24px;
+  width: 48px;
+  height: 26px;
   background: rgba(255,255,255,0.1);
-  border-radius: 12px;
+  border-radius: 13px;
   position: relative;
   transition: 0.3s;
+  flex-shrink: 0;
 }
 
 .toggle::after {
   content: '';
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   background: var(--text-secondary);
   border-radius: 50%;
   top: 2px;
@@ -517,7 +546,7 @@ body::before {
 }
 
 .toggle-label input:checked + .toggle::after {
-  transform: translateX(20px);
+  transform: translateX(22px);
   background: var(--primary);
   box-shadow: 0 0 10px var(--primary-glow);
 }
@@ -539,15 +568,15 @@ body::before {
 .api-card {
   background: rgba(0,0,0,0.3);
   border: 1px solid var(--glass-border);
-  border-radius: 10px;
-  padding: 0.875rem;
+  border-radius: 12px;
+  padding: 1rem;
 }
 
 .api-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.625rem;
+  margin-bottom: 0.75rem;
 }
 
 .api-header span:first-child {
@@ -572,47 +601,93 @@ body::before {
 .api-card input[type="password"],
 .api-card input[type="text"] {
   width: 100%;
-  padding: 0.625rem;
+  padding: 0.75rem;
   background: rgba(0,0,0,0.5);
   border: 1px solid var(--glass-border);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--text-primary);
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
   outline: none;
+  font-family: monospace;
 }
 
-.api-card select {
+.api-card input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+}
+
+.model-section {
+  margin-bottom: 0.75rem;
+}
+
+.model-section label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.model-help {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  opacity: 0.8;
+}
+
+#btn-test-api {
   width: 100%;
-  padding: 0.625rem;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  color: #000;
+  border-radius: 10px;
   cursor: pointer;
-  outline: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.api-card button,
-.api-test-btn {
-  width: 100%;
-  padding: 0.625rem;
-  background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.api-card button:active,
-.api-test-btn:active {
-  background: var(--primary-glow);
+#btn-test-api:active {
   transform: scale(0.98);
+  filter: brightness(1.1);
+}
+
+.api-info {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  padding: 0.875rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.api-info p {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.api-info ol {
+  margin-left: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.api-info li {
+  margin-bottom: 0.25rem;
+}
+
+.api-info a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.api-info strong {
+  color: var(--primary);
 }
 
 .danger-btn {
@@ -621,17 +696,17 @@ body::before {
   background: rgba(255, 68, 68, 0.1);
   border: 1px solid var(--danger);
   color: var(--danger);
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
   margin-top: auto;
   flex-shrink: 0;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .danger-btn:active {
-  background: rgba(255, 68, 68, 0.3);
+  background: rgba(255, 68, 68, 0.25);
   transform: scale(0.98);
 }
 
@@ -655,12 +730,12 @@ body::before {
   justify-content: center;
   padding: 1.25rem 1rem;
   flex-shrink: 0;
-  min-height: 180px;
+  min-height: 160px;
 }
 
 .jarvis-avatar {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   position: relative;
   cursor: pointer;
   flex-shrink: 0;
@@ -668,7 +743,7 @@ body::before {
 
 .avatar-face {
   position: absolute;
-  inset: 15%;
+  inset: 12%;
   background: rgba(0,0,0,0.3);
   border-radius: 50%;
   border: 2px solid var(--primary);
@@ -677,33 +752,33 @@ body::before {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   z-index: 2;
 }
 
 .eye {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background: var(--primary);
   border-radius: 50%;
-  box-shadow: 0 0 12px var(--primary-glow);
+  box-shadow: 0 0 10px var(--primary-glow);
 }
 
-.eye.left { margin-right: 12px; }
-.eye.right { margin-left: 12px; }
+.eye.left { margin-right: 10px; }
+.eye.right { margin-left: 10px; }
 
 .mouth {
-  width: 28px;
-  height: 4px;
+  width: 24px;
+  height: 3px;
   background: var(--primary);
   border-radius: 2px;
-  box-shadow: 0 0 10px var(--primary-glow);
+  box-shadow: 0 0 8px var(--primary-glow);
   transition: all 0.3s;
 }
 
 .jarvis-avatar.speaking .mouth {
-  height: 14px;
-  border-radius: 0 0 14px 14px;
+  height: 12px;
+  border-radius: 0 0 12px 12px;
   animation: speak 0.4s ease-in-out infinite alternate;
 }
 
@@ -717,12 +792,12 @@ body::before {
   border: 1px solid var(--primary);
   border-radius: 50%;
   opacity: 0.3;
-  animation: rotate 10s linear infinite;
+  animation: rotate 12s linear infinite;
 }
 
 .ring-1 { inset: 0; }
-.ring-2 { inset: -12px; border-style: dashed; animation-direction: reverse; animation-duration: 15s; }
-.ring-3 { inset: -24px; opacity: 0.15; animation-duration: 20s; }
+.ring-2 { inset: -10px; border-style: dashed; animation-direction: reverse; animation-duration: 18s; }
+.ring-3 { inset: -20px; opacity: 0.15; animation-duration: 24s; }
 
 @keyframes rotate {
   to { transform: rotate(360deg); }
@@ -730,7 +805,7 @@ body::before {
 
 .sound-waves {
   position: absolute;
-  inset: -40px;
+  inset: -30px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
@@ -760,63 +835,66 @@ body::before {
 }
 
 .status-text {
-  margin-top: 1rem;
-  font-size: 0.85rem;
+  margin-top: 0.875rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   font-weight: 500;
+  text-align: center;
 }
 
 /* Messages */
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0.875rem;
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: 0.75rem;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .welcome-msg {
   text-align: center;
-  padding: 1rem 0.5rem;
+  padding: 0.5rem;
 }
 
 .welcome-msg h2 {
-  font-size: 1.625rem;
+  font-size: 1.375rem;
   font-weight: 300;
-  margin-bottom: 0.625rem;
+  margin-bottom: 0.5rem;
   color: var(--primary);
   text-shadow: 0 0 20px var(--primary-glow);
 }
 
 .welcome-msg p {
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
   line-height: 1.5;
 }
 
 .quick-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.625rem;
+  gap: 0.5rem;
   justify-content: center;
 }
 
 .chip-btn {
-  padding: 0.625rem 1.125rem;
+  padding: 0.625rem 1rem;
   background: rgba(0, 212, 255, 0.1);
   border: 1px solid var(--glass-border);
   color: var(--primary);
   border-radius: 20px;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 500;
   white-space: nowrap;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
 .chip-btn:active {
@@ -826,8 +904,8 @@ body::before {
 }
 
 .message {
-  max-width: 85%;
-  padding: 0.875rem 1.125rem;
+  max-width: 90%;
+  padding: 0.75rem 1rem;
   border-radius: 18px;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -865,7 +943,7 @@ body::before {
 
 /* Input */
 .input-section {
-  padding: 0.875rem 1rem;
+  padding: 0.75rem;
   background: rgba(0,0,0,0.3);
   border-top: 1px solid var(--glass-border);
   flex-shrink: 0;
@@ -873,7 +951,7 @@ body::before {
 
 .input-box {
   display: flex;
-  gap: 0.625rem;
+  gap: 0.5rem;
   margin-bottom: 0.625rem;
 }
 
@@ -887,18 +965,13 @@ body::before {
   font-size: 1rem;
   outline: none;
   min-width: 0;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 #chat-input:focus {
   background: rgba(255,255,255,0.1);
   border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(0,212,255,0.2);
-}
-
-#chat-input::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.6;
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
 }
 
 .send-btn {
@@ -914,13 +987,12 @@ body::before {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.3s;
+  transition: all 0.2s;
   box-shadow: 0 0 15px var(--primary-glow);
 }
 
 .send-btn:active {
   transform: scale(0.9);
-  box-shadow: 0 0 25px var(--primary-glow);
 }
 
 .input-actions {
@@ -941,7 +1013,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .action-btn:active {
@@ -982,7 +1054,7 @@ body::before {
 
 #camera-video {
   width: 100%;
-  max-width: 500px;
+  max-width: 100%;
   border-radius: 12px;
   border: 2px solid var(--primary);
   box-shadow: 0 0 30px var(--primary-glow);
@@ -1003,7 +1075,7 @@ body::before {
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .camera-controls button:active {
@@ -1021,19 +1093,19 @@ body::before {
   padding: 1.5rem 1rem 2rem;
   z-index: 50;
   transform: translateY(0);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
 }
 
 .apps-drawer.hidden {
-  transform: translateY(100%);
+  transform: translateY(110%);
 }
 
 .apps-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 0.875rem;
   max-width: 360px;
   margin: 0 auto;
 }
@@ -1043,15 +1115,15 @@ body::before {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  padding: 1.125rem 0.75rem;
+  padding: 1rem 0.5rem;
   background: rgba(0,0,0,0.3);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   cursor: pointer;
-  border: none;
   color: var(--text-primary);
-  font-size: 2rem;
-  transition: all 0.3s;
+  font-size: 1.75rem;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
 .app-icon span {
@@ -1082,7 +1154,7 @@ body::before {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .close-drawer:active {
@@ -1099,8 +1171,8 @@ body::before {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 92%;
-  max-width: 380px;
+  width: 94%;
+  max-width: 400px;
   max-height: 85vh;
   background: var(--bg-panel);
   border: 1px solid var(--glass-border);
@@ -1111,6 +1183,7 @@ body::before {
   display: flex;
   flex-direction: column;
   box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+  -webkit-overflow-scrolling: touch;
 }
 
 .mini-app.hidden {
@@ -1125,6 +1198,10 @@ body::before {
   padding-bottom: 0.875rem;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  z-index: 2;
 }
 
 .mini-app-header span {
@@ -1146,7 +1223,7 @@ body::before {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .close-mini:active {
@@ -1158,13 +1235,13 @@ body::before {
 /* Calculator */
 .calc-display {
   background: rgba(0,0,0,0.5);
-  padding: 1.125rem;
+  padding: 1.25rem;
   border-radius: 12px;
   text-align: right;
   font-size: 2rem;
   color: var(--primary);
   margin-bottom: 0.875rem;
-  font-family: 'Courier New', monospace;
+  font-family: 'SF Mono', 'Courier New', monospace;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1180,15 +1257,16 @@ body::before {
 }
 
 .calc-btn {
-  padding: 1.125rem 0.5rem;
+  padding: 1.125rem 0.25rem;
   background: rgba(255,255,255,0.05);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
   color: var(--text-primary);
   font-size: 1.25rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   font-weight: 500;
+  touch-action: manipulation;
 }
 
 .calc-btn:active {
@@ -1233,11 +1311,12 @@ body::before {
   border: 1px solid var(--glass-border);
   background: rgba(0,0,0,0.3);
   color: var(--text-primary);
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.3s;
+  font-weight: 600;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
 .note-btn.new {
@@ -1268,6 +1347,7 @@ body::before {
   padding: 0.625rem;
   margin-bottom: 0.875rem;
   border: 1px solid var(--glass-border);
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty-notes {
@@ -1283,13 +1363,14 @@ body::before {
   background: rgba(0, 212, 255, 0.08);
   border-left: 3px solid var(--primary);
   margin-bottom: 0.5rem;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 10px 10px 0;
   cursor: pointer;
   font-size: 0.9rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  touch-action: manipulation;
 }
 
 .note-item:active {
@@ -1322,13 +1403,13 @@ body::before {
 
 .note-title-input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(0,212,255,0.2);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
 }
 
 .note-content-area {
   width: 100%;
   flex: 1;
-  min-height: 150px;
+  min-height: 140px;
   padding: 0.875rem;
   background: rgba(0,0,0,0.5);
   border: 1px solid var(--glass-border);
@@ -1343,7 +1424,7 @@ body::before {
 
 .note-content-area:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(0,212,255,0.2);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
 }
 
 /* Tasks */
@@ -1377,7 +1458,7 @@ body::before {
   font-size: 1.5rem;
   cursor: pointer;
   font-weight: 700;
-  transition: all 0.3s;
+  transition: all 0.2s;
   box-shadow: 0 0 15px var(--primary-glow);
 }
 
@@ -1388,13 +1469,14 @@ body::before {
 .tasks-list {
   overflow-y: auto;
   max-height: 320px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty-tasks {
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  padding: 2.5rem;
+  font-size: 0.9rem;
+  padding: 2rem;
   font-style: italic;
 }
 
@@ -1407,7 +1489,7 @@ body::before {
   border: 1px solid var(--glass-border);
   border-radius: 10px;
   margin-bottom: 0.625rem;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .task-item:active {
@@ -1419,12 +1501,14 @@ body::before {
   height: 22px;
   accent-color: var(--primary);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .task-item span {
   flex: 1;
   font-size: 0.95rem;
   font-weight: 500;
+  word-break: break-word;
 }
 
 .task-item.completed span {
@@ -1444,7 +1528,8 @@ body::before {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .task-item button:active {
@@ -1482,7 +1567,7 @@ body::before {
   border-radius: 10px;
   cursor: pointer;
   font-weight: 700;
-  transition: all 0.3s;
+  transition: all 0.2s;
   box-shadow: 0 0 15px var(--primary-glow);
 }
 
@@ -1492,7 +1577,7 @@ body::before {
 
 .weather-display {
   text-align: center;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .weather-main {
@@ -1504,12 +1589,12 @@ body::before {
 }
 
 .weather-icon {
-  font-size: 4.5rem;
+  font-size: 4rem;
   filter: drop-shadow(0 0 20px rgba(255,255,255,0.3));
 }
 
 .weather-temp {
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 300;
   color: var(--primary);
   text-shadow: 0 0 20px var(--primary-glow);
@@ -1518,7 +1603,7 @@ body::before {
 .weather-details {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.875rem;
+  gap: 0.75rem;
 }
 
 .weather-item {
@@ -1530,7 +1615,7 @@ body::before {
 
 .weather-item span:first-child {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   margin-bottom: 0.375rem;
   text-transform: uppercase;
@@ -1562,7 +1647,7 @@ body::before {
 }
 
 .reminder-input-box input[type="datetime-local"] {
-  padding: 0.875rem;
+  padding: 0.75rem;
   background: rgba(0,0,0,0.5);
   border: 1px solid var(--glass-border);
   border-radius: 10px;
@@ -1581,7 +1666,7 @@ body::before {
   cursor: pointer;
   font-weight: 700;
   font-size: 1.25rem;
-  transition: all 0.3s;
+  transition: all 0.2s;
   box-shadow: 0 0 15px var(--primary-glow);
 }
 
@@ -1592,13 +1677,14 @@ body::before {
 .reminders-list {
   overflow-y: auto;
   max-height: 320px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty-reminders {
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  padding: 2.5rem;
+  font-size: 0.9rem;
+  padding: 2rem;
   font-style: italic;
 }
 
@@ -1612,7 +1698,7 @@ body::before {
   border-radius: 10px;
   margin-bottom: 0.625rem;
   border-left: 4px solid var(--warning);
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .reminder-item.overdue {
@@ -1634,6 +1720,7 @@ body::before {
   font-size: 0.95rem;
   font-weight: 500;
   margin-bottom: 0.25rem;
+  word-break: break-word;
 }
 
 .reminder-time {
@@ -1653,12 +1740,57 @@ body::before {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .reminder-item button:active {
   background: rgba(255,68,68,0.2);
   transform: scale(0.9);
+}
+
+/* ==========================================
+   TOAST NOTIFICATIONS
+   ========================================== */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-panel);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  max-width: 90%;
+  width: max-content;
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.toast span {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.toast button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
 /* ==========================================
@@ -1671,6 +1803,7 @@ body::before {
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -1687,13 +1820,38 @@ body::before {
 }
 
 /* ==========================================
-   DESKTOP
+   TABLET & DESKTOP
    ========================================== */
+@media (min-width: 768px) {
+  .sidebar {
+    width: 360px;
+    max-width: 400px;
+  }
+  
+  .jarvis-avatar {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .welcome-msg h2 {
+    font-size: 1.75rem;
+  }
+  
+  .quick-chips {
+    gap: 0.75rem;
+  }
+  
+  .chip-btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
 @media (min-width: 1024px) {
   #app {
     display: grid;
-    grid-template-columns: 320px 1fr 340px;
-    grid-template-rows: 60px 1fr;
+    grid-template-columns: 320px 1fr 360px;
+    grid-template-rows: 56px 1fr;
     grid-template-areas: 
       "header header header"
       "left main right";
@@ -1709,14 +1867,18 @@ body::before {
     max-width: none;
     transform: none !important;
     height: auto;
-  }
-  
-  .sidebar.left {
-    grid-area: left;
+    border: none;
+    border-right: 1px solid var(--glass-border);
   }
   
   .sidebar.right {
     grid-area: right;
+    border-right: none;
+    border-left: 1px solid var(--glass-border);
+  }
+  
+  .sidebar.left {
+    grid-area: left;
   }
   
   .sidebar-backdrop {
@@ -1731,25 +1893,13 @@ body::before {
     grid-area: main;
   }
   
-  .jarvis-avatar {
-    width: 140px;
-    height: 140px;
-  }
-  
   .mini-app {
-    max-width: 420px;
+    max-width: 450px;
   }
 }
 
-/* Tablet */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .sidebar {
-    width: 340px;
-  }
-}
-
-/* Small mobile */
-@media (max-width: 380px) {
+/* Small phones */
+@media (max-width: 360px) {
   .splash-logo {
     width: 80px;
     height: 80px;
@@ -1757,16 +1907,21 @@ body::before {
   }
   
   .splash-text {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
   }
   
   .jarvis-avatar {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
+  }
+  
+  .eye {
+    width: 12px;
+    height: 12px;
   }
   
   .quick-chips {
-    gap: 0.5rem;
+    gap: 0.375rem;
   }
   
   .chip-btn {
@@ -1775,7 +1930,7 @@ body::before {
   }
   
   .calc-btn {
-    padding: 0.875rem 0.25rem;
+    padding: 1rem 0.125rem;
     font-size: 1.1rem;
   }
 }
