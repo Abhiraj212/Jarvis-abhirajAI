@@ -20,6 +20,7 @@
             <div class="splash-loading">
                 <div class="splash-bar"></div>
             </div>
+            <div class="splash-status" id="splash-status">Initializing...</div>
         </div>
     </div>
 
@@ -28,21 +29,21 @@
         
         <!-- TOP BAR -->
         <header class="top-bar">
-            <button class="menu-btn" onclick="jarvis.toggleSidebar('left')">☰</button>
+            <button class="menu-btn" onclick="toggleSidebar('left')">☰</button>
             <div class="logo-mini">J.A.R.V.I.S.</div>
-            <button class="menu-btn" onclick="jarvis.toggleSidebar('right')">⚙️</button>
+            <button class="menu-btn" onclick="toggleSidebar('right')">⚙️</button>
         </header>
 
         <!-- LEFT SIDEBAR (MEMORY) -->
         <aside class="sidebar left" id="sidebar-left">
             <div class="sidebar-header">
                 <h3>🧠 Memory Core</h3>
-                <button class="close-sidebar" onclick="jarvis.toggleSidebar('left')">×</button>
+                <button class="close-sidebar" onclick="toggleSidebar('left')">×</button>
             </div>
             
             <div class="memory-stats-real">
                 <div class="stat-card">
-                    <div class="stat-value" id="mem-usage">0 MB</div>
+                    <div class="stat-value" id="mem-usage">0 KB</div>
                     <div class="stat-label">Storage Used</div>
                 </div>
                 <div class="stat-card">
@@ -120,10 +121,10 @@
                     <h2>Hello, I'm J.A.R.V.I.S.</h2>
                     <p>Your personal AI assistant. I remember everything you tell me.</p>
                     <div class="quick-chips">
-                        <button onclick="jarvis.quickSend('What can you do?')">What can you do?</button>
-                        <button onclick="jarvis.quickSend('Remember my name is')">Set my name</button>
-                        <button onclick="jarvis.quickSend('Play quiz game')">Play game</button>
-                        <button onclick="jarvis.startChat()">Start chatting</button>
+                        <button onclick="quickSend('What can you do?')">What can you do?</button>
+                        <button onclick="quickSend('Remember my name is')">Set my name</button>
+                        <button onclick="quickSend('Play quiz game')">Play game</button>
+                        <button onclick="startChat()">Start chatting</button>
                     </div>
                 </div>
             </div>
@@ -132,12 +133,12 @@
             <div class="input-section">
                 <div class="input-box">
                     <input type="text" id="chat-input" placeholder="Type or tap microphone..." autocomplete="off">
-                    <button class="send-btn" onclick="jarvis.send()">➤</button>
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
                 </div>
                 <div class="input-actions">
-                    <button class="action-btn voice-btn" id="voice-btn" onclick="jarvis.toggleVoice()">🎤</button>
-                    <button class="action-btn" onclick="jarvis.toggleCamera()">📷</button>
-                    <button class="action-btn" onclick="jarvis.showApps()">📱</button>
+                    <button class="action-btn voice-btn" id="voice-btn" onclick="toggleVoice()">🎤</button>
+                    <button class="action-btn" onclick="toggleCamera()">📷</button>
+                    <button class="action-btn" onclick="showApps()">📱</button>
                 </div>
             </div>
         </main>
@@ -146,12 +147,12 @@
         <aside class="sidebar right" id="sidebar-right">
             <div class="sidebar-header">
                 <h3>⚙️ Settings</h3>
-                <button class="close-sidebar" onclick="jarvis.toggleSidebar('right')">×</button>
+                <button class="close-sidebar" onclick="toggleSidebar('right')">×</button>
             </div>
 
             <div class="settings-section">
                 <h4>🎨 Appearance</h4>
-                <select id="theme-select" onchange="jarvis.setTheme(this.value)">
+                <select id="theme-select" onchange="setTheme(this.value)">
                     <option value="jarvis">J.A.R.V.I.S. Blue</option>
                     <option value="friday">F.R.I.D.A.Y. Orange</option>
                     <option value="ultron">Ultron Red</option>
@@ -164,17 +165,17 @@
                 <h4>🔊 Voice Settings</h4>
                 <label class="toggle-label">
                     <span>Text-to-Speech</span>
-                    <input type="checkbox" id="tts-toggle" checked onchange="jarvis.toggleTTS()">
+                    <input type="checkbox" id="tts-toggle" checked onchange="toggleTTS()">
                     <span class="toggle"></span>
                 </label>
                 <label class="toggle-label">
                     <span>Speech Recognition</span>
-                    <input type="checkbox" id="stt-toggle" checked onchange="jarvis.toggleSTT()">
+                    <input type="checkbox" id="stt-toggle" checked onchange="toggleSTT()">
                     <span class="toggle"></span>
                 </label>
                 <label class="toggle-label">
                     <span>Auto-Speak Responses</span>
-                    <input type="checkbox" id="auto-speak-toggle" checked onchange="jarvis.toggleAutoSpeak()">
+                    <input type="checkbox" id="auto-speak-toggle" checked onchange="toggleAutoSpeak()">
                     <span class="toggle"></span>
                 </label>
             </div>
@@ -189,7 +190,7 @@
                         <span class="api-badge" id="badge-openrouter">OFFLINE</span>
                     </div>
                     <input type="password" id="api-openrouter" placeholder="sk-or-v1-...">
-                    <select id="openrouter-model" onchange="jarvis.saveModel()">
+                    <select id="openrouter-model" onchange="saveModel()">
                         <option value="deepseek/deepseek-chat">DeepSeek V3</option>
                         <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
                         <option value="openai/gpt-4o">GPT-4o</option>
@@ -199,7 +200,7 @@
                         <option value="nousresearch/hermes-3-llama-3.1-405b">Hermes 3 405B</option>
                         <option value="gryphe/mythomax-l2-13b">MythoMax L2 13B</option>
                     </select>
-                    <button onclick="jarvis.testAPI('openrouter')">Test & Save</button>
+                    <button onclick="testAPI('openrouter')">Test & Save</button>
                 </div>
 
                 <div class="api-card">
@@ -208,7 +209,7 @@
                         <span class="api-badge" id="badge-deepseek">OFFLINE</span>
                     </div>
                     <input type="password" id="api-deepseek" placeholder="sk-...">
-                    <button onclick="jarvis.testAPI('deepseek')">Test & Save</button>
+                    <button onclick="testAPI('deepseek')">Test & Save</button>
                 </div>
 
                 <div class="api-card">
@@ -217,7 +218,7 @@
                         <span class="api-badge" id="badge-weather">OFFLINE</span>
                     </div>
                     <input type="password" id="api-weather" placeholder="OpenWeatherMap API key">
-                    <button onclick="jarvis.testAPI('weather')">Test & Save</button>
+                    <button onclick="testAPI('weather')">Test & Save</button>
                 </div>
 
                 <div class="api-card">
@@ -226,96 +227,81 @@
                         <span class="api-badge" id="badge-news">OFFLINE</span>
                     </div>
                     <input type="password" id="api-news" placeholder="NewsAPI key">
-                    <button onclick="jarvis.testAPI('news')">Test & Save</button>
+                    <button onclick="testAPI('news')">Test & Save</button>
                 </div>
             </div>
 
             <div class="settings-section">
                 <h4>⚠️ Limitations</h4>
                 <div class="limitation-list">
-                    <div class="limit-item">
-                        <span>❌</span>
-                        <span>Can't change system settings</span>
-                    </div>
-                    <div class="limit-item">
-                        <span>❌</span>
-                        <span>Can't access contacts/SMS</span>
-                    </div>
-                    <div class="limit-item">
-                        <span>❌</span>
-                        <span>Can't control Bluetooth/WiFi</span>
-                    </div>
-                    <div class="limit-item">
-                        <span>✅</span>
-                        <span>Can use camera & microphone</span>
-                    </div>
-                    <div class="limit-item">
-                        <span>✅</span>
-                        <span>Can store data locally</span>
-                    </div>
+                    <div class="limit-item"><span>❌</span><span>Can't change system settings</span></div>
+                    <div class="limit-item"><span>❌</span><span>Can't access contacts/SMS</span></div>
+                    <div class="limit-item"><span>❌</span><span>Can't control Bluetooth/WiFi</span></div>
+                    <div class="limit-item"><span>✅</span><span>Can use camera & microphone</span></div>
+                    <div class="limit-item"><span>✅</span><span>Can store data locally</span></div>
                 </div>
                 <p class="native-app-msg">For full phone control, a native Android app is needed.</p>
             </div>
 
-            <button class="danger-btn" onclick="jarvis.clearAllData()">🗑️ Clear All Data</button>
+            <button class="danger-btn" onclick="clearAllData()">🗑️ Clear All Data</button>
         </aside>
 
     </div>
 
-    <!-- OVERLAYS - OUTSIDE APP CONTAINER -->
+    <!-- OVERLAYS -->
     
     <!-- CAMERA OVERLAY -->
     <div class="camera-overlay hidden" id="camera-overlay">
         <video id="camera-video" autoplay playsinline muted></video>
         <canvas id="camera-canvas"></canvas>
         <div class="camera-controls">
-            <button onclick="jarvis.captureFace()">📷 Capture</button>
-            <button onclick="jarvis.closeCamera()">✕ Close</button>
+            <button onclick="captureFace()">📷 Capture</button>
+            <button onclick="closeCamera()">✕ Close</button>
         </div>
     </div>
 
     <!-- APPS DRAWER -->
     <div class="apps-drawer hidden" id="apps-drawer">
         <div class="apps-grid">
-            <button class="app-icon" onclick="jarvis.openCalculator()">🧮<span>Calculator</span></button>
-            <button class="app-icon" onclick="jarvis.openTasks()">📋<span>Tasks</span></button>
-            <button class="app-icon" onclick="jarvis.openWeather()">🌤️<span>Weather</span></button>
-            <button class="app-icon" onclick="jarvis.openGame()">🎮<span>Quiz Game</span></button>
-            <button class="app-icon" onclick="jarvis.openReminders()">⏰<span>Reminders</span></button>
-            <button class="app-icon" onclick="jarvis.openNotebook()">📓<span>Notebook</span></button>
+            <button class="app-icon" onclick="openCalculator()">🧮<span>Calculator</span></button>
+            <button class="app-icon" onclick="openTasks()">📋<span>Tasks</span></button>
+            <button class="app-icon" onclick="openWeather()">🌤️<span>Weather</span></button>
+            <button class="app-icon" onclick="openGame()">🎮<span>Quiz Game</span></button>
+            <button class="app-icon" onclick="openReminders()">⏰<span>Reminders</span></button>
+            <button class="app-icon" onclick="openNotebook()">📓<span>Notebook</span></button>
         </div>
-        <button class="close-drawer" onclick="jarvis.showApps()">✕</button>
+        <button class="close-drawer" onclick="showApps()">✕</button>
     </div>
 
-    <!-- MINI APPS (Overlays) -->
+    <!-- MINI APPS -->
     
     <!-- Calculator -->
     <div class="mini-app hidden" id="calc-app">
         <div class="mini-app-header">
             <span>🧮 Calculator</span>
-            <button onclick="jarvis.closeMiniApp()">×</button>
+            <button onclick="closeMiniApp()">×</button>
         </div>
         <div class="calc-display" id="calc-display">0</div>
         <div class="calc-grid">
-            <button onclick="jarvis.calc('C')">C</button>
-            <button onclick="jarvis.calc('⌫')">⌫</button>
-            <button onclick="jarvis.calc('%')">%</button>
-            <button onclick="jarvis.calc('/')">÷</button>
-            <button onclick="jarvis.calc('7')">7</button>
-            <button onclick="jarvis.calc('8')">8</button>
-            <button onclick="jarvis.calc('9')">9</button>
-            <button onclick="jarvis.calc('*')">×</button>
-            <button onclick="jarvis.calc('4')">4</button>
-            <button onclick="jarvis.calc('5')">5</button>
-            <button onclick="jarvis.calc('6')">6</button>
-            <button onclick="jarvis.calc('-')">−</button>
-            <button onclick="jarvis.calc('1')">1</button>
-            <button onclick="jarvis.calc('2')">2</button>
-            <button onclick="jarvis.calc('3')">3</button>
-            <button onclick="jarvis.calc('+')">+</button>
-            <button onclick="jarvis.calc('0')" class="calc-wide">0</button>
-            <button onclick="jarvis.calc('.')">.</button>
-            <button onclick="jarvis.calc('=')">=</button>
+            <button onclick="calc('C')">C</button>
+            <button onclick="calc('⌫')">⌫</button>
+            <button onclick="calc('%')">%</button>
+            <button onclick="calc('/')">÷</button>
+            <button onclick="calc('7')">7</button>
+            <button onclick="calc('8')">8</button>
+            <button onclick="calc('9')">9</button>
+            <button onclick="calc('*')">×</button>
+            <button onclick="calc('4')">4</button>
+            <button onclick="calc('5')">5</button>
+            <button onclick="calc('6')">6</button>
+            <button onclick="calc('-')">−</button>
+            <button onclick="calc('1')">1</button>
+            <button onclick="calc('2')">2</button>
+            <button onclick="calc('3')">3</button>
+            <button onclick="calc('+')">+</button>
+            <button onclick="calc('0')" class="calc-wide">0</button>
+            <button onclick="calc('.')">.</button>
+            <button onclick="calc('=')">=</button>
         </div>
     </div>
 
@@ -323,12 +309,12 @@
     <div class="mini-app hidden" id="notebook-app">
         <div class="mini-app-header">
             <span>📓 Notebook</span>
-            <button onclick="jarvis.closeMiniApp()">×</button>
+            <button onclick="closeMiniApp()">×</button>
         </div>
         <div class="notebook-controls">
-            <button onclick="jarvis.newNote()" class="note-btn new">+ New Note</button>
-            <button onclick="jarvis.saveNote()" class="note-btn save">💾 Save</button>
-            <button onclick="jarvis.deleteNote()" class="note-btn delete">🗑️ Delete</button>
+            <button onclick="newNote()" class="note-btn new">+ New Note</button>
+            <button onclick="saveNote()" class="note-btn save">💾 Save</button>
+            <button onclick="deleteNote()" class="note-btn delete">🗑️ Delete</button>
         </div>
         <div class="notebook-list" id="notebook-list">
             <div class="empty-notes">No notes yet</div>
@@ -341,11 +327,11 @@
     <div class="mini-app hidden" id="tasks-app">
         <div class="mini-app-header">
             <span>📋 Tasks</span>
-            <button onclick="jarvis.closeMiniApp()">×</button>
+            <button onclick="closeMiniApp()">×</button>
         </div>
         <div class="task-input-box">
             <input type="text" id="task-input" placeholder="Add new task...">
-            <button onclick="jarvis.addTask()">+</button>
+            <button onclick="addTask()">+</button>
         </div>
         <div class="tasks-list" id="tasks-list">
             <div class="empty-tasks">No tasks yet</div>
@@ -356,11 +342,11 @@
     <div class="mini-app hidden" id="weather-app">
         <div class="mini-app-header">
             <span>🌤️ Weather</span>
-            <button onclick="jarvis.closeMiniApp()">×</button>
+            <button onclick="closeMiniApp()">×</button>
         </div>
         <div class="weather-search">
             <input type="text" id="weather-city" placeholder="Enter city...">
-            <button onclick="jarvis.getWeather()">Search</button>
+            <button onclick="getWeather()">Search</button>
         </div>
         <div class="weather-display" id="weather-display">
             <div class="weather-main">
@@ -388,20 +374,32 @@
     <div class="mini-app hidden" id="reminders-app">
         <div class="mini-app-header">
             <span>⏰ Reminders</span>
-            <button onclick="jarvis.closeMiniApp()">×</button>
+            <button onclick="closeMiniApp()">×</button>
         </div>
         <div class="reminder-input-box">
             <input type="text" id="reminder-text" placeholder="Reminder text...">
             <input type="datetime-local" id="reminder-time">
-            <button onclick="jarvis.addReminder()">+</button>
+            <button onclick="addReminder()">+</button>
         </div>
         <div class="reminders-list" id="reminders-list">
             <div class="empty-reminders">No reminders set</div>
         </div>
     </div>
 
-    <!-- BACKDROP FOR SIDEBARS -->
-    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="jarvis.closeAllSidebars()"></div>
+    <!-- BACKDROP -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeAllSidebars()"></div>
+
+    <!-- FALLBACK: Auto-hide splash after 5 seconds if JS fails -->
+    <script>
+        setTimeout(function() {
+            var splash = document.getElementById('splash-screen');
+            var app = document.getElementById('app');
+            if (splash && !splash.classList.contains('hidden')) {
+                splash.classList.add('hidden');
+                if (app) app.classList.remove('hidden');
+            }
+        }, 5000);
+    </script>
 
     <script src="core.js"></script>
     <script src="features.js"></script>
