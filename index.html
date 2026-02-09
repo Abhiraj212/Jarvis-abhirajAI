@@ -1,7 +1,4 @@
-
-# Creating the COMPLETE UPGRADED JARVIS with Mobile Optimization and Hinglish Support
-
-html_code = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,611 +6,406 @@ html_code = '''<!DOCTYPE html>
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>J.A.R.V.I.S. Ultra | AI Assistant</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>J.A.R.V.I.S. AI</title>
+    <link rel="stylesheet" href="style.css">
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- BOOT SEQUENCE -->
-    <div id="boot-sequence" class="boot-overlay">
-        <div class="boot-content">
-            <div class="boot-logo">
-                <span class="logo-char">J</span><span class="logo-char">.</span><span class="logo-char">A</span><span class="logo-char">.</span><span class="logo-char">R</span><span class="logo-char">.</span><span class="logo-char">V</span><span class="logo-char">.</span><span class="logo-char">I</span><span class="logo-char">.</span><span class="logo-char">S</span><span class="logo-char">.</span>
-            </div>
-            <div class="boot-subtitle">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
-            <div class="boot-status" id="boot-status">Initializing core systems...</div>
-            <div class="boot-progress-container">
-                <div class="boot-progress">
-                    <div class="boot-bar" id="boot-bar"></div>
-                </div>
-                <div class="boot-percent" id="boot-percent">0%</div>
-            </div>
-            <div class="boot-log" id="boot-log"></div>
-            <div class="boot-language-select" id="boot-language" style="display:none;">
-                <p>Select Language / भाषा चुनें:</p>
-                <button class="lang-btn" data-lang="en">🇬🇧 English</button>
-                <button class="lang-btn" data-lang="hi">🇮🇳 हिंदी</button>
-                <button class="lang-btn" data-lang="hinglish">🇮🇳 Hinglish (हिंग्लिश)</button>
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">J</div>
+            <div class="splash-text">J.A.R.V.I.S.</div>
+            <div class="splash-loading">
+                <div class="splash-bar"></div>
             </div>
         </div>
     </div>
 
-    <!-- MOBILE NAVIGATION DRAWER -->
-    <div class="mobile-drawer" id="mobile-drawer">
-        <div class="drawer-header">
-            <div class="drawer-avatar">🤖</div>
-            <div class="drawer-info">
-                <div class="drawer-name">J.A.R.V.I.S.</div>
-                <div class="drawer-status online">● Online</div>
-            </div>
-        </div>
-        <div class="drawer-menu">
-            <div class="drawer-item" data-panel="memory">
-                <span class="drawer-icon">🧠</span>
-                <span class="drawer-text">Memory Core</span>
-            </div>
-            <div class="drawer-item" data-panel="emotion">
-                <span class="drawer-icon">😊</span>
-                <span class="drawer-text">Emotions</span>
-            </div>
-            <div class="drawer-item" data-panel="tasks">
-                <span class="drawer-icon">📋</span>
-                <span class="drawer-text">Tasks</span>
-            </div>
-            <div class="drawer-item" data-panel="games">
-                <span class="drawer-icon">🎮</span>
-                <span class="drawer-text">Games</span>
-            </div>
-            <div class="drawer-item" data-panel="weather">
-                <span class="drawer-icon">🌤️</span>
-                <span class="drawer-text">Weather</span>
-            </div>
-            <div class="drawer-item" data-panel="calculator">
-                <span class="drawer-icon">🧮</span>
-                <span class="drawer-text">Calculator</span>
-            </div>
-            <div class="drawer-item" data-panel="settings">
-                <span class="drawer-icon">⚙️</span>
-                <span class="drawer-text">Settings</span>
-            </div>
-            <div class="drawer-divider"></div>
-            <div class="drawer-item danger" id="drawer-shutdown">
-                <span class="drawer-icon">⏻</span>
-                <span class="drawer-text">Shutdown</span>
-            </div>
-        </div>
-    </div>
-    <div class="drawer-overlay" id="drawer-overlay"></div>
-
-    <!-- MAIN APPLICATION -->
-    <div id="app-container" class="app-container hidden">
+    <!-- MAIN APP -->
+    <div id="app" class="hidden">
         
-        <!-- MOBILE HEADER -->
-        <header class="mobile-header" id="mobile-header">
-            <button class="hamburger" id="hamburger">☰</button>
-            <div class="mobile-logo">
-                <span class="mobile-logo-text">J.A.R.V.I.S.</span>
-                <div class="mobile-status-pill" id="mobile-status">ONLINE</div>
-            </div>
-            <button class="mobile-mic" id="mobile-mic-btn">🎤</button>
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <button class="menu-btn" onclick="jarvis.toggleSidebar('left')">☰</button>
+            <div class="logo-mini">J.A.R.V.I.S.</div>
+            <button class="menu-btn" onclick="jarvis.toggleSidebar('right')">⚙️</button>
         </header>
 
-        <!-- DESKTOP TOP HUD -->
-        <header class="main-hud" id="desktop-hud">
-            <div class="hud-section left">
-                <div class="system-clock" id="system-clock">00:00:00</div>
-                <div class="system-date" id="system-date">Loading...</div>
-                <div class="location-info" id="location-info">📍 Locating...</div>
+        <!-- LEFT SIDEBAR (MEMORY) -->
+        <aside class="sidebar left" id="sidebar-left">
+            <div class="sidebar-header">
+                <h3>🧠 Memory Core</h3>
+                <button class="close-sidebar" onclick="jarvis.toggleSidebar('left')">×</button>
             </div>
             
-            <div class="hud-section center">
-                <div class="jarvis-logo">
-                    <span class="logo-text">J.A.R.V.I.S.</span>
-                    <div class="logo-ring"></div>
-                    <div class="logo-ring"></div>
-                    <div class="logo-ring"></div>
+            <div class="memory-stats-real">
+                <div class="stat-card">
+                    <div class="stat-value" id="mem-usage">0 MB</div>
+                    <div class="stat-label">Storage Used</div>
                 </div>
-                <div class="system-status-bar">
-                    <span class="status-pill" id="main-status">STANDBY</span>
-                    <span class="confidence-meter" id="confidence-meter">Confidence: 100%</span>
+                <div class="stat-card">
+                    <div class="stat-value" id="mem-facts">0</div>
+                    <div class="stat-label">Facts Stored</div>
                 </div>
-            </div>
-            
-            <div class="hud-section right">
-                <div class="resource-monitor">
-                    <div class="resource-item">
-                        <span class="res-icon">⚡</span>
-                        <div class="res-bar"><div id="cpu-bar"></div></div>
-                        <span id="cpu-text">0%</span>
-                    </div>
-                    <div class="resource-item">
-                        <span class="res-icon">💾</span>
-                        <div class="res-bar"><div id="mem-bar"></div></div>
-                        <span id="mem-text">0MB</span>
-                    </div>
-                </div>
-                <div class="connection-status" id="connection-status">
-                    <span class="conn-dot"></span>
-                    <span class="conn-text">ONLINE</span>
+                <div class="stat-card">
+                    <div class="stat-value" id="mem-convos">0</div>
+                    <div class="stat-label">Conversations</div>
                 </div>
             </div>
-        </header>
 
-        <!-- MAIN WORKSPACE -->
-        <main class="workspace">
-            
-            <!-- LEFT SIDEBAR (Desktop) -->
-            <aside class="sidebar left-panel" id="left-panel">
-                
-                <!-- MEMORY -->
-                <div class="panel memory-panel" id="panel-memory">
-                    <div class="panel-header">
-                        <span class="panel-title">🧠 Memory Core</span>
-                        <button class="panel-toggle">−</button>
+            <div class="memory-visual">
+                <div class="brain-visual" id="brain-visual">
+                    <div class="brain-node" style="--delay:0s"></div>
+                    <div class="brain-node" style="--delay:0.2s"></div>
+                    <div class="brain-node" style="--delay:0.4s"></div>
+                    <div class="brain-node" style="--delay:0.6s"></div>
+                </div>
+                <div class="memory-bar">
+                    <div class="memory-fill" id="memory-fill"></div>
+                </div>
+                <div class="memory-text" id="memory-text">0% used</div>
+            </div>
+
+            <div class="user-profile-section">
+                <h4>👤 User Profile</h4>
+                <div class="profile-item">
+                    <span>Name:</span>
+                    <span id="profile-name">Unknown</span>
+                </div>
+                <div class="profile-item">
+                    <span>Age:</span>
+                    <span id="profile-age">-</span>
+                </div>
+                <div class="profile-item">
+                    <span>Location:</span>
+                    <span id="profile-location">-</span>
+                </div>
+                <div class="profile-item">
+                    <span>Mood:</span>
+                    <span id="profile-mood">Neutral</span>
+                </div>
+            </div>
+
+            <div class="stored-facts">
+                <h4>💾 Stored Facts</h4>
+                <div id="facts-list" class="facts-scroll">
+                    <div class="empty-facts">No facts stored yet</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CHAT AREA -->
+        <main class="chat-area">
+            <!-- AVATAR / VISUALIZER -->
+            <div class="avatar-section">
+                <div class="jarvis-avatar" id="jarvis-avatar">
+                    <div class="avatar-face">
+                        <div class="eye left"></div>
+                        <div class="eye right"></div>
+                        <div class="mouth"></div>
                     </div>
-                    <div class="panel-content">
-                        <div class="memory-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Facts</span>
-                                <span class="stat-value" id="mem-facts">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Prefs</span>
-                                <span class="stat-value" id="mem-prefs">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Chats</span>
-                                <span class="stat-value" id="mem-chats">0</span>
-                            </div>
-                        </div>
-                        <div class="memory-graph-container">
-                            <canvas id="memory-graph"></canvas>
-                        </div>
-                        <div class="memory-search">
-                            <input type="text" id="memory-search-input" placeholder="Search memories...">
-                        </div>
-                        <div class="memory-results" id="memory-results"></div>
+                    <div class="avatar-ring ring-1"></div>
+                    <div class="avatar-ring ring-2"></div>
+                    <div class="avatar-ring ring-3"></div>
+                    <div class="sound-waves" id="sound-waves"></div>
+                </div>
+                <div class="status-text" id="status-text">Tap to speak</div>
+            </div>
+
+            <!-- MESSAGES -->
+            <div class="messages-container" id="messages-container">
+                <div class="welcome-msg">
+                    <h2>Hello, I'm J.A.R.V.I.S.</h2>
+                    <p>Your personal AI assistant. I remember everything you tell me.</p>
+                    <div class="quick-chips">
+                        <button onclick="jarvis.quickSend('What can you do?')">What can you do?</button>
+                        <button onclick="jarvis.quickSend('Remember my name is')">Set my name</button>
+                        <button onclick="jarvis.quickSend('Play quiz game')">Play game</button>
+                        <button onclick="jarvis.startChat()">Start chatting</button>
                     </div>
                 </div>
+            </div>
 
-                <!-- EMOTION -->
-                <div class="panel emotion-panel" id="panel-emotion">
-                    <div class="panel-header">
-                        <span class="panel-title">😊 Emotions</span>
-                        <button class="panel-toggle">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="emotion-wheel" id="emotion-wheel">
-                            <div class="emotion-center" id="current-emotion">😐</div>
-                            <div class="emotion-orbit joy" data-emotion="joy">😄</div>
-                            <div class="emotion-orbit sadness" data-emotion="sadness">😢</div>
-                            <div class="emotion-orbit anger" data-emotion="anger">😠</div>
-                            <div class="emotion-orbit fear" data-emotion="fear">😨</div>
-                            <div class="emotion-orbit surprise" data-emotion="surprise">😲</div>
-                            <div class="emotion-orbit trust" data-emotion="trust">🤝</div>
-                        </div>
-                        <div class="emotion-metrics" id="emotion-metrics">
-                            <div class="emotion-bar">
-                                <span>Joy</span>
-                                <div class="bar"><div id="joy-bar" style="width:50%"></div></div>
-                            </div>
-                            <div class="emotion-bar">
-                                <span>Sadness</span>
-                                <div class="bar"><div id="sadness-bar" style="width:10%"></div></div>
-                            </div>
-                            <div class="emotion-bar">
-                                <span>Anger</span>
-                                <div class="bar"><div id="anger-bar" style="width:5%"></div></div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- INPUT AREA -->
+            <div class="input-section">
+                <div class="input-box">
+                    <input type="text" id="chat-input" placeholder="Type or tap microphone..." autocomplete="off">
+                    <button class="send-btn" onclick="jarvis.send()">➤</button>
                 </div>
-
-                <!-- TASKS -->
-                <div class="panel tasks-panel" id="panel-tasks">
-                    <div class="panel-header">
-                        <span class="panel-title">📋 Tasks</span>
-                        <button class="panel-toggle">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="task-input-area">
-                            <input type="text" id="new-task" placeholder="Add task...">
-                            <select id="task-priority">
-                                <option value="low">Low</option>
-                                <option value="medium" selected>Medium</option>
-                                <option value="high">High</option>
-                                <option value="urgent">Urgent</option>
-                            </select>
-                            <button id="add-task">+</button>
-                        </div>
-                        <div class="task-filters">
-                            <button class="filter-btn active" data-filter="all">All</button>
-                            <button class="filter-btn" data-filter="active">Active</button>
-                            <button class="filter-btn" data-filter="completed">Done</button>
-                        </div>
-                        <ul class="task-list" id="task-list"></ul>
-                    </div>
+                <div class="input-actions">
+                    <button class="action-btn voice-btn" id="voice-btn" onclick="jarvis.toggleVoice()">🎤</button>
+                    <button class="action-btn" onclick="jarvis.toggleCamera()">📷</button>
+                    <button class="action-btn" onclick="jarvis.showApps()">📱</button>
                 </div>
-
-                <!-- GAMES -->
-                <div class="panel games-panel" id="panel-games">
-                    <div class="panel-header">
-                        <span class="panel-title">🎮 Games</span>
-                        <button class="panel-toggle">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="game-list">
-                            <div class="game-card" data-game="quiz">
-                                <div class="game-icon">❓</div>
-                                <div class="game-info">
-                                    <div class="game-name">Quiz Master</div>
-                                    <div class="game-desc">Test your knowledge</div>
-                                </div>
-                                <button class="game-play">Play</button>
-                            </div>
-                            <div class="game-card" data-game="riddle">
-                                <div class="game-icon">🧩</div>
-                                <div class="game-info">
-                                    <div class="game-name">Riddles</div>
-                                    <div class="game-desc">Brain teasers</div>
-                                </div>
-                                <button class="game-play">Play</button>
-                            </div>
-                            <div class="game-card" data-game="word">
-                                <div class="game-icon">🔤</div>
-                                <div class="game-info">
-                                    <div class="game-name">Word Chain</div>
-                                    <div class="game-desc">Word building game</div>
-                                </div>
-                                <button class="game-play">Play</button>
-                            </div>
-                            <div class="game-card" data-game="memory">
-                                <div class="game-icon">🧠</div>
-                                <div class="game-info">
-                                    <div class="game-name">Memory Match</div>
-                                    <div class="game-desc">Test your memory</div>
-                                </div>
-                                <button class="game-play">Play</button>
-                            </div>
-                            <div class="game-card" data-game="math">
-                                <div class="game-icon">🔢</div>
-                                <div class="game-info">
-                                    <div class="game-name">Speed Math</div>
-                                    <div class="game-desc">Fast calculations</div>
-                                </div>
-                                <button class="game-play">Play</button>
-                            </div>
-                        </div>
-                        <div class="game-stats">
-                            <div class="stat">
-                                <span class="stat-value" id="game-score">0</span>
-                                <span class="stat-label">Score</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-value" id="game-streak">0</span>
-                                <span class="stat-label">Streak</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </aside>
-
-            <!-- CENTER STAGE -->
-            <section class="center-stage">
-                
-                <!-- VISUALIZER -->
-                <div class="visualizer-container" id="visualizer-container">
-                    <canvas id="audio-visualizer"></canvas>
-                    <div class="jarvis-avatar" id="jarvis-avatar">
-                        <div class="avatar-core"></div>
-                        <div class="avatar-rings">
-                            <span></span><span></span><span></span>
-                        </div>
-                    </div>
-                    <div class="voice-waves" id="voice-waves">
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
-                        <div class="wave-bar"></div>
-                    </div>
-                    <div class="language-indicator" id="language-indicator">🌐 Auto</div>
-                </div>
-
-                <!-- CHAT INTERFACE -->
-                <div class="chat-interface">
-                    <div class="chat-header">
-                        <div class="chat-tabs" id="chat-tabs">
-                            <button class="chat-tab active" data-tab="main">💬 Main</button>
-                            <button class="chat-tab" data-tab="code">💻 Code</button>
-                            <button class="chat-tab" data-tab="search">🔍 Search</button>
-                            <button class="chat-tab" data-tab="image">🖼️ Image</button>
-                        </div>
-                        <div class="chat-tools">
-                            <button class="tool-btn" id="btn-export-chat" title="Export">💾</button>
-                            <button class="tool-btn" id="btn-clear-chat" title="Clear">🗑️</button>
-                        </div>
-                    </div>
-                    
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="welcome-message" id="welcome-message">
-                            <div class="welcome-avatar">🤖</div>
-                            <h2 id="welcome-title">Welcome, Sir</h2>
-                            <p id="welcome-subtitle">I am J.A.R.V.I.S., your AI assistant.</p>
-                            <div class="quick-actions" id="quick-actions">
-                                <button class="quick-btn" data-action="weather">🌤️ Weather</button>
-                                <button class="quick-btn" data-action="news">📰 News</button>
-                                <button class="quick-btn" data-action="reminder">⏰ Reminder</button>
-                                <button class="quick-btn" data-action="calculate">🧮 Calculate</button>
-                                <button class="quick-btn" data-action="joke">😂 Joke</button>
-                                <button class="quick-btn" data-action="fact">📚 Fact</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SUGGESTIONS BAR -->
-                    <div class="suggestions-bar" id="suggestions-bar">
-                        <button class="suggestion-chip" data-text="ma thik hu tum kese ho">मैं ठीक हूँ, तुम कैसे हो</button>
-                        <button class="suggestion-chip" data-text="aaj ka weather kya hai">आज का वेदर क्या है</button>
-                        <button class="suggestion-chip" data-text="ek joke sunao">एक जोक सुनाओ</button>
-                        <button class="suggestion-chip" data-text="game khelte hain">गेम खेलते हैं</button>
-                    </div>
-
-                    <div class="chat-input-area">
-                        <div class="input-toolbar">
-                            <button class="toolbar-btn" id="btn-attach" title="Attach">📎</button>
-                            <button class="toolbar-btn" id="btn-image" title="Image">🖼️</button>
-                            <button class="toolbar-btn" id="btn-code" title="Code">💻</button>
-                            <button class="toolbar-btn" id="btn-voice-mode" title="Voice Mode">🎙️</button>
-                            <button class="toolbar-btn" id="btn-translate" title="Translate">🌐</button>
-                        </div>
-                        
-                        <div class="input-container">
-                            <textarea id="main-input" placeholder="Type message or say 'Hey Jarvis'...&#10;Type in English, Hindi, or Hinglish..." rows="1" maxlength="2000"></textarea>
-                            <div class="input-actions">
-                                <button class="action-btn mic-btn" id="main-mic-btn" title="Voice Input">
-                                    <span class="mic-icon">🎤</span>
-                                    <span class="recording-indicator"></span>
-                                </button>
-                                <button class="action-btn send-btn" id="main-send-btn" title="Send">➤</button>
-                            </div>
-                        </div>
-                        
-                        <div class="input-status" id="input-status">
-                            <span class="status-text">Ready • हिंदी supported • Hinglish OK</span>
-                            <span class="char-count">0/2000</span>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-
-            <!-- RIGHT SIDEBAR (Desktop) -->
-            <aside class="sidebar right-panel" id="right-panel">
-                
-                <!-- WEATHER -->
-                <div class="panel weather-panel" id="panel-weather">
-                    <div class="panel-header">
-                        <span class="panel-title">🌤️ Weather</span>
-                        <button class="panel-toggle">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="weather-main" id="weather-main">
-                            <div class="weather-icon">☀️</div>
-                            <div class="weather-temp">--°C</div>
-                            <div class="weather-desc">Loading...</div>
-                        </div>
-                        <div class="weather-details" id="weather-details">
-                            <div class="weather-item"><span>Humidity</span><span>--%</span></div>
-                            <div class="weather-item"><span>Wind</span><span>-- km/h</span></div>
-                            <div class="weather-item"><span>Feels</span><span>--°</span></div>
-                            <div class="weather-item"><span>UV</span><span>--</span></div>
-                        </div>
-                        <div class="weather-forecast" id="weather-forecast"></div>
-                    </div>
-                </div>
-
-                <!-- CALCULATOR -->
-                <div class="panel calc-panel" id="panel-calculator">
-                    <div class="panel-header">
-                        <span class="panel-title">🧮 Calculator</span>
-                        <button class="panel-toggle">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="calc-display" id="calc-display">0</div>
-                        <div class="calc-history" id="calc-history"></div>
-                        <div class="calc-buttons">
-                            <button class="calc-btn func" data-val="C">AC</button>
-                            <button class="calc-btn func" data-val="⌫">⌫</button>
-                            <button class="calc-btn func" data-val="%">%</button>
-                            <button class="calc-btn op" data-val="/">÷</button>
-                            <button class="calc-btn" data-val="7">7</button>
-                            <button class="calc-btn" data-val="8">8</button>
-                            <button class="calc-btn" data-val="9">9</button>
-                            <button class="calc-btn op" data-val="*">×</button>
-                            <button class="calc-btn" data-val="4">4</button>
-                            <button class="calc-btn" data-val="5">5</button>
-                            <button class="calc-btn" data-val="6">6</button>
-                            <button class="calc-btn op" data-val="-">−</button>
-                            <button class="calc-btn" data-val="1">1</button>
-                            <button class="calc-btn" data-val="2">2</button>
-                            <button class="calc-btn" data-val="3">3</button>
-                            <button class="calc-btn op" data-val="+">+</button>
-                            <button class="calc-btn wide" data-val="0">0</button>
-                            <button class="calc-btn" data-val=".">.</button>
-                            <button class="calc-btn op" data-val="=">=</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SYSTEM LOGS -->
-                <div class="panel logs-panel">
-                    <div class="panel-header">
-                        <span class="panel-title">📊 Logs</span>
-                        <button class="panel-toggle">−</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="log-filters">
-                            <label><input type="checkbox" checked> Info</label>
-                            <label><input type="checkbox" checked> Warn</label>
-                            <label><input type="checkbox" checked> Error</label>
-                        </div>
-                        <div class="log-container" id="system-logs"></div>
-                    </div>
-                </div>
-
-            </aside>
-
+            </div>
         </main>
 
-        <!-- MOBILE BOTTOM NAV -->
-        <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
-            <button class="mobile-nav-btn active" data-view="chat">
-                <span class="nav-icon">💬</span>
-                <span class="nav-label">Chat</span>
-            </button>
-            <button class="mobile-nav-btn" data-view="games">
-                <span class="nav-icon">🎮</span>
-                <span class="nav-label">Games</span>
-            </button>
-            <button class="mobile-nav-btn" data-view="voice">
-                <span class="nav-icon">🎤</span>
-                <span class="nav-label">Voice</span>
-            </button>
-            <button class="mobile-nav-btn" data-view="tools">
-                <span class="nav-icon">🧰</span>
-                <span class="nav-label">Tools</span>
-            </button>
-            <button class="mobile-nav-btn" data-view="settings">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">More</span>
-            </button>
-        </nav>
-
-        <!-- DESKTOP FOOTER -->
-        <footer class="control-bar" id="desktop-footer">
-            <div class="control-section">
-                <button class="control-btn" id="btn-vision">
-                    <span class="btn-icon">👁️</span>
-                    <span class="btn-label">Vision</span>
-                </button>
-                <button class="control-btn" id="btn-voice">
-                    <span class="btn-icon">🎙️</span>
-                    <span class="btn-label">Voice</span>
-                </button>
-                <button class="control-btn" id="btn-automation">
-                    <span class="btn-icon">⚙️</span>
-                    <span class="btn-label">Auto</span>
-                </button>
+        <!-- RIGHT SIDEBAR (SETTINGS & API) -->
+        <aside class="sidebar right" id="sidebar-right">
+            <div class="sidebar-header">
+                <h3>⚙️ Settings</h3>
+                <button class="close-sidebar" onclick="jarvis.toggleSidebar('right')">×</button>
             </div>
-            <div class="control-section center">
-                <div class="mode-indicator" id="mode-indicator">
-                    <span class="mode-dot"></span>
-                    <span class="mode-text">ASSISTANT MODE</span>
+
+            <div class="settings-section">
+                <h4>🎨 Appearance</h4>
+                <select id="theme-select" onchange="jarvis.setTheme(this.value)">
+                    <option value="jarvis">J.A.R.V.I.S. Blue</option>
+                    <option value="friday">F.R.I.D.A.Y. Orange</option>
+                    <option value="ultron">Ultron Red</option>
+                    <option value="vision">Vision Green</option>
+                    <option value="dark">Dark Mode</option>
+                </select>
+            </div>
+
+            <div class="settings-section">
+                <h4>🔊 Voice Settings</h4>
+                <label class="toggle-label">
+                    <span>Text-to-Speech</span>
+                    <input type="checkbox" id="tts-toggle" checked onchange="jarvis.toggleTTS()">
+                    <span class="toggle"></span>
+                </label>
+                <label class="toggle-label">
+                    <span>Speech Recognition</span>
+                    <input type="checkbox" id="stt-toggle" checked onchange="jarvis.toggleSTT()">
+                    <span class="toggle"></span>
+                </label>
+                <label class="toggle-label">
+                    <span>Auto-Speak Responses</span>
+                    <input type="checkbox" id="auto-speak-toggle" checked onchange="jarvis.toggleAutoSpeak()">
+                    <span class="toggle"></span>
+                </label>
+            </div>
+
+            <div class="api-section">
+                <h4>🔌 API Configuration</h4>
+                
+                <!-- OpenRouter API -->
+                <div class="api-card">
+                    <div class="api-header">
+                        <span>🌐 OpenRouter AI</span>
+                        <span class="api-badge" id="badge-openrouter">OFFLINE</span>
+                    </div>
+                    <input type="password" id="api-openrouter" placeholder="sk-or-v1-...">
+                    <select id="openrouter-model" onchange="jarvis.saveModel()">
+                        <option value="deepseek/deepseek-chat">DeepSeek V3</option>
+                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                        <option value="openai/gpt-4o">GPT-4o</option>
+                        <option value="google/gemini-pro">Gemini Pro</option>
+                        <option value="meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B</option>
+                        <option value="mistralai/mistral-large">Mistral Large</option>
+                        <option value="nousresearch/hermes-3-llama-3.1-405b">Hermes 3 405B</option>
+                        <option value="gryphe/mythomax-l2-13b">MythoMax L2 13B</option>
+                    </select>
+                    <button onclick="jarvis.testAPI('openrouter')">Test & Save</button>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-header">
+                        <span>🧠 DeepSeek AI</span>
+                        <span class="api-badge" id="badge-deepseek">OFFLINE</span>
+                    </div>
+                    <input type="password" id="api-deepseek" placeholder="sk-...">
+                    <button onclick="jarvis.testAPI('deepseek')">Test & Save</button>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-header">
+                        <span>🌤️ Weather</span>
+                        <span class="api-badge" id="badge-weather">OFFLINE</span>
+                    </div>
+                    <input type="password" id="api-weather" placeholder="OpenWeatherMap API key">
+                    <button onclick="jarvis.testAPI('weather')">Test & Save</button>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-header">
+                        <span>📰 News</span>
+                        <span class="api-badge" id="badge-news">OFFLINE</span>
+                    </div>
+                    <input type="password" id="api-news" placeholder="NewsAPI key">
+                    <button onclick="jarvis.testAPI('news')">Test & Save</button>
                 </div>
             </div>
-            <div class="control-section">
-                <button class="control-btn" id="btn-settings">
-                    <span class="btn-icon">🔧</span>
-                    <span class="btn-label">Settings</span>
-                </button>
-                <button class="control-btn" id="btn-help">
-                    <span class="btn-icon">❓</span>
-                    <span class="btn-label">Help</span>
-                </button>
-                <button class="control-btn danger" id="btn-shutdown">
-                    <span class="btn-icon">⏻</span>
-                    <span class="btn-label">Exit</span>
-                </button>
+
+            <div class="settings-section">
+                <h4>⚠️ Limitations</h4>
+                <div class="limitation-list">
+                    <div class="limit-item">
+                        <span>❌</span>
+                        <span>Can't change system settings</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>❌</span>
+                        <span>Can't access contacts/SMS</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>❌</span>
+                        <span>Can't control Bluetooth/WiFi</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>✅</span>
+                        <span>Can use camera & microphone</span>
+                    </div>
+                    <div class="limit-item">
+                        <span>✅</span>
+                        <span>Can store data locally</span>
+                    </div>
+                </div>
+                <p class="native-app-msg">For full phone control, a native Android app is needed.</p>
             </div>
-        </footer>
+
+            <button class="danger-btn" onclick="jarvis.clearAllData()">🗑️ Clear All Data</button>
+        </aside>
 
     </div>
 
-    <!-- MODALS -->
-    <div class="modal-overlay hidden" id="vision-modal">
-        <div class="modal vision-modal">
-            <div class="modal-header">
-                <h3>👁️ Computer Vision</h3>
-                <button class="modal-close">&times;</button>
+    <!-- OVERLAYS - OUTSIDE APP CONTAINER -->
+    
+    <!-- CAMERA OVERLAY -->
+    <div class="camera-overlay hidden" id="camera-overlay">
+        <video id="camera-video" autoplay playsinline muted></video>
+        <canvas id="camera-canvas"></canvas>
+        <div class="camera-controls">
+            <button onclick="jarvis.captureFace()">📷 Capture</button>
+            <button onclick="jarvis.closeCamera()">✕ Close</button>
+        </div>
+    </div>
+
+    <!-- APPS DRAWER -->
+    <div class="apps-drawer hidden" id="apps-drawer">
+        <div class="apps-grid">
+            <button class="app-icon" onclick="jarvis.openCalculator()">🧮<span>Calculator</span></button>
+            <button class="app-icon" onclick="jarvis.openTasks()">📋<span>Tasks</span></button>
+            <button class="app-icon" onclick="jarvis.openWeather()">🌤️<span>Weather</span></button>
+            <button class="app-icon" onclick="jarvis.openGame()">🎮<span>Quiz Game</span></button>
+            <button class="app-icon" onclick="jarvis.openReminders()">⏰<span>Reminders</span></button>
+            <button class="app-icon" onclick="jarvis.openNotebook()">📓<span>Notebook</span></button>
+        </div>
+        <button class="close-drawer" onclick="jarvis.showApps()">✕</button>
+    </div>
+
+    <!-- MINI APPS (Overlays) -->
+    
+    <!-- Calculator -->
+    <div class="mini-app hidden" id="calc-app">
+        <div class="mini-app-header">
+            <span>🧮 Calculator</span>
+            <button onclick="jarvis.closeMiniApp()">×</button>
+        </div>
+        <div class="calc-display" id="calc-display">0</div>
+        <div class="calc-grid">
+            <button onclick="jarvis.calc('C')">C</button>
+            <button onclick="jarvis.calc('⌫')">⌫</button>
+            <button onclick="jarvis.calc('%')">%</button>
+            <button onclick="jarvis.calc('/')">÷</button>
+            <button onclick="jarvis.calc('7')">7</button>
+            <button onclick="jarvis.calc('8')">8</button>
+            <button onclick="jarvis.calc('9')">9</button>
+            <button onclick="jarvis.calc('*')">×</button>
+            <button onclick="jarvis.calc('4')">4</button>
+            <button onclick="jarvis.calc('5')">5</button>
+            <button onclick="jarvis.calc('6')">6</button>
+            <button onclick="jarvis.calc('-')">−</button>
+            <button onclick="jarvis.calc('1')">1</button>
+            <button onclick="jarvis.calc('2')">2</button>
+            <button onclick="jarvis.calc('3')">3</button>
+            <button onclick="jarvis.calc('+')">+</button>
+            <button onclick="jarvis.calc('0')" class="calc-wide">0</button>
+            <button onclick="jarvis.calc('.')">.</button>
+            <button onclick="jarvis.calc('=')">=</button>
+        </div>
+    </div>
+
+    <!-- Notebook -->
+    <div class="mini-app hidden" id="notebook-app">
+        <div class="mini-app-header">
+            <span>📓 Notebook</span>
+            <button onclick="jarvis.closeMiniApp()">×</button>
+        </div>
+        <div class="notebook-controls">
+            <button onclick="jarvis.newNote()" class="note-btn new">+ New Note</button>
+            <button onclick="jarvis.saveNote()" class="note-btn save">💾 Save</button>
+            <button onclick="jarvis.deleteNote()" class="note-btn delete">🗑️ Delete</button>
+        </div>
+        <div class="notebook-list" id="notebook-list">
+            <div class="empty-notes">No notes yet</div>
+        </div>
+        <input type="text" id="note-title" placeholder="Note title..." class="note-title-input">
+        <textarea id="note-content" placeholder="Write your note here..." class="note-content-area"></textarea>
+    </div>
+
+    <!-- Tasks -->
+    <div class="mini-app hidden" id="tasks-app">
+        <div class="mini-app-header">
+            <span>📋 Tasks</span>
+            <button onclick="jarvis.closeMiniApp()">×</button>
+        </div>
+        <div class="task-input-box">
+            <input type="text" id="task-input" placeholder="Add new task...">
+            <button onclick="jarvis.addTask()">+</button>
+        </div>
+        <div class="tasks-list" id="tasks-list">
+            <div class="empty-tasks">No tasks yet</div>
+        </div>
+    </div>
+
+    <!-- Weather -->
+    <div class="mini-app hidden" id="weather-app">
+        <div class="mini-app-header">
+            <span>🌤️ Weather</span>
+            <button onclick="jarvis.closeMiniApp()">×</button>
+        </div>
+        <div class="weather-search">
+            <input type="text" id="weather-city" placeholder="Enter city...">
+            <button onclick="jarvis.getWeather()">Search</button>
+        </div>
+        <div class="weather-display" id="weather-display">
+            <div class="weather-main">
+                <span class="weather-icon">☀️</span>
+                <span class="weather-temp">--°</span>
             </div>
-            <div class="modal-body">
-                <div class="vision-container">
-                    <video id="vision-video" autoplay playsinline muted></video>
-                    <canvas id="vision-canvas"></canvas>
+            <div class="weather-details">
+                <div class="weather-item">
+                    <span>Humidity</span>
+                    <span id="weather-humidity">--%</span>
                 </div>
-                <div class="vision-controls">
-                    <button class="vision-btn" id="btn-snapshot">📷 Snapshot</button>
-                    <button class="vision-btn" id="btn-register-face">👤 Register Face</button>
-                    <button class="vision-btn" id="btn-detect-objects">🔍 Detect Objects</button>
+                <div class="weather-item">
+                    <span>Wind</span>
+                    <span id="weather-wind">-- km/h</span>
+                </div>
+                <div class="weather-item">
+                    <span>Condition</span>
+                    <span id="weather-condition">--</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay hidden" id="settings-modal">
-        <div class="modal settings-modal">
-            <div class="modal-header">
-                <h3>⚙️ System Settings</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="settings-tabs">
-                    <button class="settings-tab active" data-tab="general">General</button>
-                    <button class="settings-tab" data-tab="voice">Voice</button>
-                    <button class="settings-tab" data-tab="ai">AI</button>
-                    <button class="settings-tab" data-tab="language">Language</button>
-                    <button class="settings-tab" data-tab="privacy">Privacy</button>
-                </div>
-                <div class="settings-content" id="settings-content">
-                    <!-- Settings panels loaded dynamically -->
-                </div>
-            </div>
+    <!-- Reminders -->
+    <div class="mini-app hidden" id="reminders-app">
+        <div class="mini-app-header">
+            <span>⏰ Reminders</span>
+            <button onclick="jarvis.closeMiniApp()">×</button>
+        </div>
+        <div class="reminder-input-box">
+            <input type="text" id="reminder-text" placeholder="Reminder text...">
+            <input type="datetime-local" id="reminder-time">
+            <button onclick="jarvis.addReminder()">+</button>
+        </div>
+        <div class="reminders-list" id="reminders-list">
+            <div class="empty-reminders">No reminders set</div>
         </div>
     </div>
 
-    <div class="modal-overlay hidden" id="game-modal">
-        <div class="modal game-modal">
-            <div class="modal-header">
-                <h3 id="game-title">🎮 Game</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body" id="game-container">
-                <!-- Game content loaded dynamically -->
-            </div>
-        </div>
-    </div>
+    <!-- BACKDROP FOR SIDEBARS -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="jarvis.closeAllSidebars()"></div>
 
-    <!-- NOTIFICATIONS -->
-    <div class="notification-center" id="notification-center"></div>
-
-    <!-- TYPING INDICATOR TEMPLATE -->
-    <template id="typing-template">
-        <div class="typing-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </template>
-
-    <!-- SCRIPTS -->
     <script src="core.js"></script>
     <script src="features.js"></script>
     <script src="voice_vision.js"></script>
     <script src="app.js"></script>
-
 </body>
-</html>'''
-
-# Save HTML
-with open('/mnt/kimi/output/jarvis_ultra/index.html', 'w', encoding='utf-8') as f:
-    f.write(html_code)
-
-print("✅ index.html created (Mobile optimized + Hinglish support)")
-print(f"   Size: {len(html_code):,} characters")
+</html>
