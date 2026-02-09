@@ -1,147 +1,138 @@
-// CORE.JS - COMPLETE WORKING VERSION
-(function() {
-    'use strict';
-    
-    console.log('Loading core.js...');
-    
-    // Simple Event Emitter
-    function EventEmitter() {
-        this.events = {};
-    }
-    
-    EventEmitter.prototype.on = function(event, listener) {
-        if (!this.events[event]) this.events[event] = [];
-        this.events[event].push(listener);
-    };
-    
-    EventEmitter.prototype.emit = function(event, data) {
-        if (!this.events[event]) return;
-        for (var i = 0; i < this.events[event].length; i++) {
-            this.events[event][i](data);
+// J.A.R.V.I.S. Core - State Management & Utilities
+
+const JARVIS = {
+    state: {
+        memory: {
+            facts: [],
+            conversations: [],
+            user: { name: 'Unknown', age: '-', location: '-', mood: 'Neutral' },
+            notes: [],
+            tasks: [],
+            reminders: []
+        },
+        settings: {
+            theme: 'jarvis',
+            tts: true,
+            stt: true,
+            autoSpeak: true,
+            apiKeys: {},
+            model: 'deepseek/deepseek-chat'
+        },
+        currentNote: null,
+        isListening: false,
+        synth: window.speechSynthesis,
+        recognition: null
+    },
+
+    init() {
+        console.log('JARVIS Core initializing...');
+        this.loadData();
+        this.updateUI();
+        return this;
+    },
+
+    // Data Persistence
+    saveData() {
+        try {
+            localStorage.setItem('jarvis_memory', JSON.stringify(this.state.memory));
+            localStorage.setItem('jarvis_settings', JSON.stringify(this.state.settings));
+            console.log('Data saved');
+        } catch (e) {
+            console.error('Save failed:', e);
         }
-    };
-    
-    // Memory Manager
-    function MemoryManager(config) {
-        this.config = config || {};
-    }
-    
-    MemoryManager.prototype.initialize = async function() {
-        console.log('Memory initialized');
-        return true;
-    };
-    
-    MemoryManager.prototype.getFact = async function(key) {
-        var val = localStorage.getItem('jarvis_fact_' + key);
-        return val ? JSON.parse(val) : null;
-    };
-    
-    MemoryManager.prototype.setFact = async function(key, value) {
-        localStorage.setItem('jarvis_fact_' + key, JSON.stringify(value));
-    };
-    
-    MemoryManager.prototype.getPreferences = function() {
-        var prefs = localStorage.getItem('jarvis_prefs');
-        return prefs ? JSON.parse(prefs) : {};
-    };
-    
-    MemoryManager.prototype.setPreference = function(key, value) {
-        var prefs = this.getPreferences();
-        prefs[key] = value;
-        localStorage.setItem('jarvis_prefs', JSON.stringify(prefs));
-    };
-    
-    MemoryManager.prototype.getStats = function() {
-        return { facts: 0, preferences: 0, conversations: 0 };
-    };
-    
-    MemoryManager.prototype.save = function() {};
-    
-    // Emotional Core
-    function EmotionalCore(config) {
-        this.config = config || {};
-        this.state = {
-            current: 'neutral',
-            intensity: 0.5,
-            emoji: '😐'
-        };
-    }
-    
-    EmotionalCore.prototype.getState = function() {
-        return this.state;
-    };
-    
-    EmotionalCore.prototype.decay = function() {};
-    
-    // Intent Processor
-    function IntentProcessor(config) {
-        this.config = config || {};
-    }
-    
-    IntentProcessor.prototype.recognize = async function(input, context) {
-        return {
-            intent: 'UNKNOWN',
-            confidence: 0.5,
-            entities: {}
-        };
-    };
-    
-    // Learning Engine
-    function LearningEngine(config) {
-        this.config = config || {};
-    }
-    
-    // Response Generator
-    function ResponseGenerator(config) {
-        this.config = config || {};
-    }
-    
-    ResponseGenerator.prototype.generate = async function(params) {
-        return {
-            text: 'Hello, I am J.A.R.V.I.S. How can I assist you?',
-            metadata: {}
-        };
-    };
-    
-    // Jarvis Brain
-    function JarvisBrain(config) {
-        EventEmitter.call(this);
-        this.config = config;
-    }
-    
-    JarvisBrain.prototype = Object.create(EventEmitter.prototype);
-    JarvisBrain.prototype.constructor = JarvisBrain;
-    
-    JarvisBrain.prototype.process = async function(input, context) {
-        this.emit('status', 'PROCESSING');
+    },
+
+    loadData() {
+        try {
+            const mem = localStorage.getItem('jarvis_memory');
+            const set = localStorage.getItem('jarvis_settings');
+            
+            if (mem) this.state.memory = JSON.parse(mem);
+            if (set) {
+                const parsed = JSON.parse(set);
+                this.state.settings = { ...this.state.settings, ...parsed };
+            }
+            console.log('Data loaded');
+        } catch (e) {
+            console.error('Load failed:', e);
+        }
+    },
+
+    clearAllData() {
+        if (confirm('Clear all data? This cannot be undone.')) {
+            localStorage.removeItem('jarvis_memory');
+            localStorage.removeItem('jarvis_settings');
+            location.reload();
+        }
+    },
+
+    // UI Updates
+    updateUI() {
+        const { user } = this.state.memory;
         
-        // Simple echo for testing
-        var response = {
-            text: 'You said: "' + input + '". I am still learning to process this properly.',
-            metadata: { intent: 'ECHO' }
-        };
+        this.setText('profile-name', user.name);
+        this.setText('profile-age', user.age);
+        this.setText('profile-location', user.location);
+        this.setText('profile-mood', user.mood);
         
-        this.emit('status', 'IDLE');
-        return response;
-    };
-    
-    // Create global object
-    window.JarvisCore = {
-        EventEmitter: EventEmitter,
-        MemoryManager: MemoryManager,
-        EmotionalCore: EmotionalCore,
-        IntentProcessor: IntentProcessor,
-        LearningEngine: LearningEngine,
-        ResponseGenerator: ResponseGenerator,
-        JarvisBrain: JarvisBrain,
+        this.updateMemoryStats();
+    },
+
+    updateMemoryStats() {
+        const { facts, conversations } = this.state.memory;
+        const storage = JSON.stringify(this.state.memory).length;
         
-        createBrain: function(config) { return new JarvisBrain(config); },
-        createMemory: function(config) { return new MemoryManager(config); },
-        createEmotion: function(config) { return new EmotionalCore(config); },
-        createIntent: function(config) { return new IntentProcessor(config); },
-        createLearning: function(config) { return new LearningEngine(config); },
-        createResponse: function(config) { return new ResponseGenerator(config); }
-    };
-    
-    console.log('core.js loaded - JarvisCore:', typeof window.JarvisCore);
-})();
+        this.setText('mem-usage', (storage / 1024).toFixed(1) + ' KB');
+        this.setText('mem-facts', facts.length);
+        this.setText('mem-convos', conversations.length);
+        
+        const percent = Math.min(storage / 5120, 100);
+        this.setText('memory-text', percent.toFixed(0) + '% used');
+        
+        const fill = document.getElementById('memory-fill');
+        if (fill) fill.style.width = percent + '%';
+        
+        this.renderFactsList();
+    },
+
+    renderFactsList() {
+        const list = document.getElementById('facts-list');
+        if (!list) return;
+        
+        const { facts } = this.state.memory;
+        if (facts.length === 0) {
+            list.innerHTML = '<div class="empty-facts">No facts stored yet</div>';
+        } else {
+            list.innerHTML = facts.map(f => 
+                `<div class="fact-item">${this.escapeHtml(f)}</div>`
+            ).join('');
+        }
+    },
+
+    // Utility Functions
+    setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    },
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    get(id) {
+        return document.getElementById(id);
+    },
+
+    hideSplash() {
+        const splash = this.get('splash-screen');
+        const app = this.get('app');
+        if (splash) splash.classList.add('hidden');
+        if (app) app.classList.remove('hidden');
+        console.log('JARVIS ready');
+    }
+};
+
+// Initialize on load
+window.JARVIS = JARVIS;
