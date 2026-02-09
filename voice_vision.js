@@ -1,80 +1,124 @@
-// VOICE_VISION.JS - COMPLETE WORKING VERSION
-(function() {
-    'use strict';
-    
-    console.log('Loading voice_vision.js...');
-    
-    // Voice Controller
-    function VoiceController(config) {
-        this.config = config || {};
-        this.isListening = false;
-    }
-    
-    VoiceController.prototype.start = function(onResult) {
-        this.isListening = true;
-        console.log('Voice started');
+// J.A.R.V.I.S. Voice & Vision - Speech and Camera Functions
+
+JARVIS.Voice = {
+    setup() {
+        const { state } = JARVIS;
         
-        // Simulate voice input after 3 seconds for testing
-        setTimeout(function() {
-            if (onResult) onResult('Hello Jarvis');
-        }, 3000);
-    };
-    
-    VoiceController.prototype.stop = function() {
-        this.isListening = false;
-    };
-    
-    VoiceController.prototype.speak = function(text) {
-        console.log('Speaking:', text);
-        if ('speechSynthesis' in window) {
-            var utter = new SpeechSynthesisUtterance(text);
-            window.speechSynthesis.speak(utter);
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            console.log('Speech recognition not supported');
+            return;
         }
-    };
-    
-    // Wake Word Detector
-    function WakeWordDetector(config) {
-        this.config = config || {};
-    }
-    
-    WakeWordDetector.prototype.start = function(callback) {
-        console.log('Wake word listening...');
-    };
-    
-    WakeWordDetector.prototype.stop = function() {};
-    
-    // Vision System
-    function VisionSystem(config) {
-        this.config = config || {};
-    }
-    
-    VisionSystem.prototype.initialize = async function() {
-        console.log('Vision initialized');
-    };
-    
-    VisionSystem.prototype.start = async function() {
-        console.log('Vision started');
-    };
-    
-    VisionSystem.prototype.stop = function() {};
-    
-    // Create global object
-    window.JarvisVoiceVision = {
-        VoiceController: VoiceController,
-        WakeWordDetector: WakeWordDetector,
-        VisionSystem: VisionSystem,
         
-        voice: null,
-        wakeWord: null,
-        vision: null,
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        state.recognition = new SpeechRecognition();
+        state.recognition.continuous = false;
+        state.recognition.interimResults = false;
+        state.recognition.lang = 'en-US';
         
-        init: function(config) {
-            this.voice = new VoiceController(config.voice);
-            this.wakeWord = new WakeWordDetector(config.wake);
-            this.vision = new VisionSystem(config.vision);
-            console.log('Voice & Vision initialized');
+        state.recognition.onstart = () => {
+            state.isListening = true;
+            JARVIS.get('btn-voice')?.classList.add('active');
+            JARVIS.get('jarvis-avatar')?.classList.add('listening');
+            JARVIS.setText('status-text', 'Listening...');
+        };
+        
+        state.recognition.onend = () => {
+            state.isListening = false;
+            JARVIS.get('btn-voice')?.classList.remove('active');
+            JARVIS.get('jarvis-avatar')?.classList.remove('listening');
+            JARVIS.setText('status-text', 'Tap microphone to speak');
+        };
+        
+        state.recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            const input = JARVIS.get('chat-input');
+            if (input) {
+                input.value = transcript;
+                JARVIS.Chat.send();
+            }
+        };
+        
+        console.log('Voice setup complete');
+    },
+
+    toggle() {
+        const { state } = JARVIS;
+        if (!state.recognition) {
+            alert('Speech recognition not supported');
+            return;
         }
-    };
-    
-    console.log('voice_vision.js loaded - JarvisVoiceVision:', typeof window.JarvisVoiceVision);
-})();
+        
+        if (state.isListening) {
+            state.recognition.stop();
+        } else {
+            state.recognition.start();
+        }
+    },
+
+    speak(text) {
+        const { state } = JARVIS;
+        if (!state.settings.tts || !state.synth) return;
+        
+        state.synth.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1;
+        utterance.pitch = 0.9;
+        
+        const voices = state.synth.getVoices();
+        const voice = voices.find(v => v.lang === 'en-US') || voices[0];
+        if (voice) utterance.voice = voice;
+        
+        const avatar = JARVIS.get('jarvis-avatar');
+        if (avatar) {
+            utterance.onstart = () => avatar.classList.add('speaking');
+            utterance.onend = () => avatar.classList.remove('speaking');
+        }
+        
+        state.synth.speak(utterance);
+    }
+};
+
+JARVIS.Vision = {
+    stream: null,
+
+    async start() {
+        try {
+            this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = JARVIS.get('camera-video');
+            if (video) video.srcObject = this.stream;
+        } catch (e) {
+            alert('Camera access denied');
+            this.close();
+        }
+    },
+
+    close() {
+        const overlay = JARVIS.get('camera-overlay');
+        if (overlay) overlay.classList.add('hidden');
+        
+        const video = JARVIS.get('camera-video');
+        if (video?.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+        }
+        this.stream = null;
+    },
+
+    toggle() {
+        const overlay = JARVIS.get('camera-overlay');
+        if (!overlay) return;
+        
+        if (overlay.classList.contains('hidden')) {
+            overlay.classList.remove('hidden');
+            this.start();
+        } else {
+            this.close();
+        }
+    },
+
+    capture() {
+        JARVIS.Voice.speak('Face captured');
+        this.close();
+    }
+};
