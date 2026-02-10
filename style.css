@@ -1,7 +1,5 @@
-/* styles.css */
-
 /* ============================================
-   J.A.R.V.I.S. STYLESHEET
+   J.A.R.V.I.S. STYLESHEET - FIXED VERSION
    Complete styling for the AI Assistant Interface
    ============================================ */
 
@@ -104,6 +102,8 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 /* Typography */
@@ -532,6 +532,8 @@ a:hover {
     border-right: 1px solid var(--border-color);
     padding: var(--spacing-lg);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .nav-section {
@@ -1179,10 +1181,8 @@ a:hover {
 }
 
 .voice-animation.listening .voice-circle:nth-child(1) { animation-delay: 0s; }
-.voice-animation.listening .voice-circle:nth-child(2) { animation-delay: 0.2s; I'll continue the CSS file and then create all the JavaScript files. Let me complete the styles first:
-
-```css
-/* styles.css continued */
+.voice-animation.listening .voice-circle:nth-child(2) { animation-delay: 0.2s; }
+.voice-animation.listening .voice-circle:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes voice-active {
     0%, 100% { transform: scale(1); opacity: 0.2; }
@@ -1583,6 +1583,22 @@ a:hover {
 .note-editor-actions {
     display: flex;
     gap: var(--spacing-sm);
+}
+
+.btn-secondary {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
 }
 
 /* ============================================
