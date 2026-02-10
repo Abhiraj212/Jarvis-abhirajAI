@@ -1,499 +1,739 @@
-// J.A.R.V.I.S. Features - Mini Apps
+/**
+ * J.A.R.V.I.S. Features Module
+ * Individual app functionality and feature implementations
+ * ============================================
+ */
 
+// Extend JARVIS with Features
 JARVIS.Features = {
-    // App State
-    currentApp: null,
-
-    // Calculator
-    Calculator: {
-        current: '0',
+    // ==========================================
+    // NOTES FEATURE
+    // ==========================================
+    
+    Notes: {
+        currentNote: null,
         
-        open() {
-            this.current = '0';
-            JARVIS.get('calc-display').textContent = '0';
-            JARVIS.get('calc-app')?.classList.remove('hidden');
-            JARVIS.Features.currentApp = 'calculator';
-        },
-
-        handle(val) {
-            const display = JARVIS.get('calc-display');
-            if (!display) return;
-            
-            let current = display.textContent;
-            
-            try {
-                if (val === 'C') {
-                    current = '0';
-                } else if (val === '⌫') {
-                    current = current.length > 1 ? current.slice(0, -1) : '0';
-                } else if (val === '=') {
-                    // Safe evaluation
-                    const clean = current.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
-                    // eslint-disable-next-line no-new-func
-                    const result = Function('"use strict"; return (' + clean + ')')();
-                    current = String(result).slice(0, 12);
-                    if (current === 'Infinity' || current === 'NaN') current = 'Error';
-                } else {
-                    if (current === '0' && '0123456789'.includes(val)) {
-                        current = val;
-                    } else {
-                        current = (current + val).slice(0, 12);
-                    }
-                }
-                
-                display.textContent = current;
-            } catch (e) {
-                display.textContent = 'Error';
-            }
-        }
-    },
-
-    // Notebook
-    Notebook: {
-        open() {
-            JARVIS.get('notebook-app')?.classList.remove('hidden');
-            JARVIS.Features.currentApp = 'notebook';
-            this.render();
-        },
-
-        render() {
-            const list = JARVIS.get('notebook-list');
-            if (!list) return;
-            
-            const { notes } = JARVIS.state.memory;
-            const { currentNote } = JARVIS.state;
-            
-            if (notes.length === 0) {
-                list.innerHTML = '<div class="empty-notes">No notes yet. Tap "+ New" to create one.</div>';
-                return;
-            }
-            
-            list.innerHTML = notes.map((note, i) => 
-                `<div class="note-item ${currentNote === i ? 'active' : ''}" data-index="${i}">
-                    <span>${JARVIS.escapeHtml(note.title || 'Untitled')}</span>
-                    <small>${new Date(note.date).toLocaleDateString()}</small>
-                </div>`
-            ).join('');
-            
-            // Add click handlers
-            list.querySelectorAll('.note-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    JARVIS.state.currentNote = parseInt(item.dataset.index);
-                    this.load(JARVIS.state.currentNote);
-                });
-            });
-        },
-
-        load(index) {
-            const note = JARVIS.state.memory.notes[index];
-            if (!note) return;
-            
-            const title = JARVIS.get('note-title');
-            const content = JARVIS.get('note-content');
-            
-            if (title) title.value = note.title || '';
-            if (content) content.value = note.content || '';
-            
-            this.render();
-        },
-
-        new() {
-            JARVIS.state.currentNote = null;
-            const title = JARVIS.get('note-title');
-            const content = JARVIS.get('note-content');
-            
-            if (title) title.value = '';
-            if (content) content.value = '';
-            
-            title?.focus();
-            this.render();
-        },
-
-        save() {
-            const titleInput = JARVIS.get('note-title');
-            const contentInput = JARVIS.get('note-content');
-            
-            const title = titleInput?.value.trim() || 'Untitled';
-            const content = contentInput?.value || '';
-            
-            if (!content && title === 'Untitled') {
-                JARVIS.showError('Cannot save empty note');
-                return;
-            }
-            
-            const { state } = JARVIS;
-            
-            if (state.currentNote !== null) {
-                state.memory.notes[state.currentNote] = { 
-                    title, 
-                    content, 
-                    date: Date.now() 
-                };
-            } else {
-                state.memory.notes.push({ 
-                    title, 
-                    content, 
-                    date: Date.now() 
-                });
-                state.currentNote = state.memory.notes.length - 1;
-            }
-            
-            JARVIS.saveData();
-            this.render();
-            JARVIS.Voice.speak('Note saved');
-        },
-
-        delete() {
-            const { state } = JARVIS;
-            if (state.currentNote === null) {
-                JARVIS.showError('No note selected');
-                return;
-            }
-            
-            if (!confirm('Delete this note?')) return;
-            
-            state.memory.notes.splice(state.currentNote, 1);
-            state.currentNote = null;
-            
-            const title = JARVIS.get('note-title');
-            const content = JARVIS.get('note-content');
-            
-            if (title) title.value = '';
-            if (content) content.value = '';
-            
-            JARVIS.saveData();
-            this.render();
-            JARVIS.Voice.speak('Note deleted');
-        }
-    },
-
-    // Tasks
-    Tasks: {
-        open() {
-            JARVIS.get('tasks-app')?.classList.remove('hidden');
-            JARVIS.Features.currentApp = 'tasks';
-            this.render();
-        },
-
-        render() {
-            const list = JARVIS.get('tasks-list');
-            if (!list) return;
-            
-            const { tasks } = JARVIS.state.memory;
-            
-            if (tasks.length === 0) {
-                list.innerHTML = '<div class="empty-tasks">No tasks yet. Add one above!</div>';
-                return;
-            }
-            
-            // Sort: incomplete first, then by date
-            const sorted = [...tasks].sort((a, b) => {
-                if (a.completed === b.completed) return b.id - a.id;
-                return a.completed ? 1 : -1;
-            });
-            
-            list.innerHTML = sorted.map(task => 
-                `<div class="task-item ${task.completed ? 'completed' : ''}" data-id="${task.id}">
-                    <input type="checkbox" ${task.completed ? 'checked' : ''}>
-                    <span>${JARVIS.escapeHtml(task.text)}</span>
-                    <button>×</button>
-                </div>`
-            ).join('');
-            
-            // Add handlers
-            list.querySelectorAll('.task-item').forEach(item => {
-                const id = parseInt(item.dataset.id);
-                const checkbox = item.querySelector('input');
-                const deleteBtn = item.querySelector('button');
-                
-                checkbox?.addEventListener('change', () => this.toggle(id));
-                deleteBtn?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.delete(id);
-                });
-            });
-        },
-
-        add() {
-            const input = JARVIS.get('task-input');
-            const text = input?.value.trim();
-            
-            if (!text) {
-                JARVIS.showError('Please enter a task');
-                return;
-            }
-            
-            JARVIS.state.memory.tasks.push({ 
-                text, 
-                completed: false, 
-                id: Date.now() 
-            });
-            
-            if (input) input.value = '';
-            JARVIS.saveData();
-            this.render();
-            
-            // Haptic feedback if available
-            if (navigator.vibrate) navigator.vibrate(50);
-        },
-
-        toggle(id) {
-            const task = JARVIS.state.memory.tasks.find(t => t.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                JARVIS.saveData();
-                this.render();
-                
-                if (task.completed && navigator.vibrate) {
-                    navigator.vibrate([50, 50, 50]);
-                }
-            }
-        },
-
-        delete(id) {
-            JARVIS.state.memory.tasks = JARVIS.state.memory.tasks.filter(t => t.id !== id);
-            JARVIS.saveData();
-            this.render();
-        }
-    },
-
-    // Weather
-    Weather: {
-        open() {
-            JARVIS.get('weather-app')?.classList.remove('hidden');
-            JARVIS.Features.currentApp = 'weather';
-        },
-
-        async get() {
-            const cityInput = JARVIS.get('weather-city');
-            const city = cityInput?.value.trim();
-            
-            if (!city) {
-                JARVIS.showError('Please enter a city name');
-                return;
-            }
-            
-            // Show loading
-            JARVIS.setText('weather-condition', 'Loading...');
-            
-            try {
-                // Using OpenWeatherMap free API (you need to add your key)
-                const apiKey = JARVIS.state.settings.weatherApiKey || '';
-                
-                if (!apiKey) {
-                    // Demo mode
-                    setTimeout(() => {
-                        this.showMockData(city);
-                    }, 800);
-                    return;
-                }
-                
-                const response = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`
-                );
-                
-                if (!response.ok) throw new Error('City not found');
-                
-                const data = await response.json();
-                this.display(data);
-                
-            } catch (e) {
-                console.error('Weather error:', e);
-                // Fallback to mock data for demo
-                this.showMockData(city);
-            }
-        },
-
-        showMockData(city) {
-            const conditions = [
-                { icon: '☀️', temp: 24, humidity: 45, wind: 12, desc: 'Sunny' },
-                { icon: '⛅', temp: 20, humidity: 60, wind: 15, desc: 'Partly Cloudy' },
-                { icon: '☁️', temp: 18, humidity: 70, wind: 10, desc: 'Cloudy' },
-                { icon: '🌧️', temp: 16, humidity: 85, wind: 20, desc: 'Rainy' }
+        createFromCommand(input) {
+            // Extract note content from command
+            const patterns = [
+                /note that (.*)/i,
+                /remember that (.*)/i,
+                /save this: (.*)/i,
+                /write down (.*)/i,
+                /remind me to (.*)/i
             ];
             
-            const mock = conditions[Math.floor(Math.random() * conditions.length)];
+            let content = '';
+            for (const pattern of patterns) {
+                const match = input.match(pattern);
+                if (match) {
+                    content = match[1];
+                    break;
+                }
+            }
             
-            document.querySelector('.weather-icon').textContent = mock.icon;
-            document.querySelector('.weather-temp').textContent = mock.temp + '°';
-            JARVIS.setText('weather-humidity', mock.humidity + '%');
-            JARVIS.setText('weather-wind', mock.wind + ' km/h');
-            JARVIS.setText('weather-condition', mock.desc + ' (Demo)');
+            if (!content) {
+                // If no pattern matched, remove command words and use rest
+                content = input.replace(/\b(note|remember|save|write down|record)\b/gi, '').trim();
+            }
+            
+            if (!content) {
+                return "What would you like me to note down?";
+            }
+            
+            const note = this.create(content);
+            return `I've noted: "${content.substring(0, 50)}${content.length > 50 ? '...' : ''}"`;
         },
-
-        display(data) {
-            const iconMap = {
-                '01d': '☀️', '01n': '🌙',
-                '02d': '⛅', '02n': '☁️',
-                '03d': '☁️', '03n': '☁️',
-                '04d': '☁️', '04n': '☁️',
-                '09d': '🌧️', '09n': '🌧️',
-                '10d': '🌦️', '10n': '🌧️',
-                '11d': '⛈️', '11n': '⛈️',
-                '13d': '❄️', '13n': '❄️',
-                '50d': '🌫️', '50n': '🌫️'
+        
+        create(content, title = null) {
+            if (!content.trim()) return null;
+            
+            const note = {
+                id: JARVIS.generateId(),
+                title: title || content.split('\n')[0].substring(0, 50),
+                content: content,
+                created: Date.now(),
+                updated: Date.now(),
+                tags: [],
+                pinned: false,
+                color: null
             };
             
-            const icon = iconMap[data.weather[0].icon] || '☀️';
+            JARVIS.data.notes.unshift(note);
+            JARVIS.Storage.local.set('notes', JARVIS.data.notes);
             
-            document.querySelector('.weather-icon').textContent = icon;
-            document.querySelector('.weather-temp').textContent = Math.round(data.main.temp) + '°';
-            JARVIS.setText('weather-humidity', data.main.humidity + '%');
-            JARVIS.setText('weather-wind', Math.round(data.wind.speed) + ' km/h');
-            JARVIS.setText('weather-condition', data.weather[0].main);
+            JARVIS.events.emit('notes:create', note);
+            this.updateBadge();
+            
+            return note;
+        },
+        
+        update(id, updates) {
+            const index = JARVIS.data.notes.findIndex(n => n.id === id);
+            if (index === -1) return null;
+            
+            JARVIS.data.notes[index] = {
+                ...JARVIS.data.notes[index],
+                ...updates,
+                updated: Date.now()
+            };
+            
+            JARVIS.Storage.local.set('notes', JARVIS.data.notes);
+            JARVIS.events.emit('notes:update', JARVIS.data.notes[index]);
+            
+            return JARVIS.data.notes[index];
+        },
+        
+        delete(id) {
+            const note = JARVIS.data.notes.find(n => n.id === id);
+            if (!note) return false;
+            
+            JARVIS.data.notes = JARVIS.data.notes.filter(n => n.id !== id);
+            JARVIS.Storage.local.set('notes', JARVIS.data.notes);
+            
+            JARVIS.events.emit('notes:delete', note);
+            this.updateBadge();
+            
+            return true;
+        },
+        
+        search(query) {
+            const lowerQuery = query.toLowerCase();
+            return JARVIS.data.notes.filter(note => 
+                note.title.toLowerCase().includes(lowerQuery) ||
+                note.content.toLowerCase().includes(lowerQuery) ||
+                note.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+            );
+        },
+        
+        render() {
+            const container = document.getElementById('notes-grid');
+            if (!container) return;
+            
+            if (JARVIS.data.notes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <p>No notes yet. Create your first note!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = JARVIS.data.notes.map(note => `
+                <div class="note-card" data-id="${note.id}" onclick="JARVIS.Features.Notes.openEditor('${note.id}')">
+                    <div class="note-title">${this.escapeHtml(note.title)}</div>
+                    <div class="note-preview">${this.escapeHtml(note.content)}</div>
+                    <div class="note-meta">
+                        <span>${new Date(note.updated).toLocaleDateString()}</span>
+                        <div class="note-actions" onclick="event.stopPropagation()">
+                            <button class="note-action-btn" onclick="JARVIS.Features.Notes.delete('${note.id}')" title="Delete">
+                                <svg viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        },
+        
+        openEditor(noteId = null) {
+            this.currentNote = noteId ? JARVIS.data.notes.find(n => n.id === noteId) : null;
+            
+            // Create modal if not exists
+            let modal = document.getElementById('note-editor-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'note-editor-modal';
+                modal.className = 'note-editor-overlay';
+                modal.innerHTML = `
+                    <div class="note-editor">
+                        <div class="note-editor-header">
+                            <input type="text" class="note-editor-title" placeholder="Note title...">
+                            <button class="modal-close" onclick="JARVIS.Features.Notes.closeEditor()">×</button>
+                        </div>
+                        <div class="note-editor-body">
+                            <textarea class="note-editor-content" placeholder="Start typing..."></textarea>
+                        </div>
+                        <div class="note-editor-footer">
+                            <span class="last-saved"></span>
+                            <div class="note-editor-actions">
+                                <button class="btn-secondary" onclick="JARVIS.Features.Notes.closeEditor()">Cancel</button>
+                                <button class="btn-primary" onclick="JARVIS.Features.Notes.saveFromEditor()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            
+            // Populate fields
+            const titleInput = modal.querySelector('.note-editor-title');
+            const contentInput = modal.querySelector('.note-editor-content');
+            
+            if (this.currentNote) {
+                titleInput.value = this.currentNote.title;
+                contentInput.value = this.currentNote.content;
+            } else {
+                titleInput.value = '';
+                contentInput.value = '';
+            }
+            
+            // Show modal
+            modal.classList.add('active');
+            contentInput.focus();
+            
+            // Auto-resize textarea
+            contentInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        },
+        
+        closeEditor() {
+            const modal = document.getElementById('note-editor-modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+            this.currentNote = null;
+        },
+        
+        saveFromEditor() {
+            const modal = document.getElementById('note-editor-modal');
+            const title = modal.querySelector('.note-editor-title').value;
+            const content = modal.querySelector('.note-editor-content').value;
+            
+            if (!content.trim()) {
+                JARVIS.notify('Note cannot be empty', 'warning');
+                return;
+            }
+            
+            if (this.currentNote) {
+                this.update(this.currentNote.id, { title, content });
+                JARVIS.notify('Note updated', 'success');
+            } else {
+                this.create(content, title);
+                JARVIS.notify('Note created', 'success');
+            }
+            
+            this.closeEditor();
+            this.render();
+        },
+        
+        updateBadge() {
+            const badge = document.getElementById('notes-badge');
+            if (badge) {
+                badge.textContent = JARVIS.data.notes.length;
+                badge.style.display = JARVIS.data.notes.length > 0 ? 'block' : 'none';
+            }
+        },
+        
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
     },
-
-    // Reminders
+    
+    // ==========================================
+    // REMINDERS FEATURE
+    // ==========================================
+    
     Reminders: {
-        open() {
-            JARVIS.get('reminders-app')?.classList.remove('hidden');
-            JARVIS.Features.currentApp = 'reminders';
-            this.render();
-            this.checkDue();
-        },
-
-        render() {
-            const list = JARVIS.get('reminders-list');
-            if (!list) return;
+        checkInterval: null,
+        
+        createFromCommand(input) {
+            // Parse reminder from natural language
+            const patterns = [
+                /remind me to (.*?) (?:at|on|in) (.*)/i,
+                /remind me (?:at|on|in) (.*?) to (.*)/i,
+                /remind me (?:that|about) (.*?) (?:at|on|in) (.*)/i
+            ];
             
-            const { reminders } = JARVIS.state.memory;
+            let task = '';
+            let timeStr = '';
             
-            if (reminders.length === 0) {
-                list.innerHTML = '<div class="empty-reminders">No reminders set</div>';
-                return;
+            for (const pattern of patterns) {
+                const match = input.match(pattern);
+                if (match) {
+                    task = match[1];
+                    timeStr = match[2];
+                    break;
+                }
             }
             
-            const now = Date.now();
+            if (!task || !timeStr) {
+                return "I couldn't understand the reminder. Try saying: 'Remind me to [task] at [time]'";
+            }
             
-            // Sort by time
-            const sorted = [...reminders].sort((a, b) => a.time - b.time);
+            const dueDate = this.parseTime(timeStr);
+            if (!dueDate) {
+                return "I couldn't understand the time format. Try something like '3 PM' or 'in 30 minutes'.";
+            }
             
-            list.innerHTML = sorted.map(r => {
-                const isOverdue = r.time < now;
-                const isDueSoon = !isOverdue && (r.time - now < 3600000); // 1 hour
-                const timeStr = new Date(r.time).toLocaleString();
+            const reminder = this.create(task, dueDate);
+            return `Reminder set for ${dueDate.toLocaleString()}: "${task}"`;
+        },
+        
+        parseTime(timeStr) {
+            const now = new Date();
+            const lower = timeStr.toLowerCase();
+            
+            // Handle "in X minutes/hours"
+            const inMatch = lower.match(/in (\d+) (minute|hour|day)s?/);
+            if (inMatch) {
+                const amount = parseInt(inMatch[1]);
+                const unit = inMatch[2];
+                const date = new Date(now);
                 
-                return `<div class="reminder-item ${isOverdue ? 'overdue' : ''} ${isDueSoon ? 'due-soon' : ''}" data-id="${r.id}">
-                    <div class="reminder-content">
-                        <div class="reminder-text">${JARVIS.escapeHtml(r.text)}</div>
-                        <div class="reminder-time">${timeStr}</div>
-                    </div>
-                    <button>×</button>
-                </div>`;
-            }).join('');
+                if (unit === 'minute') date.setMinutes(date.getMinutes() + amount);
+                if (unit === 'hour') date.setHours(date.getHours() + amount);
+                if (unit === 'day') date.setDate(date.getDate() + amount);
+                
+                return date;
+            }
             
-            // Add handlers
-            list.querySelectorAll('.reminder-item button').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const id = parseInt(btn.closest('.reminder-item').dataset.id);
-                    this.delete(id);
-                });
-            });
+            // Handle specific times like "3 PM", "15:30"
+            const timeMatch = lower.match(/(\d{1,2}):?(\d{2})?\s*(am|pm)?/);
+            if (timeMatch) {
+                let hours = parseInt(timeMatch[1]);
+                const minutes = parseInt(timeMatch[2]) || 0;
+                const period = timeMatch[3];
+                
+                if (period === 'pm' && hours < 12) hours += 12;
+                if (period === 'am' && hours === 12) hours = 0;
+                
+                const date = new Date(now);
+                date.setHours(hours, minutes, 0, 0);
+                
+                // If time has passed, set for tomorrow
+                if (date < now) {
+                    date.setDate(date.getDate() + 1);
+                }
+                
+                return date;
+            }
+            
+            // Try standard Date parsing
+            const parsed = Date.parse(timeStr);
+            if (!isNaN(parsed)) {
+                return new Date(parsed);
+            }
+            
+            return null;
         },
-
-        add() {
-            const textInput = JARVIS.get('reminder-text');
-            const timeInput = JARVIS.get('reminder-time');
+        
+        create(task, dueDate, priority = 'normal') {
+            const reminder = {
+                id: JARVIS.generateId(),
+                task: task,
+                due: dueDate.getTime(),
+                priority,
+                completed: false,
+                created: Date.now(),
+                notified: false
+            };
             
-            const text = textInput?.value.trim();
-            const timeVal = timeInput?.value;
+            JARVIS.data.reminders.push(reminder);
+            JARVIS.Storage.local.set('reminders', JARVIS.data.reminders);
             
-            if (!text) {
-                JARVIS.showError('Please enter reminder text');
-                return;
-            }
+            JARVIS.events.emit('reminders:create', reminder);
+            this.updateBadge();
+            this.scheduleCheck();
             
-            if (!timeVal) {
-                JARVIS.showError('Please select a time');
-                return;
-            }
+            return reminder;
+        },
+        
+        complete(id) {
+            const reminder = JARVIS.data.reminders.find(r => r.id === id);
+            if (!reminder) return false;
             
-            const time = new Date(timeVal).getTime();
+            reminder.completed = !reminder.completed;
+            JARVIS.Storage.local.set('reminders', JARVIS.data.reminders);
             
-            if (time < Date.now()) {
-                JARVIS.showError('Cannot set reminder in the past');
-                return;
-            }
-            
-            JARVIS.state.memory.reminders.push({ 
-                text, 
-                time, 
-                id: Date.now() 
-            });
-            
-            if (textInput) textInput.value = '';
-            if (timeInput) timeInput.value = '';
-            
-            JARVIS.saveData();
+            JARVIS.events.emit('reminders:complete', reminder);
             this.render();
-            JARVIS.Voice.speak('Reminder set');
             
-            // Schedule notification if supported
-            this.scheduleNotification(text, time);
+            return true;
         },
-
+        
         delete(id) {
-            JARVIS.state.memory.reminders = JARVIS.state.memory.reminders.filter(r => r.id !== id);
-            JARVIS.saveData();
+            JARVIS.data.reminders = JARVIS.data.reminders.filter(r => r.id !== id);
+            JARVIS.Storage.local.set('reminders', JARVIS.data.reminders);
+            
+            JARVIS.events.emit('reminders:delete', { id });
+            this.updateBadge();
             this.render();
+            
+            return true;
         },
-
+        
         checkDue() {
-            // Check for due reminders
             const now = Date.now();
-            const due = JARVIS.state.memory.reminders.filter(r => 
-                !r.notified && r.time <= now
+            const due = JARVIS.data.reminders.filter(r => 
+                !r.completed && 
+                !r.notified && 
+                r.due <= now
             );
             
-            due.forEach(r => {
-                r.notified = true;
-                JARVIS.Voice.speak(`Reminder: ${r.text}`);
+            due.forEach(reminder => {
+                // Show notification
+                JARVIS.notify(`Reminder: ${reminder.task}`, 'warning', 10000);
+                
+                // Speak if voice enabled
+                JARVIS.Voice.speak(`Reminder: ${reminder.task}`);
+                
+                // Mark as notified
+                reminder.notified = true;
             });
             
             if (due.length > 0) {
-                JARVIS.saveData();
+                JARVIS.Storage.local.set('reminders', JARVIS.data.reminders);
                 this.render();
             }
         },
-
-        scheduleNotification(text, time) {
-            // Simple notification using setTimeout (limited when page is backgrounded)
-            const delay = time - Date.now();
-            if (delay > 0 && delay < 86400000) { // Max 24 hours
-                setTimeout(() => {
-                    JARVIS.Voice.speak(`Reminder: ${text}`);
-                    this.render();
-                }, delay);
+        
+        scheduleCheck() {
+            // Check every minute
+            if (this.checkInterval) {
+                clearInterval(this.checkInterval);
             }
+            
+            this.checkInterval = setInterval(() => this.checkDue(), 60000);
+        },
+        
+        render() {
+            const container = document.getElementById('reminders-list');
+            if (!container) return;
+            
+            const sorted = JARVIS.data.reminders
+                .filter(r => !r.completed)
+                .sort((a, b) => a.due - b.due);
+            
+            if (sorted.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No active reminders. Create one!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = sorted.map(r => {
+                const due = new Date(r.due);
+                const isOverdue = due < new Date();
+                const timeStr = due.toLocaleString();
+                
+                return `
+                    <div class="reminder-item" data-id="${r.id}">
+                        <div class="reminder-checkbox ${r.completed ? 'checked' : ''}" 
+                             onclick="JARVIS.Features.Reminders.complete('${r.id}')"></div>
+                        <div class="reminder-content">
+                            <div class="reminder-text">${this.escapeHtml(r.task)}</div>
+                            <div class="reminder-time ${isOverdue ? 'overdue' : ''}">
+                                ${isOverdue ? '⚠️ Overdue: ' : '🕐 '}${timeStr}
+                            </div>
+                        </div>
+                        <button class="reminder-delete" onclick="JARVIS.Features.Reminders.delete('${r.id}')" title="Delete">
+                            ×
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        },
+        
+        updateBadge() {
+            const active = JARVIS.data.reminders.filter(r => !r.completed).length;
+            const badge = document.getElementById('reminders-badge');
+            if (badge) {
+                badge.textContent = active;
+                badge.style.display = active > 0 ? 'block' : 'none';
+            }
+        },
+        
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
     },
-
-    // App Drawer
-    toggleApps() {
-        JARVIS.get('apps-drawer')?.classList.toggle('hidden');
-    },
-
-    closeMiniApp() {
-        document.querySelectorAll('.mini-app').forEach(app => {
-            app.classList.add('hidden');
-        });
-        JARVIS.Features.currentApp = null;
-    },
-
-    openApp(appName) {
-        this.toggleApps();
+    
+    // ==========================================
+    // CALCULATOR FEATURE
+    // ==========================================
+    
+    Calculator: {
+        currentInput: '0',
+        previousInput: '',
+        operation: null,
+        resetNext: false,
         
-        switch(appName) {
-            case 'calculator': this.Calculator.open(); break;
-            case 'notebook': this.Notebook.open(); break;
-            case 'tasks': this.Tasks.open(); break;
-            case 'weather': this.Weather.open(); break;
-            case 'reminders': this.Reminders.open(); break;
-            case 'game': 
-                alert('🎮 Quiz Game\n\nComing in next update!\n\nTest your knowledge with AI-generated questions.'); 
-                break;
+        init() {
+            this.bindEvents();
+        },
+        
+        bindEvents() {
+            document.querySelectorAll('.calc-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const value = e.target.dataset.value;
+                    const action = e.target.dataset.action;
+                    
+                    if (value !== undefined) {
+                        this.appendNumber(value);
+                    } else if (action) {
+                        this.performAction(action);
+                    }
+                });
+            });
+        },
+        
+        appendNumber(num) {
+            if (this.resetNext) {
+                this.currentInput = '';
+                this.resetNext = false;
+            }
+            
+            if (num === '.' && this.currentInput.includes('.')) return;
+            if (this.currentInput === '0' && num !== '.') {
+                this.currentInput = num;
+            } else {
+                this.currentInput += num;
+            }
+            
+            this.updateDisplay();
+        },
+        
+        performAction(action) {
+            switch(action) {
+                case 'clear':
+                    this.currentInput = '0';
+                    this.previousInput = '';
+                    this.operation = null;
+                    break;
+                case 'delete':
+                    this.currentInput = this.currentInput.slice(0, -1) || '0';
+                    break;
+                case 'percent':
+                    this.currentInput = String(parseFloat(this.currentInput) / 100);
+                    break;
+                case 'divide':
+                case 'multiply':
+                case 'subtract':
+                case 'add':
+                    this.setOperation(action);
+                    break;
+                case 'equals':
+                    this.calculate();
+                    break;
+            }
+            
+            this.updateDisplay();
+        },
+        
+        setOperation(op) {
+            if (this.operation !== null) {
+                this.calculate();
+            }
+            
+            this.previousInput = this.currentInput;
+            this.operation = op;
+            this.resetNext = true;
+        },
+        
+        calculate() {
+            if (!this.operation || !this.previousInput) return;
+            
+            const prev = parseFloat(this.previousInput);
+            const current = parseFloat(this.currentInput);
+            let result;
+            
+            switch(this.operation) {
+                case 'add': result = prev + current; break;
+                case 'subtract': result = prev - current; break;
+                case 'multiply': result = prev * current; break;
+                case 'divide': result = current !== 0 ? prev / current : 'Error'; break;
+                default: return;
+            }
+            
+            this.currentInput = String(result);
+            this.operation = null;
+            this.previousInput = '';
+            this.resetNext = true;
+        },
+        
+        updateDisplay() {
+            const inputEl = document.getElementById('calc-input');
+            const historyEl = document.getElementById('calc-history');
+            
+            if (inputEl) inputEl.textContent = this.currentInput;
+            if (historyEl) {
+                historyEl.textContent = this.operation ? 
+                    `${this.previousInput} ${this.getOperatorSymbol(this.operation)}` : '';
+            }
+        },
+        
+        getOperatorSymbol(op) {
+            const symbols = {
+                add: '+',
+                subtract: '−',
+                multiply: '×',
+                divide: '÷'
+            };
+            return symbols[op] || '';
+        }
+    },
+    
+    // ==========================================
+    // WEATHER FEATURE
+    // ==========================================
+    
+    Weather: {
+        currentLocation: null,
+        currentData: null,
+        
+        async fetchWeather(location = null) {
+            if (!JARVIS_CONFIG.APIS.WEATHER.ENABLED) {
+                JARVIS.notify('Weather API not configured', 'warning');
+                return null;
+            }
+            
+            const city = location || JARVIS_CONFIG.APIS.WEATHER.DEFAULT_CITY;
+            const { KEY, ENDPOINT, UNITS } = JARVIS_CONFIG.APIS.WEATHER;
+            
+            try {
+                const response = await fetch(
+                    `${ENDPOINT}/weather?q=${encodeURIComponent(city)}&appid=${KEY}&units=${UNITS}`
+                );
+                
+                if (!response.ok) throw new Error('Weather fetch failed');
+                
+                const data = await response.json();
+                this.currentData = data;
+                this.currentLocation = city;
+                
+                JARVIS.events.emit('weather:update', data);
+                return data;
+                
+            } catch (error) {
+                console.error('Weather error:', error);
+                JARVIS.notify('Failed to fetch weather', 'error');
+                return null;
+            }
+        },
+        
+        async fetchForecast(location = null) {
+            if (!JARVIS_CONFIG.APIS.WEATHER.ENABLED) return null;
+            
+            const city = location || this.currentLocation || JARVIS_CONFIG.APIS.WEATHER.DEFAULT_CITY;
+            const { KEY, ENDPOINT, UNITS } = JARVIS_CONFIG.APIS.WEATHER;
+            
+            try {
+                const response = await fetch(
+                    `${ENDPOINT}/forecast?q=${encodeURIComponent(city)}&appid=${KEY}&units=${UNITS}`
+                );
+                
+                if (!response.ok) throw new Error('Forecast fetch failed');
+                
+                const data = await response.json();
+                return data;
+                
+            } catch (error) {
+                console.error('Forecast error:', error);
+                return null;
+            }
+        },
+        
+        renderWeather(data) {
+            if (!data) return;
+            
+            const temp = Math.round(data.main.temp);
+            const description = data.weather[0].description;
+            const icon = this.getWeatherIcon(data.weather[0].id);
+            
+            // Update dashboard
+            const tempEl = document.getElementById('weather-temp');
+            const descEl = document.getElementById('weather-desc');
+            const iconEl = document.getElementById('weather-icon');
+            const locEl = document.getElementById('weather-location');
+            const humEl = document.getElementById('weather-humidity');
+            const windEl = document.getElementById('weather-wind');
+            
+            if (tempEl) tempEl.textContent = `${temp}°`;
+            if (descEl) descEl.textContent = description;
+            if (iconEl) iconEl.textContent = icon;
+            if (locEl) locEl.textContent = data.name;
+            if (humEl) humEl.textContent = `${data.main.humidity}%`;
+            if (windEl) windEl.textContent = `${Math.round(data.wind.speed)} mph`;
+        },
+        
+        getWeatherIcon(code) {
+            // Weather condition codes from OpenWeatherMap
+            if (code >= 200 && code < 300) return '⛈️'; // Thunderstorm
+            if (code >= 300 && code < 400) return '🌦️'; // Drizzle
+            if (code >= 500 && code < 600) return '🌧️'; // Rain
+            if (code >= 600 && code < 700) return '❄️'; // Snow
+            if (code >= 700 && code < 800) return '🌫️'; // Atmosphere
+            if (code === 800) return '☀️'; // Clear
+            if (code === 801) return '🌤️'; // Few clouds
+            if (code === 802) return '⛅'; // Scattered clouds
+            if (code === 803 || code === 804) return '☁️'; // Clouds
+            return '🌡️';
+        }
+    },
+    
+    // ==========================================
+    // SEARCH FEATURE
+    // ==========================================
+    
+    Search: {
+        async perform(query, type = 'web') {
+            if (!JARVIS_CONFIG.APIS.SEARCH.ENABLED) {
+                // Fallback to browser search
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+                return;
+            }
+            
+            // Implement API search if configured
+            JARVIS.notify('Searching...', 'info');
+        }
+    },
+    
+    // ==========================================
+    // CALENDAR FEATURE
+    // ==========================================
+    
+    Calendar: {
+        async init() {
+            if (!JARVIS_CONFIG.APIS.CALENDAR.ENABLED) return;
+            
+            // Initialize Google Calendar API
+            // This requires additional OAuth setup
+        },
+        
+        async fetchEvents() {
+            // Fetch events from calendar API
+        },
+        
+        async createEvent(event) {
+            // Create calendar event
         }
     }
 };
+
+// Initialize features when ready
+JARVIS.events.on('system:ready', () => {
+    // Initialize calculator
+    JARVIS.Features.Calculator.init();
+    
+    // Start reminder checking
+    JARVIS.Features.Reminders.scheduleCheck();
+    
+    // Update badges
+    JARVIS.Features.Notes.updateBadge();
+    JARVIS.Features.Reminders.updateBadge();
+    
+    // Fetch weather if enabled
+    if (JARVIS_CONFIG.APIS.WEATHER.ENABLED) {
+        JARVIS.Features.Weather.fetchWeather().then(data => {
+            JARVIS.Features.Weather.renderWeather(data);
+        });
+    }
+});
