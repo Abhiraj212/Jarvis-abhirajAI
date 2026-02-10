@@ -1,388 +1,570 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>J.A.R.V.I.S. AI</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="J.A.R.V.I.S. - Just A Rather Very Intelligent System">
+    <meta name="theme-color" content="#0a0e27">
+    <title>J.A.R.V.I.S. | Personal AI Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-
-    <!-- SPLASH SCREEN -->
-    <div id="splash-screen">
+<body class="dark-theme">
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
         <div class="splash-content">
-            <div class="splash-logo">J</div>
-            <div class="splash-text">J.A.R.V.I.S.</div>
-            <div class="splash-loading">
-                <div class="splash-bar"></div>
+            <div class="logo-container">
+                <div class="hexagon-loader">
+                    <div class="hexagon"></div>
+                    <div class="hexagon"></div>
+                    <div class="hexagon"></div>
+                </div>
+                <h1 class="splash-title">J.A.R.V.I.S.</h1>
+                <p class="splash-subtitle">Just A Rather Very Intelligent System</p>
             </div>
-            <div class="splash-status" id="splash-status">Initializing...</div>
+            <div class="loading-bar-container">
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <div class="loading-text">Initializing Systems...</div>
+                <div class="loading-status" id="loading-status">Loading core modules</div>
+            </div>
+            <div class="system-checks" id="system-checks">
+                <div class="check-item" data-check="neural">Neural Network</div>
+                <div class="check-item" data-check="voice">Voice Synthesis</div>
+                <div class="check-item" data-check="memory">Memory Banks</div>
+                <div class="check-item" data-check="security">Security Protocols</div>
+            </div>
+        </div>
+        <div class="splash-background">
+            <div class="grid-overlay"></div>
+            <div class="particles" id="particles"></div>
         </div>
     </div>
 
-    <!-- MAIN APP -->
-    <div id="app" class="hidden">
-        
-        <!-- TOP BAR -->
-        <header class="top-bar">
-            <button class="menu-btn" id="btn-left-menu" aria-label="Memory">☰</button>
-            <div class="logo-mini">J.A.R.V.I.S.</div>
-            <button class="menu-btn" id="btn-right-menu" aria-label="Settings">⚙️</button>
+    <!-- Main Application -->
+    <div id="app" class="app hidden">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <div class="logo-small">
+                    <div class="logo-icon">J</div>
+                    <span class="logo-text">A.R.V.I.S.</span>
+                </div>
+                <div class="system-status">
+                    <div class="status-indicator online" id="system-status"></div>
+                    <span class="status-text">Online</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="time-display" id="header-time">00:00:00</div>
+                <div class="date-display" id="header-date">Loading...</div>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" id="theme-toggle" title="Toggle Theme">
+                    <svg viewBox="0 0 24 24" class="icon"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </button>
+                <button class="icon-btn" id="settings-btn" title="Settings">
+                    <svg viewBox="0 0 24 24" class="icon"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </button>
+                <div class="user-avatar" id="user-avatar">
+                    <span>U</span>
+                </div>
+            </div>
         </header>
 
-        <!-- LEFT SIDEBAR (MEMORY) -->
-        <aside class="sidebar left" id="sidebar-left">
-            <div class="sidebar-header">
-                <h3>🧠 Memory Core</h3>
-                <button class="close-sidebar" id="btn-close-left" aria-label="Close">×</button>
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="nav-section">
+                <div class="nav-title">Main</div>
+                <button class="nav-item active" data-app="dashboard" title="Dashboard">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-app="assistant" title="AI Assistant">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span>Assistant</span>
+                </button>
+                <button class="nav-item" data-app="voice" title="Voice Command">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                    <span>Voice</span>
+                </button>
             </div>
             
-            <div class="memory-stats-real">
-                <div class="stat-card">
-                    <div class="stat-value" id="mem-usage">0 KB</div>
-                    <div class="stat-label">Storage</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="mem-facts">0</div>
-                    <div class="stat-label">Facts</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="mem-convos">0</div>
-                    <div class="stat-label">Chats</div>
-                </div>
+            <div class="nav-section">
+                <div class="nav-title">Productivity</div>
+                <button class="nav-item" data-app="notes" title="Notes">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    <span>Notes</span>
+                    <span class="badge" id="notes-badge">0</span>
+                </button>
+                <button class="nav-item" data-app="reminders" title="Reminders">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    <span>Reminders</span>
+                    <span class="badge" id="reminders-badge">0</span>
+                </button>
+                <button class="nav-item" data-app="calendar" title="Calendar">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Calendar</span>
+                </button>
+                <button class="nav-item" data-app="calculator" title="Calculator">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    <span>Calculator</span>
+                </button>
             </div>
-
-            <div class="memory-visual">
-                <div class="brain-visual">
-                    <div class="brain-node" style="--delay:0s"></div>
-                    <div class="brain-node" style="--delay:0.2s"></div>
-                    <div class="brain-node" style="--delay:0.4s"></div>
-                    <div class="brain-node" style="--delay:0.6s"></div>
-                </div>
-                <div class="memory-bar">
-                    <div class="memory-fill" id="memory-fill"></div>
-                </div>
-                <div class="memory-text" id="memory-text">0% used</div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Information</div>
+                <button class="nav-item" data-app="weather" title="Weather">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+                    <span>Weather</span>
+                </button>
+                <button class="nav-item" data-app="news" title="News">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                    <span>News</span>
+                </button>
+                <button class="nav-item" data-app="search" title="Web Search">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <span>Search</span>
+                </button>
             </div>
-
-            <div class="user-profile-section">
-                <h4>👤 User Profile</h4>
-                <div class="profile-item">
-                    <span>Name:</span>
-                    <span id="profile-name">Unknown</span>
-                </div>
-                <div class="profile-item">
-                    <span>Age:</span>
-                    <span id="profile-age">-</span>
-                </div>
-                <div class="profile-item">
-                    <span>Location:</span>
-                    <span id="profile-location">-</span>
-                </div>
-                <div class="profile-item">
-                    <span>Mood:</span>
-                    <span id="profile-mood">Neutral</span>
-                </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">System</div>
+                <button class="nav-item" data-app="memory" title="Memory Banks">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                    <span>Memory</span>
+                </button>
+                <button class="nav-item" data-app="settings" title="Settings">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span>Settings</span>
+                </button>
             </div>
+        </nav>
 
-            <div class="stored-facts">
-                <h4>💾 Stored Facts</h4>
-                <div id="facts-list" class="facts-scroll">
-                    <div class="empty-facts">No facts stored yet</div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- MAIN CHAT AREA -->
-        <main class="chat-area">
-            <div class="avatar-section">
-                <div class="jarvis-avatar" id="jarvis-avatar">
-                    <div class="avatar-face">
-                        <div class="eye left"></div>
-                        <div class="eye right"></div>
-                        <div class="mouth"></div>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <section id="app-dashboard" class="app-section active">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card welcome-card">
+                        <div class="card-header">
+                            <h2>Welcome Back, <span id="user-name">Sir</span></h2>
+                            <p class="subtitle" id="greeting-text">Good evening</p>
+                        </div>
+                        <div class="quick-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="total-notes">0</div>
+                                <div class="stat-label">Notes</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="total-reminders">0</div>
+                                <div class="stat-label">Reminders</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="system-uptime">00:00</div>
+                                <div class="stat-label">Uptime</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="avatar-ring ring-1"></div>
-                    <div class="avatar-ring ring-2"></div>
-                    <div class="avatar-ring ring-3"></div>
-                    <div class="sound-waves" id="sound-waves"></div>
-                </div>
-                <div class="status-text" id="status-text">Tap microphone to speak</div>
-            </div>
-
-            <div class="messages-container" id="messages-container">
-                <div class="welcome-msg">
-                    <h2>Hello, I'm J.A.R.V.I.S.</h2>
-                    <p>Your personal AI assistant. I remember everything you tell me.</p>
-                    <div class="quick-chips">
-                        <button class="chip-btn" data-message="What can you do?">What can you do?</button>
-                        <button class="chip-btn" data-message="Remember my name is Tony">Set my name</button>
-                        <button class="chip-btn" data-action="openCalculator">Calculator</button>
-                        <button class="chip-btn" data-action="openNotebook">Notebook</button>
+                    
+                    <div class="dashboard-card voice-card">
+                        <div class="voice-visualizer" id="voice-visualizer">
+                            <div class="voice-ring"></div>
+                            <div class="voice-ring"></div>
+                            <div class="voice-ring"></div>
+                            <button class="voice-btn-large" id="dashboard-voice-btn">
+                                <svg viewBox="0 0 24 24"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                            </button>
+                        </div>
+                        <p class="voice-hint">Tap to speak</p>
+                    </div>
+                    
+                    <div class="dashboard-card weather-card">
+                        <div class="weather-header">
+                            <div class="weather-location" id="weather-location">New York, NY</div>
+                            <div class="weather-time" id="weather-time">Now</div>
+                        </div>
+                        <div class="weather-main">
+                            <div class="weather-temp" id="weather-temp">--°</div>
+                            <div class="weather-icon" id="weather-icon">☁️</div>
+                        </div>
+                        <div class="weather-desc" id="weather-desc">Loading...</div>
+                        <div class="weather-details">
+                            <div class="detail">
+                                <span class="label">Humidity</span>
+                                <span class="value" id="weather-humidity">--%</span>
+                            </div>
+                            <div class="detail">
+                                <span class="label">Wind</span>
+                                <span class="value" id="weather-wind">-- mph</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list" id="activity-list">
+                            <div class="empty-state">No recent activity</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card quick-actions">
+                        <h3>Quick Actions</h3>
+                        <div class="action-grid">
+                            <button class="action-btn" data-action="note">
+                                <svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                <span>New Note</span>
+                            </button>
+                            <button class="action-btn" data-action="reminder">
+                                <svg viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                <span>Reminder</span>
+                            </button>
+                            <button class="action-btn" data-action="calculate">
+                                <svg viewBox="0 0 24 24"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                <span>Calculate</span>
+                            </button>
+                            <button class="action-btn" data-action="search">
+                                <svg viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <span>Search</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="input-section">
-                <div class="input-box">
-                    <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off" enterkeyhint="send">
-                    <button class="send-btn" id="btn-send" aria-label="Send">➤</button>
+            <!-- Assistant View -->
+            <section id="app-assistant" class="app-section">
+                <div class="assistant-container">
+                    <div class="chat-header">
+                        <div class="ai-avatar">
+                            <div class="avatar-ring"></div>
+                            <span>J</span>
+                        </div>
+                        <div class="ai-info">
+                            <h2>J.A.R.V.I.S.</h2>
+                            <span class="status">Online • Ready to assist</span>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="icon-btn" id="clear-chat" title="Clear conversation">
+                                <svg viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                            <button class="icon-btn" id="export-chat" title="Export conversation">
+                                <svg viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message system-message">
+                            <div class="message-content">
+                                <p>Hello! I'm J.A.R.V.I.S., your personal AI assistant. I can help you with notes, reminders, calculations, weather, and general questions. How may I assist you today?</p>
+                                <span class="message-time">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="input-wrapper">
+                            <button class="input-action-btn" id="attach-btn" title="Attach file">
+                                <svg viewBox="0 0 24 24"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                            </button>
+                            <textarea id="chat-input" placeholder="Type your message..." rows="1"></textarea>
+                            <button class="input-action-btn" id="emoji-btn" title="Add emoji">
+                                <svg viewBox="0 0 24 24"><path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </button>
+                            <button class="send-btn" id="send-message">
+                                <svg viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            </button>
+                        </div>
+                        <div class="input-hints">
+                            <span>Press <kbd>Enter</kbd> to send</span>
+                            <span>•</span>
+                            <span><kbd>Shift</kbd> + <kbd>Enter</kbd> for new line</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="input-actions">
-                    <button class="action-btn" id="btn-voice" aria-label="Voice">🎤</button>
-                    <button class="action-btn" id="btn-camera" aria-label="Camera">📷</button>
-                    <button class="action-btn" id="btn-apps" aria-label="Apps">📱</button>
+            </section>
+
+            <!-- Voice Interface -->
+            <section id="app-voice" class="app-section">
+                <div class="voice-interface">
+                    <div class="voice-status" id="voice-status">Tap microphone to start</div>
+                    <div class="voice-animation" id="voice-animation">
+                        <div class="voice-circle"></div>
+                        <div class="voice-circle"></div>
+                        <div class="voice-circle"></div>
+                        <button class="main-mic-btn" id="main-mic-btn">
+                            <svg viewBox="0 0 24 24"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                        </button>
+                    </div>
+                    <div class="voice-commands">
+                        <h3>Try saying:</h3>
+                        <div class="command-chips">
+                            <span class="chip">"What's the weather?"</span>
+                            <span class="chip">"Set a reminder"</span>
+                            <span class="chip">"Take a note"</span>
+                            <span class="chip">"Calculate 15 times 23"</span>
+                            <span class="chip">"Tell me a joke"</span>
+                        </div>
+                    </div>
+                    <div class="transcript-container" id="transcript-container">
+                        <div class="transcript-label">Transcript</div>
+                        <div class="transcript-text" id="transcript-text">...</div>
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- Notes App -->
+            <section id="app-notes" class="app-section">
+                <div class="notes-container">
+                    <div class="notes-header">
+                        <h2>Notes</h2>
+                        <div class="notes-actions">
+                            <div class="search-box">
+                                <input type="text" id="notes-search" placeholder="Search notes...">
+                                <svg viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                            <button class="btn-primary" id="new-note-btn">
+                                <svg viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                                New Note
+                            </button>
+                        </div>
+                    </div>
+                    <div class="notes-grid" id="notes-grid">
+                        <!-- Notes will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reminders App -->
+            <section id="app-reminders" class="app-section">
+                <div class="reminders-container">
+                    <div class="reminders-header">
+                        <h2>Reminders</h2>
+                        <button class="btn-primary" id="new-reminder-btn">
+                            <svg viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                            Add Reminder
+                        </button>
+                    </div>
+                    <div class="reminders-list" id="reminders-list">
+                        <!-- Reminders will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calculator -->
+            <section id="app-calculator" class="app-section">
+                <div class="calculator-container">
+                    <div class="calculator-display">
+                        <div class="calc-history" id="calc-history"></div>
+                        <div class="calc-input" id="calc-input">0</div>
+                    </div>
+                    <div class="calculator-buttons">
+                        <button class="calc-btn function" data-action="clear">C</button>
+                        <button class="calc-btn function" data-action="delete">⌫</button>
+                        <button class="calc-btn function" data-action="percent">%</button>
+                        <button class="calc-btn operator" data-action="divide">÷</button>
+                        
+                        <button class="calc-btn number" data-value="7">7</button>
+                        <button class="calc-btn number" data-value="8">8</button>
+                        <button class="calc-btn number" data-value="9">9</button>
+                        <button class="calc-btn operator" data-action="multiply">×</button>
+                        
+                        <button class="calc-btn number" data-value="4">4</button>
+                        <button class="calc-btn number" data-value="5">5</button>
+                        <button class="calc-btn number" data-value="6">6</button>
+                        <button class="calc-btn operator" data-action="subtract">−</button>
+                        
+                        <button class="calc-btn number" data-value="1">1</button>
+                        <button class="calc-btn number" data-value="2">2</button>
+                        <button class="calc-btn number" data-value="3">3</button>
+                        <button class="calc-btn operator" data-action="add">+</button>
+                        
+                        <button class="calc-btn number zero" data-value="0">0</button>
+                        <button class="calc-btn number" data-value=".">.</button>
+                        <button class="calc-btn equals" data-action="equals">=</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather App -->
+            <section id="app-weather" class="app-section">
+                <div class="weather-container">
+                    <div class="weather-search">
+                        <input type="text" id="weather-search-input" placeholder="Search city...">
+                        <button id="weather-search-btn">
+                            <svg viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </button>
+                    </div>
+                    <div class="weather-display" id="weather-display">
+                        <!-- Weather content -->
+                    </div>
+                    <div class="forecast-grid" id="forecast-grid">
+                        <!-- Forecast -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings -->
+            <section id="app-settings" class="app-section">
+                <div class="settings-container">
+                    <h2>Settings</h2>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>General</h3>
+                            <div class="setting-item">
+                                <label>User Name</label>
+                                <input type="text" id="setting-username" value="Sir">
+                            </div>
+                            <div class="setting-item">
+                                <label>Language</label>
+                                <select id="setting-language">
+                                    <option value="en">English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>Voice & Audio</h3>
+                            <div class="setting-item toggle">
+                                <label>Voice Recognition</label>
+                                <input type="checkbox" id="setting-voice" checked>
+                            </div>
+                            <div class="setting-item toggle">
+                                <label>Text-to-Speech</label>
+                                <input type="checkbox" id="setting-tts" checked>
+                            </div>
+                            <div class="setting-item">
+                                <label>Voice Speed</label>
+                                <input type="range" id="setting-voice-speed" min="0.5" max="2" step="0.1" value="1">
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>AI Configuration</h3>
+                            <div class="setting-item">
+                                <label>AI Model</label>
+                                <select id="setting-ai-model">
+                                    <option value="default">Default</option>
+                                    <!-- ADD YOUR MODEL ID HERE -->
+                                    <option value="CUSTOM_MODEL_ID_1">Custom Model 1</option>
+                                    <option value="CUSTOM_MODEL_ID_2">Custom Model 2</option>
+                                    <!-- END MODEL ID SECTION -->
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>API Endpoint</label>
+                                <input type="text" id="setting-api-endpoint" placeholder="Enter API URL">
+                                <!-- ADD YOUR API URL HERE -->
+                                <!-- Example: https://api.example.com/v1/chat -->
+                            </div>
+                            <div class="setting-item">
+                                <label>API Key</label>
+                                <input type="password" id="setting-api-key" placeholder="Enter API key">
+                                <!-- ADD YOUR API KEY HERE -->
+                                <!-- Or implement secure key storage -->
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>Appearance</h3>
+                            <div class="setting-item">
+                                <label>Theme</label>
+                                <select id="setting-theme">
+                                    <option value="dark">Dark</option>
+                                    <option value="light">Light</option>
+                                    <option value="auto">Auto</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>Accent Color</label>
+                                <div class="color-picker">
+                                    <button class="color-option active" style="background: #00d4ff" data-color="#00d4ff"></button>
+                                    <button class="color-option" style="background: #ff6b6b" data-color="#ff6b6b"></button>
+                                    <button class="color-option" style="background: #4ecdc4" data-color="#4ecdc4"></button>
+                                    <button class="color-option" style="background: #ffe66d" data-color="#ffe66d"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Other placeholder sections -->
+            <section id="app-calendar" class="app-section">
+                <div class="placeholder-section">
+                    <h2>Calendar</h2>
+                    <p>Calendar integration coming soon</p>
+                </div>
+            </section>
+            
+            <section id="app-news" class="app-section">
+                <div class="placeholder-section">
+                    <h2>News</h2>
+                    <p>News feed integration coming soon</p>
+                </div>
+            </section>
+            
+            <section id="app-search" class="app-section">
+                <div class="placeholder-section">
+                    <h2>Web Search</h2>
+                    <p>Search integration coming soon</p>
+                </div>
+            </section>
+            
+            <section id="app-memory" class="app-section">
+                <div class="memory-interface">
+                    <h2>Memory Banks</h2>
+                    <div class="memory-stats">
+                        <div class="memory-stat">
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 45%"></div>
+                            </div>
+                            <span>Short Term Memory: 45%</span>
+                        </div>
+                        <div class="memory-stat">
+                            <div class="stat-bar">
+                                <div class="stat-fill" style="width: 23%"></div>
+                            </div>
+                            <span>Long Term Memory: 23%</span>
+                        </div>
+                    </div>
+                    <button class="btn-danger" id="clear-memory">Clear All Memory</button>
+                </div>
+            </section>
         </main>
 
-        <!-- RIGHT SIDEBAR (SETTINGS) -->
-        <aside class="sidebar right" id="sidebar-right">
-            <div class="sidebar-header">
-                <h3>⚙️ Settings</h3>
-                <button class="close-sidebar" id="btn-close-right" aria-label="Close">×</button>
-            </div>
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
 
-            <div class="settings-section">
-                <h4>🎨 Appearance</h4>
-                <select id="theme-select">
-                    <option value="jarvis">J.A.R.V.I.S. Blue</option>
-                    <option value="friday">F.R.I.D.A.Y. Orange</option>
-                    <option value="ultron">Ultron Red</option>
-                    <option value="vision">Vision Green</option>
-                    <option value="dark">Dark Mode</option>
-                </select>
-            </div>
-
-            <div class="settings-section">
-                <h4>🔊 Voice</h4>
-                <label class="toggle-label">
-                    <span>Text-to-Speech</span>
-                    <input type="checkbox" id="tts-toggle" checked>
-                    <span class="toggle"></span>
-                </label>
-                <label class="toggle-label">
-                    <span>Speech Recognition</span>
-                    <input type="checkbox" id="stt-toggle" checked>
-                    <span class="toggle"></span>
-                </label>
-                <label class="toggle-label">
-                    <span>Auto-Speak</span>
-                    <input type="checkbox" id="auto-speak-toggle" checked>
-                    <span class="toggle"></span>
-                </label>
-            </div>
-
-            <div class="api-section">
-                <h4>🔌 OpenRouter API</h4>
-                
-                <div class="api-card">
-                    <div class="api-header">
-                        <span>🌐 API Status</span>
-                        <span class="api-badge" id="badge-openrouter">OFFLINE</span>
-                    </div>
-                    <input type="password" id="api-openrouter" placeholder="Enter your API key (sk-or-v1-...)">
-                    
-                    <div class="model-section">
-                        <label>Model ID</label>
-                        <input type="text" id="model-id" placeholder="e.g., deepseek/deepseek-chat" value="deepseek/deepseek-chat">
-                        <small class="model-help">Enter any OpenRouter model ID</small>
-                    </div>
-                    
-                    <button id="btn-test-api">Connect API</button>
+        <!-- Modal Container -->
+        <div id="modal-container" class="modal-container hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Title</h3>
+                    <button class="modal-close" id="modal-close">×</button>
                 </div>
-
-                <div class="api-info">
-                    <p>💡 <strong>How to get API key:</strong></p>
-                    <ol>
-                        <li>Go to <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a></li>
-                        <li>Create a free account</li>
-                        <li>Copy your API key</li>
-                        <li>Paste it here securely</li>
-                    </ol>
-                    <p>🔒 Your key is stored locally on your device only.</p>
+                <div class="modal-body" id="modal-body">
+                    <!-- Dynamic content -->
                 </div>
-            </div>
-
-            <div class="settings-section">
-                <h4>⚠️ Capabilities</h4>
-                <div class="limitation-list">
-                    <div class="limit-item"><span>✅</span><span>AI Chat with OpenRouter</span></div>
-                    <div class="limit-item"><span>✅</span><span>Voice Input/Output</span></div>
-                    <div class="limit-item"><span>✅</span><span>Notebook & Tasks</span></div>
-                    <div class="limit-item"><span>✅</span><span>Camera Access</span></div>
-                    <div class="limit-item"><span>✅</span><span>Local Data Storage</span></div>
-                </div>
-            </div>
-
-            <button class="danger-btn" id="btn-clear-data">🗑️ Clear All Data</button>
-        </aside>
-
-    </div>
-
-    <!-- OVERLAYS -->
-    
-    <!-- CAMERA -->
-    <div class="camera-overlay hidden" id="camera-overlay">
-        <video id="camera-video" autoplay playsinline muted></video>
-        <div class="camera-controls">
-            <button id="btn-capture">📷 Capture</button>
-            <button id="btn-close-camera">✕ Close</button>
-        </div>
-    </div>
-
-    <!-- APPS DRAWER -->
-    <div class="apps-drawer hidden" id="apps-drawer">
-        <div class="apps-grid">
-            <button class="app-icon" data-app="calculator">🧮<span>Calculator</span></button>
-            <button class="app-icon" data-app="notebook">📓<span>Notebook</span></button>
-            <button class="app-icon" data-app="tasks">📋<span>Tasks</span></button>
-            <button class="app-icon" data-app="weather">🌤️<span>Weather</span></button>
-            <button class="app-icon" data-app="reminders">⏰<span>Reminders</span></button>
-            <button class="app-icon" data-app="game">🎮<span>Game</span></button>
-        </div>
-        <button class="close-drawer" id="btn-close-apps">✕</button>
-    </div>
-
-    <!-- MINI APPS -->
-    
-    <!-- Calculator -->
-    <div class="mini-app hidden" id="calc-app">
-        <div class="mini-app-header">
-            <span>🧮 Calculator</span>
-            <button class="close-mini">×</button>
-        </div>
-        <div class="calc-display" id="calc-display">0</div>
-        <div class="calc-grid">
-            <button class="calc-btn" data-val="C">C</button>
-            <button class="calc-btn" data-val="⌫">⌫</button>
-            <button class="calc-btn" data-val="%">%</button>
-            <button class="calc-btn" data-val="/">÷</button>
-            <button class="calc-btn" data-val="7">7</button>
-            <button class="calc-btn" data-val="8">8</button>
-            <button class="calc-btn" data-val="9">9</button>
-            <button class="calc-btn" data-val="*">×</button>
-            <button class="calc-btn" data-val="4">4</button>
-            <button class="calc-btn" data-val="5">5</button>
-            <button class="calc-btn" data-val="6">6</button>
-            <button class="calc-btn" data-val="-">−</button>
-            <button class="calc-btn" data-val="1">1</button>
-            <button class="calc-btn" data-val="2">2</button>
-            <button class="calc-btn" data-val="3">3</button>
-            <button class="calc-btn" data-val="+">+</button>
-            <button class="calc-btn calc-wide" data-val="0">0</button>
-            <button class="calc-btn" data-val=".">.</button>
-            <button class="calc-btn" data-val="=">=</button>
-        </div>
-    </div>
-
-    <!-- Notebook -->
-    <div class="mini-app hidden" id="notebook-app">
-        <div class="mini-app-header">
-            <span>📓 Notebook</span>
-            <button class="close-mini">×</button>
-        </div>
-        <div class="notebook-controls">
-            <button id="btn-new-note" class="note-btn new">+ New</button>
-            <button id="btn-save-note" class="note-btn save">💾 Save</button>
-            <button id="btn-delete-note" class="note-btn delete">🗑️ Delete</button>
-        </div>
-        <div class="notebook-list" id="notebook-list">
-            <div class="empty-notes">No notes yet</div>
-        </div>
-        <input type="text" id="note-title" placeholder="Note title..." class="note-title-input">
-        <textarea id="note-content" placeholder="Write your note here..." class="note-content-area"></textarea>
-    </div>
-
-    <!-- Tasks -->
-    <div class="mini-app hidden" id="tasks-app">
-        <div class="mini-app-header">
-            <span>📋 Tasks</span>
-            <button class="close-mini">×</button>
-        </div>
-        <div class="task-input-box">
-            <input type="text" id="task-input" placeholder="Add new task...">
-            <button id="btn-add-task">+</button>
-        </div>
-        <div class="tasks-list" id="tasks-list">
-            <div class="empty-tasks">No tasks yet</div>
-        </div>
-    </div>
-
-    <!-- Weather -->
-    <div class="mini-app hidden" id="weather-app">
-        <div class="mini-app-header">
-            <span>🌤️ Weather</span>
-            <button class="close-mini">×</button>
-        </div>
-        <div class="weather-search">
-            <input type="text" id="weather-city" placeholder="Enter city...">
-            <button id="btn-get-weather">Search</button>
-        </div>
-        <div class="weather-display" id="weather-display">
-            <div class="weather-main">
-                <span class="weather-icon">☀️</span>
-                <span class="weather-temp">--°</span>
-            </div>
-            <div class="weather-details">
-                <div class="weather-item">
-                    <span>Humidity</span>
-                    <span id="weather-humidity">--%</span>
-                </div>
-                <div class="weather-item">
-                    <span>Wind</span>
-                    <span id="weather-wind">-- km/h</span>
-                </div>
-                <div class="weather-item">
-                    <span>Condition</span>
-                    <span id="weather-condition">--</span>
+                <div class="modal-footer" id="modal-footer">
+                    <!-- Dynamic buttons -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Reminders -->
-    <div class="mini-app hidden" id="reminders-app">
-        <div class="mini-app-header">
-            <span>⏰ Reminders</span>
-            <button class="close-mini">×</button>
-        </div>
-        <div class="reminder-input-box">
-            <input type="text" id="reminder-text" placeholder="Reminder text...">
-            <input type="datetime-local" id="reminder-time">
-            <button id="btn-add-reminder">+</button>
-        </div>
-        <div class="reminders-list" id="reminders-list">
-            <div class="empty-reminders">No reminders set</div>
-        </div>
-    </div>
-
-    <!-- BACKDROP -->
-    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
-
-    <!-- ERROR TOAST -->
-    <div class="toast hidden" id="toast">
-        <span id="toast-message">Error message</span>
-        <button onclick="hideToast()">×</button>
-    </div>
-
-    <!-- FALLBACK -->
-    <script>
-        setTimeout(function() {
-            var splash = document.getElementById('splash-screen');
-            var app = document.getElementById('app');
-            if (splash && !splash.classList.contains('hidden')) {
-                splash.classList.add('hidden');
-                if (app) app.classList.remove('hidden');
-            }
-        }, 8000);
-    </script>
-
+    <!-- Scripts -->
+    <script src="config.js"></script>
     <script src="core.js"></script>
-    <script src="voice_vision.js"></script>
     <script src="features.js"></script>
     <script src="app.js"></script>
 </body>
