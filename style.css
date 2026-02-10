@@ -1,5 +1,5 @@
 /* ============================================
-   J.A.R.V.I.S. STYLESHEET - FIXED VERSION
+   J.A.R.V.I.S. STYLESHEET - WORKING VERSION
    Complete styling for the AI Assistant Interface
    ============================================ */
 
@@ -222,8 +222,14 @@ a:hover {
 }
 
 @keyframes hexagon-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.6; }
-    50% { transform: scale(1.1); opacity: 1; }
+    0%, 100% { 
+        transform: scale(1); 
+        opacity: 0.6; 
+    }
+    50% { 
+        transform: scale(1.1); 
+        opacity: 1; 
+    }
 }
 
 .splash-title {
@@ -239,8 +245,12 @@ a:hover {
 }
 
 @keyframes title-glow {
-    from { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5)); }
-    to { filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.8)); }
+    from { 
+        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5)); 
+    }
+    to { 
+        filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.8)); 
+    }
 }
 
 .splash-subtitle {
@@ -335,8 +345,12 @@ a:hover {
 }
 
 @keyframes grid-move {
-    0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-    100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+    0% { 
+        transform: perspective(500px) rotateX(60deg) translateY(0); 
+    }
+    100% { 
+        transform: perspective(500px) rotateX(60deg) translateY(50px); 
+    }
 }
 
 .particles {
@@ -357,10 +371,20 @@ a:hover {
 }
 
 @keyframes float-up {
-    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    10% { opacity: 0.5; }
-    90% { opacity: 0.5; }
-    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+    0% { 
+        transform: translateY(100vh) scale(0); 
+        opacity: 0; 
+    }
+    10% { 
+        opacity: 0.5; 
+    }
+    90% { 
+        opacity: 0.5; 
+    }
+    100% { 
+        transform: translateY(-100px) scale(1); 
+        opacity: 0; 
+    }
 }
 
 /* ============================================
@@ -445,9 +469,18 @@ a:hover {
     animation: pulse-green 2s infinite;
 }
 
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
 @keyframes pulse-green {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-    50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); 
+    }
+    50% { 
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); 
+    }
 }
 
 .status-text {
@@ -617,8 +650,14 @@ a:hover {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
 }
 
 /* ============================================
@@ -711,13 +750,33 @@ a:hover {
     animation: voice-ring 2s ease-out infinite;
 }
 
-.voice-ring:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
-.voice-ring:nth-child(2) { width: 75%; height: 75%; animation-delay: 0.5s; }
-.voice-ring:nth-child(3) { width: 50%; height: 50%; animation-delay: 1s; }
+.voice-ring:nth-child(1) { 
+    width: 100%; 
+    height: 100%; 
+    animation-delay: 0s; 
+}
+
+.voice-ring:nth-child(2) { 
+    width: 75%; 
+    height: 75%; 
+    animation-delay: 0.5s; 
+}
+
+.voice-ring:nth-child(3) { 
+    width: 50%; 
+    height: 50%; 
+    animation-delay: 1s; 
+}
 
 @keyframes voice-ring {
-    0% { transform: scale(0.8); opacity: 0.3; }
-    100% { transform: scale(1.2); opacity: 0; }
+    0% { 
+        transform: scale(0.8); 
+        opacity: 0.3; 
+    }
+    100% { 
+        transform: scale(1.2); 
+        opacity: 0; 
+    }
 }
 
 .voice-btn-large {
@@ -751,8 +810,12 @@ a:hover {
 }
 
 @keyframes listening-pulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
-    50% { box-shadow: 0 0 60px rgba(0, 212, 255, 0.9); }
+    0%, 100% { 
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.5); 
+    }
+    50% { 
+        box-shadow: 0 0 60px rgba(0, 212, 255, 0.9); 
+    }
 }
 
 .voice-hint {
@@ -966,8 +1029,14 @@ a:hover {
 }
 
 @keyframes messageSlide {
-    from { opacity: 0; transform: translateX(-10px); }
-    to { opacity: 1; transform: translateX(0); }
+    from { 
+        opacity: 0; 
+        transform: translateX(-10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
 }
 
 .message.user-message {
@@ -1172,21 +1241,46 @@ a:hover {
     transition: all var(--transition-normal);
 }
 
-.voice-circle:nth-child(1) { width: 100%; height: 100%; }
-.voice-circle:nth-child(2) { width: 75%; height: 75%; }
-.voice-circle:nth-child(3) { width: 50%; height: 50%; }
+.voice-circle:nth-child(1) { 
+    width: 100%; 
+    height: 100%; 
+}
+
+.voice-circle:nth-child(2) { 
+    width: 75%; 
+    height: 75%; 
+}
+
+.voice-circle:nth-child(3) { 
+    width: 50%; 
+    height: 50%; 
+}
 
 .voice-animation.listening .voice-circle {
     animation: voice-active 1s ease-in-out infinite;
 }
 
-.voice-animation.listening .voice-circle:nth-child(1) { animation-delay: 0s; }
-.voice-animation.listening .voice-circle:nth-child(2) { animation-delay: 0.2s; }
-.voice-animation.listening .voice-circle:nth-child(3) { animation-delay: 0.4s; }
+.voice-animation.listening .voice-circle:nth-child(1) { 
+    animation-delay: 0s; 
+}
+
+.voice-animation.listening .voice-circle:nth-child(2) { 
+    animation-delay: 0.2s; 
+}
+
+.voice-animation.listening .voice-circle:nth-child(3) { 
+    animation-delay: 0.4s; 
+}
 
 @keyframes voice-active {
-    0%, 100% { transform: scale(1); opacity: 0.2; }
-    50% { transform: scale(1.1); opacity: 0.6; }
+    0%, 100% { 
+        transform: scale(1); 
+        opacity: 0.2; 
+    }
+    50% { 
+        transform: scale(1.1); 
+        opacity: 0.6; 
+    }
 }
 
 .main-mic-btn {
@@ -1219,8 +1313,12 @@ a:hover {
 }
 
 @keyframes mic-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
-    50% { box-shadow: 0 0 0 30px rgba(255, 107, 107, 0); }
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); 
+    }
+    50% { 
+        box-shadow: 0 0 0 30px rgba(255, 107, 107, 0); 
+    }
 }
 
 .main-mic-btn svg {
@@ -2471,16 +2569,6 @@ a:hover {
     animation: spin 1s linear infinite;
 }
 
-/* Pulse Animation */
-.pulse {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
 /* Fade Animation */
 .fade-in {
     animation: fadeIn 0.3s ease;
@@ -2492,8 +2580,14 @@ a:hover {
 }
 
 @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { 
+        transform: translateY(20px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
 }
 
 /* Glass Effect */
