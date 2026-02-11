@@ -6,12 +6,18 @@
     <meta name="description" content="J.A.R.V.I.S. - Just A Rather Very Intelligent System">
     <meta name="theme-color" content="#0a0e27">
     <title>J.A.R.V.I.S. | Personal AI Assistant</title>
-    <link rel="stylesheet" href="styles.css">
+    
+    <!-- CRITICAL FIX: Use relative path ./ for GitHub Pages -->
+    <link rel="stylesheet" href="./styles.css">
+    
+    <!-- Alternative: If CSS is in a folder, use ./css/styles.css -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dark-theme">
+    <!-- Rest of your HTML remains the same -->
     <!-- Splash Screen -->
     <div id="splash-screen" class="splash-screen">
         <div class="splash-content">
@@ -452,23 +458,17 @@
                                 <label>AI Model</label>
                                 <select id="setting-ai-model">
                                     <option value="default">Default</option>
-                                    <!-- ADD YOUR MODEL ID HERE -->
                                     <option value="CUSTOM_MODEL_ID_1">Custom Model 1</option>
                                     <option value="CUSTOM_MODEL_ID_2">Custom Model 2</option>
-                                    <!-- END MODEL ID SECTION -->
                                 </select>
                             </div>
                             <div class="setting-item">
                                 <label>API Endpoint</label>
                                 <input type="text" id="setting-api-endpoint" placeholder="Enter API URL">
-                                <!-- ADD YOUR API URL HERE -->
-                                <!-- Example: https://api.example.com/v1/chat -->
                             </div>
                             <div class="setting-item">
                                 <label>API Key</label>
                                 <input type="password" id="setting-api-key" placeholder="Enter API key">
-                                <!-- ADD YOUR API KEY HERE -->
-                                <!-- Or implement secure key storage -->
                             </div>
                         </div>
                         
@@ -561,10 +561,10 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="config.js"></script>
-    <script src="core.js"></script>
-    <script src="features.js"></script>
-    <script src="app.js"></script>
+    <!-- Scripts - Use ./ for relative paths -->
+    <script src="./config.js"></script>
+    <script src="./core.js"></script>
+    <script src="./features.js"></script>
+    <script src="./app.js"></script>
 </body>
 </html>
