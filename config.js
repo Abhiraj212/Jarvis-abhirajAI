@@ -16,62 +16,38 @@ const JARVIS_CONFIG = {
     
     AI: {
         // DEFAULT MODEL SETTINGS
-        DEFAULT_MODEL: 'default',
+        DEFAULT_MODEL: 'google/gemma-3-4b-it:free',
         
         // ADD YOUR CUSTOM MODEL IDs HERE
-        // Format: 'model-id': 'Display Name'
         MODELS: {
-            // OpenAI Models
-            'gpt-4': 'GPT-4',
-            'gpt-4-turbo': 'GPT-4 Turbo',
-            'gpt-3.5-turbo': 'GPT-3.5 Turbo',
-            
-            // Anthropic Models
-            'claude-3-opus': 'Claude 3 Opus',
-            'claude-3-sonnet': 'Claude 3 Sonnet',
-            'claude-3-haiku': 'Claude 3 Haiku',
-            
-            // Google Models
-            'gemini-pro': 'Gemini Pro',
-            'gemini-ultra': 'Gemini Ultra',
-            
-            // Local/Custom Models
-            // ADD YOUR CUSTOM MODEL ID HERE
-            'CUSTOM_MODEL_ID_1': 'Custom Model 1',
-            'CUSTOM_MODEL_ID_2': 'Custom Model 2',
-            // END CUSTOM MODEL SECTION
+            // OpenRouter Models
+            'google/gemma-3-4b-it:free': 'Gemma 3 4B Free',
+            'openai/gpt-3.5-turbo': 'GPT-3.5 Turbo',
+            'openai/gpt-4': 'GPT-4',
+            'anthropic/claude-3-sonnet': 'Claude 3 Sonnet',
+            'anthropic/claude-3-opus': 'Claude 3 Opus',
+            'meta-llama/llama-3-8b-instruct': 'Llama 3 8B',
             
             // Default fallback
             'default': 'JARVIS Local'
         },
         
-        // CURRENT ACTIVE MODEL
-        // Change this to switch models or use settings UI
-        CURRENT_MODEL: 'default',
+        // CURRENT ACTIVE MODEL - Set to your preferred model
+        CURRENT_MODEL: 'google/gemma-3-4b-it:free',
         
         // ==========================================
         // API CONFIGURATION
         // ==========================================
         
         API: {
-            // ENABLE EXTERNAL API
-            USE_EXTERNAL_API: false,
+            // ENABLE EXTERNAL API - Set to true to use AI
+            USE_EXTERNAL_API: true,
             
-            // API ENDPOINT URL
-            // ADD YOUR API URL HERE
-            // Examples:
-            // OpenAI: 'https://api.openai.com/v1/chat/completions'
-            // Anthropic: 'https://api.anthropic.com/v1/messages'
-            // Local: 'http://localhost:1234/v1/chat/completions'
-            // Custom: 'https://your-api-endpoint.com/v1/chat'
-            ENDPOINT: '',
+            // API ENDPOINT URL - OpenRouter API
+            ENDPOINT: 'https://openrouter.ai/api/v1/chat/completions',
             
-            // API KEY
-            // ADD YOUR API KEY HERE
-            // Format: 'sk-...' for OpenAI
-            // Format: 'your-key-here' for others
-            // IMPORTANT: In production, use environment variables or secure storage
-            KEY: '',
+            // API KEY - HARDCODE YOUR KEY HERE
+            KEY: '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',
             
             // REQUEST CONFIGURATION
             MAX_TOKENS: 2048,
@@ -112,7 +88,6 @@ const JARVIS_CONFIG = {
             RATE: 1.0,
             PITCH: 1.0,
             VOLUME: 1.0,
-            // Preferred voice (leave empty for default)
             PREFERRED_VOICE: ''
         }
     },
@@ -123,22 +98,17 @@ const JARVIS_CONFIG = {
     
     APIS: {
         // WEATHER API
-        // Services: OpenWeatherMap, WeatherAPI, etc.
         WEATHER: {
             ENABLED: false,
-            // ADD YOUR WEATHER API KEY HERE
             KEY: '',
-            // ADD YOUR WEATHER API ENDPOINT HERE
             ENDPOINT: 'https://api.openweathermap.org/data/2.5',
             DEFAULT_CITY: 'New York',
-            UNITS: 'metric' // metric, imperial, kelvin
+            UNITS: 'metric'
         },
         
         // NEWS API
-        // Services: NewsAPI, GNews, etc.
         NEWS: {
             ENABLED: false,
-            // ADD YOUR NEWS API KEY HERE
             KEY: '',
             ENDPOINT: 'https://newsapi.org/v2',
             DEFAULT_CATEGORY: 'technology',
@@ -146,21 +116,16 @@ const JARVIS_CONFIG = {
         },
         
         // SEARCH API
-        // Services: Google Custom Search, Bing Search, etc.
         SEARCH: {
             ENABLED: false,
-            // ADD YOUR SEARCH API KEY HERE
             KEY: '',
-            // ADD YOUR SEARCH ENGINE ID (for Google) HERE
             ENGINE_ID: '',
             ENDPOINT: ''
         },
         
         // CALENDAR API
-        // Services: Google Calendar, Outlook, etc.
         CALENDAR: {
             ENABLED: false,
-            // ADD YOUR CALENDAR API CREDENTIALS HERE
             CLIENT_ID: '',
             API_KEY: '',
             DISCOVERY_DOCS: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
@@ -168,10 +133,8 @@ const JARVIS_CONFIG = {
         },
         
         // TRANSLATION API
-        // Services: Google Translate, DeepL, etc.
         TRANSLATION: {
             ENABLED: false,
-            // ADD YOUR TRANSLATION API KEY HERE
             KEY: '',
             ENDPOINT: ''
         }
@@ -187,7 +150,7 @@ const JARVIS_CONFIG = {
         MAX_NOTES: 1000,
         MAX_REMINDERS: 500,
         MAX_HISTORY: 100,
-        AUTO_SAVE_INTERVAL: 30000 // 30 seconds
+        AUTO_SAVE_INTERVAL: 30000
     },
     
     // ==========================================
@@ -195,14 +158,14 @@ const JARVIS_CONFIG = {
     // ==========================================
     
     UI: {
-        THEME: 'dark', // dark, light, auto
+        THEME: 'dark',
         ACCENT_COLOR: '#00d4ff',
         ANIMATIONS_ENABLED: true,
         SOUNDS_ENABLED: true,
         NOTIFICATION_DURATION: 5000,
         SPLASH_DURATION: 2000,
         DATE_FORMAT: 'en-US',
-        TIME_FORMAT: '24h' // 12h, 24h
+        TIME_FORMAT: '24h'
     },
     
     // ==========================================
@@ -216,10 +179,10 @@ const JARVIS_CONFIG = {
         NOTES: true,
         REMINDERS: true,
         CALCULATOR: true,
-        CALENDAR: false, // Requires API
-        WEATHER: false, // Requires API
-        NEWS: false, // Requires API
-        SEARCH: false, // Requires API
+        CALENDAR: false,
+        WEATHER: false,
+        NEWS: false,
+        SEARCH: false,
         MEMORY: true,
         SETTINGS: true
     },
@@ -230,7 +193,7 @@ const JARVIS_CONFIG = {
     
     DEBUG: {
         ENABLED: false,
-        LOG_LEVEL: 'info', // error, warn, info, debug
+        LOG_LEVEL: 'info',
         MOCK_API: false,
         SHOW_BORDERS: false,
         PERFORMANCE_MONITORING: false
@@ -238,10 +201,8 @@ const JARVIS_CONFIG = {
 };
 
 // Freeze configuration to prevent accidental modifications
+// Note: We don't freeze AI config so runtime updates work
 Object.freeze(JARVIS_CONFIG);
-Object.freeze(JARVIS_CONFIG.AI);
-Object.freeze(JARVIS_CONFIG.AI.MODELS);
-Object.freeze(JARVIS_CONFIG.AI.API);
 Object.freeze(JARVIS_CONFIG.VOICE);
 Object.freeze(JARVIS_CONFIG.VOICE.RECOGNITION);
 Object.freeze(JARVIS_CONFIG.VOICE.SYNTHESIS);
