@@ -26,6 +26,10 @@ const JARVIS_APP = {
         console.log('APP Interface ready');
     },
     
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
+    
     bindNavigation() {
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => {
@@ -68,6 +72,10 @@ const JARVIS_APP = {
             this.navigateTo('dashboard');
         }
     },
+    
+    // ==========================================
+    // HEADER
+    // ==========================================
     
     bindHeader() {
         const themeBtn = document.getElementById('theme-toggle');
@@ -123,6 +131,10 @@ const JARVIS_APP = {
         setInterval(updateTime, 1000);
     },
     
+    // ==========================================
+    // DASHBOARD
+    // ==========================================
+    
     bindDashboard() {
         const voiceBtn = document.getElementById('dashboard-voice-btn');
         if (voiceBtn) {
@@ -158,6 +170,10 @@ const JARVIS_APP = {
                 break;
         }
     },
+    
+    // ==========================================
+    // ASSISTANT CHAT
+    // ==========================================
     
     bindAssistant() {
         const chatInput = document.getElementById('chat-input');
@@ -214,7 +230,6 @@ const JARVIS_APP = {
         input.value = '';
         input.style.height = 'auto';
         
-        // Show typing indicator
         this.showTypingIndicator();
         
         try {
@@ -229,47 +244,60 @@ const JARVIS_APP = {
         }
     },
     
+    // ==========================================
+    // AI API CALL - THIS IS THE NEW FUNCTION
+    // ==========================================
+    
     async callAI(message) {
         if (!JARVIS_CONFIG.AI.API.USE_EXTERNAL_API || !JARVIS_CONFIG.AI.API.KEY) {
-            return this.getLocalResponse(message);
+            return "I'm currently offline. Please check my API configuration. Make sure you've added a valid API key in the settings.";
         }
         
-        const response = await fetch(JARVIS_CONFIG.AI.API.ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JARVIS_CONFIG.AI.API.KEY}`,
-                'HTTP-Referer': window.location.href,
-                'X-Title': 'JARVIS AI Assistant'
-            },
-            body: JSON.stringify({
-                model: JARVIS_CONFIG.AI.CURRENT_MODEL,
-                messages: [
-                    { role: 'system', content: JARVIS_CONFIG.AI.SYSTEM_PROMPT },
-                    { role: 'user', content: message }
-                ],
-                max_tokens: JARVIS_CONFIG.AI.API.MAX_TOKENS,
-                temperature: JARVIS_CONFIG.AI.API.TEMPERATURE,
-                top_p: JARVIS_CONFIG.AI.API.TOP_P
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+        try {
+            const response = await fetch(JARVIS_CONFIG.AI.API.ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${JARVIS_CONFIG.AI.API.KEY}`,
+                    'HTTP-Referer': 'https://abhiraj212.github.io/Jarvis-abhirajAI/',
+                    'X-Title': 'JARVIS AI Assistant'
+                },
+                body: JSON.stringify({
+                    model: JARVIS_CONFIG.AI.CURRENT_MODEL,
+                    messages: [
+                        { role: 'system', content: JARVIS_CONFIG.AI.SYSTEM_PROMPT },
+                        { role: 'user', content: message }
+                    ],
+                    max_tokens: JARVIS_CONFIG.AI.API.MAX_TOKENS || 1024,
+                    temperature: JARVIS_CONFIG.AI.API.TEMPERATURE || 0.7
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('API Error:', response.status, errorData);
+                
+                if (response.status === 401) {
+                    throw new Error('Invalid API key. Please check your OpenRouter API key.');
+                } else if (response.status === 429) {
+                    throw new Error('Rate limit exceeded. Please try again later.');
+                } else {
+                    throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                }
+            }
+            
+            const data = await response.json();
+            
+            if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                throw new Error('Invalid response format from API');
+            }
+            
+            return data.choices[0].message.content;
+            
+        } catch (error) {
+            console.error('AI Call Failed:', error);
+            throw error;
         }
-        
-        const data = await response.json();
-        return data.choices[0].message.content;
-    },
-    
-    getLocalResponse(message) {
-        const responses = [
-            "I'm currently running in offline mode. Please configure my API settings to enable full AI capabilities.",
-            "I understand you're asking about: " + message + ". However, I'm in local mode without AI connection.",
-            "To use my full capabilities, please add your API key in the settings.",
-            "I'm a prototype version. Connect me to an AI API for intelligent responses."
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
     },
     
     showTypingIndicator() {
@@ -293,12 +321,16 @@ const JARVIS_APP = {
     },
     
     speak(text) {
-        if (!JARVIS_CONFIG.VOICE.SYNTHESIS.ENABLED || !window.speechSynthesis) return;
+        if (!window.speechSynthesis) return;
+        
+        // Don't speak if TTS is disabled
+        const ttsToggle = document.getElementById('setting-tts');
+        if (ttsToggle && !ttsToggle.checked) return;
         
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = JARVIS_CONFIG.VOICE.SYNTHESIS.RATE;
-        utterance.pitch = JARVIS_CONFIG.VOICE.SYNTHESIS.PITCH;
-        utterance.volume = JARVIS_CONFIG.VOICE.SYNTHESIS.VOLUME;
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
         window.speechSynthesis.speak(utterance);
     },
     
@@ -348,6 +380,10 @@ const JARVIS_APP = {
         
         this.showNotification('Chat exported', 'success');
     },
+    
+    // ==========================================
+    // VOICE INTERFACE
+    // ==========================================
     
     bindVoice() {
         const micBtn = document.getElementById('main-mic-btn');
@@ -420,8 +456,6 @@ const JARVIS_APP = {
     
     async processVoiceCommand(text) {
         this.showNotification(`Processing: "${text}"`, 'info');
-        
-        // Navigate to assistant and send the message
         this.navigateTo('assistant');
         this.updateActiveNav('assistant');
         
@@ -433,6 +467,10 @@ const JARVIS_APP = {
             }
         }, 300);
     },
+    
+    // ==========================================
+    // NOTES
+    // ==========================================
     
     bindNotes() {
         this.renderNotes();
@@ -466,11 +504,12 @@ const JARVIS_APP = {
             );
         }
         
-        // Sort by updated date
         notes.sort((a, b) => new Date(b.updated) - new Date(a.updated));
         
-        document.getElementById('notes-badge').textContent = notes.length;
-        document.getElementById('total-notes').textContent = notes.length;
+        const badge = document.getElementById('notes-badge');
+        const total = document.getElementById('total-notes');
+        if (badge) badge.textContent = notes.length;
+        if (total) total.textContent = notes.length;
         
         if (notes.length === 0) {
             container.innerHTML = '<div class="empty-state">No notes yet. Click "New Note" to create one.</div>';
@@ -575,6 +614,10 @@ const JARVIS_APP = {
         this.showNotification('Note deleted', 'success');
     },
     
+    // ==========================================
+    // REMINDERS
+    // ==========================================
+    
     bindReminders() {
         this.renderReminders();
         
@@ -593,8 +636,10 @@ const JARVIS_APP = {
         let reminders = JSON.parse(localStorage.getItem('jarvis_reminders') || '[]');
         reminders.sort((a, b) => new Date(a.time) - new Date(b.time));
         
-        document.getElementById('reminders-badge').textContent = reminders.filter(r => !r.completed).length;
-        document.getElementById('total-reminders').textContent = reminders.length;
+        const badge = document.getElementById('reminders-badge');
+        const total = document.getElementById('total-reminders');
+        if (badge) badge.textContent = reminders.filter(r => !r.completed).length;
+        if (total) total.textContent = reminders.length;
         
         if (reminders.length === 0) {
             container.innerHTML = '<div class="empty-state">No reminders. Click "Add Reminder" to create one.</div>';
@@ -704,6 +749,10 @@ const JARVIS_APP = {
         this.showNotification('Reminder deleted', 'success');
     },
     
+    // ==========================================
+    // CALCULATOR
+    // ==========================================
+    
     bindCalculator() {
         let currentInput = '0';
         let previousInput = '';
@@ -750,7 +799,7 @@ const JARVIS_APP = {
                         case 'equals':
                             if (operation && previousInput) {
                                 const result = this.calculate(parseFloat(previousInput), parseFloat(currentInput), operation);
-                                if (history) history.textContent = `${previousInput} ${operation} ${currentInput} =`;
+                                if (history) history.textContent = `${previousInput} ${this.getOperatorSymbol(operation)} ${currentInput} =`;
                                 currentInput = result.toString();
                                 operation = null;
                                 previousInput = '';
@@ -792,8 +841,11 @@ const JARVIS_APP = {
         return symbols[operation] || '';
     },
     
+    // ==========================================
+    // WEATHER
+    // ==========================================
+    
     bindWeather() {
-        // Load default weather
         this.fetchWeather('New York');
         
         const searchBtn = document.getElementById('weather-search-btn');
@@ -813,65 +865,49 @@ const JARVIS_APP = {
     },
     
     async fetchWeather(city) {
-        if (!JARVIS_CONFIG.APIS.WEATHER.KEY) {
-            // Demo mode - show mock data
-            this.updateWeatherDisplay({
-                city: city,
-                temp: Math.floor(Math.random() * 30) + 10,
-                condition: 'Partly Cloudy',
-                humidity: Math.floor(Math.random() * 50) + 30,
-                wind: Math.floor(Math.random() * 20) + 5,
-                icon: '⛅'
-            });
-            return;
-        }
+        // Demo mode - mock weather data
+        const conditions = ['Clear', 'Clouds', 'Rain', 'Partly Cloudy'];
+        const icons = { 'Clear': '☀️', 'Clouds': '☁️', 'Rain': '🌧️', 'Partly Cloudy': '⛅' };
+        const condition = conditions[Math.floor(Math.random() * conditions.length)];
         
-        try {
-            const response = await fetch(
-                `${JARVIS_CONFIG.APIS.WEATHER.ENDPOINT}/weather?q=${city}&appid=${JARVIS_CONFIG.APIS.WEATHER.KEY}&units=${JARVIS_CONFIG.APIS.WEATHER.UNITS}`
-            );
-            const data = await response.json();
-            
-            this.updateWeatherDisplay({
-                city: data.name,
-                temp: Math.round(data.main.temp),
-                condition: data.weather[0].description,
-                humidity: data.main.humidity,
-                wind: data.wind.speed,
-                icon: this.getWeatherIcon(data.weather[0].main)
-            });
-        } catch (error) {
-            console.error('Weather fetch error:', error);
-            this.showNotification('Could not fetch weather data', 'error');
-        }
+        this.updateWeatherDisplay({
+            city: city,
+            temp: Math.floor(Math.random() * 30) + 10,
+            condition: condition.toLowerCase(),
+            humidity: Math.floor(Math.random() * 50) + 30,
+            wind: Math.floor(Math.random() * 20) + 5,
+            icon: icons[condition]
+        });
     },
     
     updateWeatherDisplay(data) {
-        document.getElementById('weather-location').textContent = data.city;
-        document.getElementById('weather-temp').textContent = `${data.temp}°`;
-        document.getElementById('weather-desc').textContent = data.condition;
-        document.getElementById('weather-icon').textContent = data.icon;
-        document.getElementById('weather-humidity').textContent = `${data.humidity}%`;
-        document.getElementById('weather-wind').textContent = `${data.wind} mph`;
+        const locationEl = document.getElementById('weather-location');
+        const tempEl = document.getElementById('weather-temp');
+        const descEl = document.getElementById('weather-desc');
+        const iconEl = document.getElementById('weather-icon');
+        const humidityEl = document.getElementById('weather-humidity');
+        const windEl = document.getElementById('weather-wind');
         
-        // Dashboard weather card
-        const dashTemp = document.getElementById('weather-temp');
+        if (locationEl) locationEl.textContent = data.city;
+        if (tempEl) tempEl.textContent = `${data.temp}°`;
+        if (descEl) descEl.textContent = data.condition;
+        if (iconEl) iconEl.textContent = data.icon;
+        if (humidityEl) humidityEl.textContent = `${data.humidity}%`;
+        if (windEl) windEl.textContent = `${data.wind} mph`;
+        
+        // Dashboard weather
+        const dashTemp = document.getElementById('weather-temp-display');
+        const dashIcon = document.getElementById('weather-icon-display');
+        const dashDesc = document.getElementById('weather-desc-display');
+        
         if (dashTemp) dashTemp.textContent = `${data.temp}°`;
+        if (dashIcon) dashIcon.textContent = data.icon;
+        if (dashDesc) dashDesc.textContent = data.condition;
     },
     
-    getWeatherIcon(condition) {
-        const icons = {
-            'Clear': '☀️',
-            'Clouds': '☁️',
-            'Rain': '🌧️',
-            'Drizzle': '🌦️',
-            'Thunderstorm': '⛈️',
-            'Snow': '🌨️',
-            'Mist': '🌫️',
-            'Fog': '🌫️'
-        };
-        return icons[condition] || '⛅';
-    },
+    // ==========================================
+    // SETTINGS
+    // ==========================================
     
     bindSettings() {
         // Load saved preferences
@@ -885,14 +921,23 @@ const JARVIS_APP = {
         if (usernameInput) {
             const savedName = localStorage.getItem('jarvis_username') || 'Sir';
             usernameInput.value = savedName;
-            document.getElementById('user-name').textContent = savedName;
-            document.getElementById('user-avatar').querySelector('span').textContent = savedName.charAt(0).toUpperCase();
+            
+            const userNameEl = document.getElementById('user-name');
+            const avatarEl = document.getElementById('user-avatar');
+            
+            if (userNameEl) userNameEl.textContent = savedName;
+            if (avatarEl) avatarEl.querySelector('span').textContent = savedName.charAt(0).toUpperCase();
             
             usernameInput.addEventListener('change', (e) => {
                 const name = e.target.value || 'Sir';
                 localStorage.setItem('jarvis_username', name);
-                document.getElementById('user-name').textContent = name;
-                document.getElementById('user-avatar').querySelector('span').textContent = name.charAt(0).toUpperCase();
+                
+                const userNameEl = document.getElementById('user-name');
+                const avatarEl = document.getElementById('user-avatar');
+                
+                if (userNameEl) userNameEl.textContent = name;
+                if (avatarEl) avatarEl.querySelector('span').textContent = name.charAt(0).toUpperCase();
+                
                 this.showNotification('Username updated', 'success');
             });
         }
@@ -910,16 +955,13 @@ const JARVIS_APP = {
             });
         }
         
-        // AI Model - Populate from config
+        // AI Model
         const modelSelect = document.getElementById('setting-ai-model');
         if (modelSelect) {
-            modelSelect.innerHTML = Object.entries(JARVIS_CONFIG.AI.MODELS)
-                .map(([id, name]) => `<option value="${id}" ${id === JARVIS_CONFIG.AI.CURRENT_MODEL ? 'selected' : ''}>${name}</option>`)
-                .join('');
-            
+            modelSelect.value = JARVIS_CONFIG.AI.CURRENT_MODEL;
             modelSelect.addEventListener('change', (e) => {
                 JARVIS_CONFIG.AI.CURRENT_MODEL = e.target.value;
-                this.showNotification(`Model changed to ${JARVIS_CONFIG.AI.MODELS[e.target.value]}`, 'success');
+                this.showNotification(`Model changed to ${e.target.options[e.target.selectedIndex].text}`, 'success');
             });
         }
         
@@ -944,23 +986,6 @@ const JARVIS_APP = {
             });
         }
         
-        // Voice settings
-        const voiceToggle = document.getElementById('setting-voice');
-        if (voiceToggle) {
-            voiceToggle.checked = JARVIS_CONFIG.VOICE.RECOGNITION.ENABLED;
-            voiceToggle.addEventListener('change', (e) => {
-                JARVIS_CONFIG.VOICE.RECOGNITION.ENABLED = e.target.checked;
-            });
-        }
-        
-        const ttsToggle = document.getElementById('setting-tts');
-        if (ttsToggle) {
-            ttsToggle.checked = JARVIS_CONFIG.VOICE.SYNTHESIS.ENABLED;
-            ttsToggle.addEventListener('change', (e) => {
-                JARVIS_CONFIG.VOICE.SYNTHESIS.ENABLED = e.target.checked;
-            });
-        }
-        
         // Color picker
         document.querySelectorAll('.color-option').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -973,7 +998,7 @@ const JARVIS_APP = {
             });
         });
         
-        // Load saved accent color
+        // Load saved accent
         const savedAccent = localStorage.getItem('jarvis_accent');
         if (savedAccent) {
             document.documentElement.style.setProperty('--primary', savedAccent);
