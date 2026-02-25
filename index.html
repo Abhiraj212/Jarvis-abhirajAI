@@ -1,43 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <style>
-/* Emergency inline styles - paste the entire CSS here if needed */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="J.A.R.V.I.S. - Just A Rather Very Intelligent System">
+    <meta name="theme-color" content="#0a0e27">
+    <title>J.A.R.V.I.S. | Personal AI Assistant</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
 /* ============================================
-   J.A.R.V.I.S. STYLESHEET - WORKING VERSION
-   Complete styling for the AI Assistant Interface
+   J.A.R.V.I.S. STYLESHEET - COMPLETE
    ============================================ */
 
-/* CSS Variables & Theme Configuration */
 :root {
-    /* Primary Colors */
     --primary: #00d4ff;
     --primary-dark: #0099cc;
     --primary-light: #66e5ff;
     --secondary: #ff6b6b;
     --accent: #4ecdc4;
     
-    /* Background Colors */
     --bg-primary: #0a0e27;
     --bg-secondary: #121a3d;
     --bg-tertiary: #1a2342;
     --bg-card: rgba(26, 35, 66, 0.8);
     --bg-hover: rgba(255, 255, 255, 0.05);
     
-    /* Text Colors */
     --text-primary: #ffffff;
     --text-secondary: #a0aec0;
     --text-muted: #64748b;
-    --text-accent: var(--primary);
     
-    /* Border & Shadow */
     --border-color: rgba(255, 255, 255, 0.1);
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
     
-    /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
@@ -45,23 +46,19 @@
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;
     
-    /* Border Radius */
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
     --radius-xl: 16px;
     --radius-full: 9999px;
     
-    /* Typography */
     --font-display: 'Orbitron', sans-serif;
     --font-body: 'Rajdhani', sans-serif;
     
-    /* Transitions */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
     
-    /* Z-index Scale */
     --z-dropdown: 100;
     --z-sticky: 200;
     --z-modal: 300;
@@ -69,7 +66,6 @@
     --z-splash: 500;
 }
 
-/* Light Theme Overrides */
 .light-theme {
     --bg-primary: #f0f4f8;
     --bg-secondary: #ffffff;
@@ -84,10 +80,6 @@
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
-
-/* ============================================
-   RESET & BASE STYLES
-   ============================================ */
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -107,11 +99,8 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
 }
 
-/* Typography */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 700;
@@ -124,42 +113,9 @@ h2 { font-size: 2rem; }
 h3 { font-size: 1.5rem; }
 h4 { font-size: 1.25rem; }
 
-p {
-    margin-bottom: var(--spacing-md);
-    color: var(--text-secondary);
-}
+.hidden { display: none !important; }
 
-a {
-    color: var(--primary);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-}
-
-a:hover {
-    color: var(--primary-light);
-}
-
-/* Utility Classes */
-.hidden {
-    display: none !important;
-}
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
-
-/* ============================================
-   SPLASH SCREEN
-   ============================================ */
-
+/* Splash Screen */
 .splash-screen {
     position: fixed;
     top: 0;
@@ -187,10 +143,6 @@ a:hover {
     padding: var(--spacing-xl);
 }
 
-.logo-container {
-    margin-bottom: var(--spacing-2xl);
-}
-
 .hexagon-loader {
     position: relative;
     width: 120px;
@@ -208,33 +160,13 @@ a:hover {
     opacity: 0.6;
 }
 
-.hexagon:nth-child(1) {
-    top: 0;
-    left: 30px;
-    animation-delay: 0s;
-}
-
-.hexagon:nth-child(2) {
-    bottom: 0;
-    left: 0;
-    animation-delay: 0.3s;
-}
-
-.hexagon:nth-child(3) {
-    bottom: 0;
-    right: 0;
-    animation-delay: 0.6s;
-}
+.hexagon:nth-child(1) { top: 0; left: 30px; animation-delay: 0s; }
+.hexagon:nth-child(2) { bottom: 0; left: 0; animation-delay: 0.3s; }
+.hexagon:nth-child(3) { bottom: 0; right: 0; animation-delay: 0.6s; }
 
 @keyframes hexagon-pulse {
-    0%, 100% { 
-        transform: scale(1); 
-        opacity: 0.6; 
-    }
-    50% { 
-        transform: scale(1.1); 
-        opacity: 1; 
-    }
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.1); opacity: 1; }
 }
 
 .splash-title {
@@ -250,12 +182,8 @@ a:hover {
 }
 
 @keyframes title-glow {
-    from { 
-        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5)); 
-    }
-    to { 
-        filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.8)); 
-    }
+    from { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5)); }
+    to { filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.8)); }
 }
 
 .splash-subtitle {
@@ -350,52 +278,11 @@ a:hover {
 }
 
 @keyframes grid-move {
-    0% { 
-        transform: perspective(500px) rotateX(60deg) translateY(0); 
-    }
-    100% { 
-        transform: perspective(500px) rotateX(60deg) translateY(50px); 
-    }
+    0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+    100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
 }
 
-.particles {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-.particle {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: var(--primary);
-    border-radius: 50%;
-    opacity: 0.5;
-    animation: float-up 10s linear infinite;
-}
-
-@keyframes float-up {
-    0% { 
-        transform: translateY(100vh) scale(0); 
-        opacity: 0; 
-    }
-    10% { 
-        opacity: 0.5; 
-    }
-    90% { 
-        opacity: 0.5; 
-    }
-    100% { 
-        transform: translateY(-100px) scale(1); 
-        opacity: 0; 
-    }
-}
-
-/* ============================================
-   MAIN APP LAYOUT
-   ============================================ */
-
+/* Main App Layout */
 .app {
     display: grid;
     grid-template-areas:
@@ -480,12 +367,8 @@ a:hover {
 }
 
 @keyframes pulse-green {
-    0%, 100% { 
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); 
-    }
-    50% { 
-        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); 
-    }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
 }
 
 .status-text {
@@ -563,7 +446,7 @@ a:hover {
     transform: scale(1.1);
 }
 
-/* Sidebar Navigation */
+/* Sidebar */
 .sidebar {
     grid-area: sidebar;
     background: var(--bg-secondary);
@@ -655,20 +538,11 @@ a:hover {
 }
 
 @keyframes fadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(10px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* ============================================
-   DASHBOARD STYLES
-   ============================================ */
-
+/* Dashboard */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -701,7 +575,7 @@ a:hover {
     margin-bottom: var(--spacing-xs);
 }
 
-.welcome-card .subtitle {
+.subtitle {
     color: var(--primary);
     font-size: 1.1rem;
     margin-bottom: var(--spacing-lg);
@@ -755,33 +629,13 @@ a:hover {
     animation: voice-ring 2s ease-out infinite;
 }
 
-.voice-ring:nth-child(1) { 
-    width: 100%; 
-    height: 100%; 
-    animation-delay: 0s; 
-}
-
-.voice-ring:nth-child(2) { 
-    width: 75%; 
-    height: 75%; 
-    animation-delay: 0.5s; 
-}
-
-.voice-ring:nth-child(3) { 
-    width: 50%; 
-    height: 50%; 
-    animation-delay: 1s; 
-}
+.voice-ring:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
+.voice-ring:nth-child(2) { width: 75%; height: 75%; animation-delay: 0.5s; }
+.voice-ring:nth-child(3) { width: 50%; height: 50%; animation-delay: 1s; }
 
 @keyframes voice-ring {
-    0% { 
-        transform: scale(0.8); 
-        opacity: 0.3; 
-    }
-    100% { 
-        transform: scale(1.2); 
-        opacity: 0; 
-    }
+    0% { transform: scale(0.8); opacity: 0.3; }
+    100% { transform: scale(1.2); opacity: 0; }
 }
 
 .voice-btn-large {
@@ -808,19 +662,6 @@ a:hover {
     width: 32px;
     height: 32px;
     fill: white;
-}
-
-.voice-btn-large.listening {
-    animation: listening-pulse 1s ease-in-out infinite;
-}
-
-@keyframes listening-pulse {
-    0%, 100% { 
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.5); 
-    }
-    50% { 
-        box-shadow: 0 0 60px rgba(0, 212, 255, 0.9); 
-    }
 }
 
 .voice-hint {
@@ -946,10 +787,7 @@ a:hover {
     stroke-linejoin: round;
 }
 
-/* ============================================
-   ASSISTANT CHAT INTERFACE
-   ============================================ */
-
+/* Assistant Chat */
 .assistant-container {
     max-width: 900px;
     margin: 0 auto;
@@ -1034,14 +872,8 @@ a:hover {
 }
 
 @keyframes messageSlide {
-    from { 
-        opacity: 0; 
-        transform: translateX(-10px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateX(0); 
-    }
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 .message.user-message {
@@ -1100,6 +932,25 @@ a:hover {
 
 .message.user-message .message-time {
     color: rgba(255, 255, 255, 0.7);
+}
+
+.typing-indicator .message-content p {
+    display: flex;
+    gap: 4px;
+}
+
+.typing-indicator .dot {
+    animation: typing 1.4s infinite;
+    font-size: 1.5rem;
+    line-height: 0.5;
+}
+
+.typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-5px); }
 }
 
 .chat-input-container {
@@ -1209,10 +1060,7 @@ a:hover {
     font-family: monospace;
 }
 
-/* ============================================
-   VOICE INTERFACE
-   ============================================ */
-
+/* Voice Interface */
 .voice-interface {
     max-width: 600px;
     margin: 0 auto;
@@ -1246,46 +1094,21 @@ a:hover {
     transition: all var(--transition-normal);
 }
 
-.voice-circle:nth-child(1) { 
-    width: 100%; 
-    height: 100%; 
-}
-
-.voice-circle:nth-child(2) { 
-    width: 75%; 
-    height: 75%; 
-}
-
-.voice-circle:nth-child(3) { 
-    width: 50%; 
-    height: 50%; 
-}
+.voice-circle:nth-child(1) { width: 100%; height: 100%; }
+.voice-circle:nth-child(2) { width: 75%; height: 75%; }
+.voice-circle:nth-child(3) { width: 50%; height: 50%; }
 
 .voice-animation.listening .voice-circle {
     animation: voice-active 1s ease-in-out infinite;
 }
 
-.voice-animation.listening .voice-circle:nth-child(1) { 
-    animation-delay: 0s; 
-}
-
-.voice-animation.listening .voice-circle:nth-child(2) { 
-    animation-delay: 0.2s; 
-}
-
-.voice-animation.listening .voice-circle:nth-child(3) { 
-    animation-delay: 0.4s; 
-}
+.voice-animation.listening .voice-circle:nth-child(1) { animation-delay: 0s; }
+.voice-animation.listening .voice-circle:nth-child(2) { animation-delay: 0.2s; }
+.voice-animation.listening .voice-circle:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes voice-active {
-    0%, 100% { 
-        transform: scale(1); 
-        opacity: 0.2; 
-    }
-    50% { 
-        transform: scale(1.1); 
-        opacity: 0.6; 
-    }
+    0%, 100% { transform: scale(1); opacity: 0.2; }
+    50% { transform: scale(1.1); opacity: 0.6; }
 }
 
 .main-mic-btn {
@@ -1318,12 +1141,8 @@ a:hover {
 }
 
 @keyframes mic-pulse {
-    0%, 100% { 
-        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); 
-    }
-    50% { 
-        box-shadow: 0 0 0 30px rgba(255, 107, 107, 0); 
-    }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+    50% { box-shadow: 0 0 0 30px rgba(255, 107, 107, 0); }
 }
 
 .main-mic-btn svg {
@@ -1399,10 +1218,7 @@ a:hover {
     50% { opacity: 0.5; }
 }
 
-/* ============================================
-   NOTES APP
-   ============================================ */
-
+/* Notes */
 .notes-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -1599,7 +1415,7 @@ a:hover {
     stroke-width: 2;
 }
 
-/* Note Editor Modal */
+/* Note Editor */
 .note-editor-overlay {
     position: fixed;
     inset: 0;
@@ -1704,10 +1520,7 @@ a:hover {
     color: var(--text-primary);
 }
 
-/* ============================================
-   REMINDERS APP
-   ============================================ */
-
+/* Reminders */
 .reminders-container {
     max-width: 800px;
     margin: 0 auto;
@@ -1824,10 +1637,7 @@ a:hover {
     color: white;
 }
 
-/* ============================================
-   CALCULATOR
-   ============================================ */
-
+/* Calculator */
 .calculator-container {
     max-width: 400px;
     margin: 0 auto;
@@ -1899,17 +1709,13 @@ a:hover {
 .calc-btn.equals {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
-    grid-column: span 1;
 }
 
 .calc-btn.zero {
     grid-column: span 2;
 }
 
-/* ============================================
-   WEATHER APP
-   ============================================ */
-
+/* Weather */
 .weather-container {
     max-width: 1000px;
     margin: 0 auto;
@@ -2033,48 +1839,7 @@ a:hover {
     color: var(--text-primary);
 }
 
-.forecast-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: var(--spacing-md);
-}
-
-.forecast-day {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
-    text-align: center;
-    transition: all var(--transition-fast);
-}
-
-.forecast-day:hover {
-    border-color: var(--primary);
-    transform: translateY(-4px);
-}
-
-.forecast-day-name {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-bottom: var(--spacing-sm);
-}
-
-.forecast-day-icon {
-    font-size: 2rem;
-    margin-bottom: var(--spacing-sm);
-}
-
-.forecast-day-temp {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-/* ============================================
-   SETTINGS
-   ============================================ */
-
+/* Settings */
 .settings-container {
     max-width: 1000px;
     margin: 0 auto;
@@ -2140,6 +1905,11 @@ a:hover {
     box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
 }
 
+.setting-item input[type="range"] {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+}
+
 .setting-item.toggle {
     display: flex;
     justify-content: space-between;
@@ -2150,7 +1920,6 @@ a:hover {
     margin-bottom: 0;
 }
 
-/* Custom Toggle Switch */
 .toggle-switch {
     position: relative;
     width: 50px;
@@ -2201,10 +1970,7 @@ a:hover {
     transform: scale(1.1);
 }
 
-/* ============================================
-   MEMORY INTERFACE
-   ============================================ */
-
+/* Memory */
 .memory-interface {
     max-width: 600px;
     margin: 0 auto;
@@ -2258,10 +2024,7 @@ a:hover {
     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
 }
 
-/* ============================================
-   NOTIFICATIONS & MODALS
-   ============================================ */
-
+/* Notifications */
 .notification-container {
     position: fixed;
     top: 90px;
@@ -2317,11 +2080,6 @@ a:hover {
     flex: 1;
 }
 
-.notification-title {
-    font-weight: 600;
-    margin-bottom: 2px;
-}
-
 .notification-message {
     font-size: 0.875rem;
     color: var(--text-secondary);
@@ -2332,7 +2090,7 @@ a:hover {
     position: fixed;
     inset: 0;
     z-index: var(--z-modal);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
 }
@@ -2414,10 +2172,7 @@ a:hover {
     border-top: 1px solid var(--border-color);
 }
 
-/* ============================================
-   PLACEHOLDER SECTIONS
-   ============================================ */
-
+/* Placeholder Sections */
 .placeholder-section {
     text-align: center;
     padding: var(--spacing-2xl);
@@ -2429,10 +2184,7 @@ a:hover {
     margin-bottom: var(--spacing-md);
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-
+/* Responsive */
 @media (max-width: 1024px) {
     .app {
         grid-template-columns: 70px 1fr;
@@ -2507,33 +2259,13 @@ a:hover {
     .header-center {
         display: none;
     }
+    
+    .assistant-container {
+        height: calc(100vh - 130px);
+    }
 }
 
-/* ============================================
-   ANIMATIONS & EFFECTS
-   ============================================ */
-
-.glow-effect {
-    position: relative;
-}
-
-.glow-effect::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
-    border-radius: inherit;
-    z-index: -1;
-    opacity: 0;
-    filter: blur(10px);
-    transition: opacity var(--transition-fast);
-}
-
-.glow-effect:hover::after {
-    opacity: 0.5;
-}
-
-/* Scrollbar Styling */
+/* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -2563,113 +2295,9 @@ a:hover {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
 }
-
-/* Loading Spinner */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--bg-tertiary);
-    border-top-color: var(--primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-/* Fade Animation */
-.fade-in {
-    animation: fadeIn 0.3s ease;
-}
-
-/* Slide Animations */
-.slide-up {
-    animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-    from { 
-        transform: translateY(20px); 
-        opacity: 0; 
-    }
-    to { 
-        transform: translateY(0); 
-        opacity: 1; 
-    }
-}
-
-/* Glass Effect */
-.glass {
-    background: rgba(26, 35, 66, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* Gradient Text */
-.gradient-text {
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Hover Lift */
-.hover-lift {
-    transition: transform var(--transition-fast);
-}
-
-.hover-lift:hover {
-    transform: translateY(-4px);
-}
-
-/* Border Glow */
-.border-glow {
-    position: relative;
-}
-
-.border-glow::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, var(--primary), transparent);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-}
-
-/* Print Styles */
-@media print {
-    .sidebar,
-    .main-header,
-    .splash-screen {
-        display: none !important;
-    }
-    
-    .app {
-        display: block;
-    }
-}
-body { background: #0a0e27; color: white; font-family: sans-serif; }
-.app { display: grid; grid-template-columns: 260px 1fr; }
-/* ... etc */
-</style>
- <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="J.A.R.V.I.S. - Just A Rather Very Intelligent System">
-    <meta name="theme-color" content="#0a0e27">
-    <title>J.A.R.V.I.S. | Personal AI Assistant</title>
-    
-    <!-- CRITICAL FIX: Use relative path ./ for GitHub Pages -->
-    <link rel="stylesheet" href="./styles.css">
-    
-    <!-- Alternative: If CSS is in a folder, use ./css/styles.css -->
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    </style>
 </head>
 <body class="dark-theme">
-    <!-- Rest of your HTML remains the same -->
     <!-- Splash Screen -->
     <div id="splash-screen" class="splash-screen">
         <div class="splash-content">
@@ -2698,7 +2326,6 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
         </div>
         <div class="splash-background">
             <div class="grid-overlay"></div>
-            <div class="particles" id="particles"></div>
         </div>
     </div>
 
@@ -2722,10 +2349,10 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
             </div>
             <div class="header-right">
                 <button class="icon-btn" id="theme-toggle" title="Toggle Theme">
-                    <svg viewBox="0 0 24 24" class="icon"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 </button>
                 <button class="icon-btn" id="settings-btn" title="Settings">
-                    <svg viewBox="0 0 24 24" class="icon"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </button>
                 <div class="user-avatar" id="user-avatar">
                     <span>U</span>
@@ -2762,10 +2389,6 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                     <span>Reminders</span>
                     <span class="badge" id="reminders-badge">0</span>
-                </button>
-                <button class="nav-item" data-app="calendar" title="Calendar">
-                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    <span>Calendar</span>
                 </button>
                 <button class="nav-item" data-app="calculator" title="Calculator">
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
@@ -2992,7 +2615,7 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
                         </div>
                     </div>
                     <div class="notes-grid" id="notes-grid">
-                        <!-- Notes will be rendered here -->
+                        <div class="empty-state">No notes yet. Click "New Note" to create one.</div>
                     </div>
                 </div>
             </section>
@@ -3008,7 +2631,7 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
                         </button>
                     </div>
                     <div class="reminders-list" id="reminders-list">
-                        <!-- Reminders will be rendered here -->
+                        <div class="empty-state">No reminders. Click "Add Reminder" to create one.</div>
                     </div>
                 </div>
             </section>
@@ -3058,10 +2681,30 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
                         </button>
                     </div>
                     <div class="weather-display" id="weather-display">
-                        <!-- Weather content -->
-                    </div>
-                    <div class="forecast-grid" id="forecast-grid">
-                        <!-- Forecast -->
+                        <div class="weather-location-display" id="weather-location-display">New York</div>
+                        <div class="weather-main-display">
+                            <div class="weather-temp-display" id="weather-temp-display">22°</div>
+                            <div class="weather-icon-display" id="weather-icon-display">☀️</div>
+                        </div>
+                        <div class="weather-desc-display" id="weather-desc-display">Clear Sky</div>
+                        <div class="weather-details-grid">
+                            <div class="weather-detail-item">
+                                <div class="weather-detail-label">Humidity</div>
+                                <div class="weather-detail-value" id="weather-humidity-display">65%</div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <div class="weather-detail-label">Wind</div>
+                                <div class="weather-detail-value" id="weather-wind-display">12 mph</div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <div class="weather-detail-label">Pressure</div>
+                                <div class="weather-detail-value">1013 hPa</div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <div class="weather-detail-label">Visibility</div>
+                                <div class="weather-detail-value">10 km</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -3109,18 +2752,19 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
                             <div class="setting-item">
                                 <label>AI Model</label>
                                 <select id="setting-ai-model">
-                                    <option value="default">Default</option>
-                                    <option value="CUSTOM_MODEL_ID_1">Custom Model 1</option>
-                                    <option value="CUSTOM_MODEL_ID_2">Custom Model 2</option>
+                                    <option value="google/gemma-3-4b-it:free">Gemma 3 4B Free</option>
+                                    <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                    <option value="openai/gpt-4">GPT-4</option>
+                                    <option value="default">JARVIS Local</option>
                                 </select>
                             </div>
                             <div class="setting-item">
                                 <label>API Endpoint</label>
-                                <input type="text" id="setting-api-endpoint" placeholder="Enter API URL">
+                                <input type="text" id="setting-api-endpoint" placeholder="Enter API URL" value="https://openrouter.ai/api/v1/chat/completions">
                             </div>
                             <div class="setting-item">
                                 <label>API Key</label>
-                                <input type="password" id="setting-api-key" placeholder="Enter API key">
+                                <input type="password" id="setting-api-key" placeholder="Enter API key" value="••••••••••••••••">
                             </div>
                         </div>
                         
@@ -3148,7 +2792,7 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
                 </div>
             </section>
 
-            <!-- Other placeholder sections -->
+            <!-- Placeholder Sections -->
             <section id="app-calendar" class="app-section">
                 <div class="placeholder-section">
                     <h2>Calendar</h2>
@@ -3194,29 +2838,10 @@ body { background: #0a0e27; color: white; font-family: sans-serif; }
 
         <!-- Notification Container -->
         <div id="notification-container" class="notification-container"></div>
-
-        <!-- Modal Container -->
-        <div id="modal-container" class="modal-container hidden">
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="modal-title">Title</h3>
-                    <button class="modal-close" id="modal-close">×</button>
-                </div>
-                <div class="modal-body" id="modal-body">
-                    <!-- Dynamic content -->
-                </div>
-                <div class="modal-footer" id="modal-footer">
-                    <!-- Dynamic buttons -->
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Scripts - Use ./ for relative paths -->
+    <!-- Scripts -->
     <script src="./config.js"></script>
-    <script src="./core.js"></script>
-    <script src="./features.js"></script>
     <script src="./app.js"></script>
 </body>
 </html>
