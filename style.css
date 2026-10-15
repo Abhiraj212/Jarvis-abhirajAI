@@ -134,3 +134,47 @@ input:focus,textarea:focus,select:focus{outline:0;border-color:var(--cyan);box-s
 .hud-cell i{width:5px;height:5px;flex:0 0 5px;margin-left:auto;border-radius:50%;background:var(--mint);box-shadow:0 0 10px rgba(126,255,209,.7)}
 .light-theme .hud-cell{background:linear-gradient(120deg,rgba(89,228,255,.09),rgba(255,255,255,.9))}
 @media(max-width:520px){.hud-strip{gap:6px;margin:-2px 0 16px}.hud-cell{gap:6px;padding:9px 7px;border-radius:12px}.hud-icon{flex-basis:27px;height:27px;font-size:13px;border-radius:8px}.hud-cell small{font-size:6px;letter-spacing:.08em}.hud-cell strong{font-size:8px;letter-spacing:.02em}.hud-cell i{width:4px;height:4px;flex-basis:4px}}
+
+
+/* JARVIS cinematic HUD upgrade */
+.boot-screen{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at center,rgba(0,168,225,.16),transparent 38%),#030914;color:#dffaff;animation:boot-exit .8s ease 3.15s forwards;pointer-events:none}
+.boot-grid{position:absolute;inset:-50%;background-image:linear-gradient(rgba(48,202,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(48,202,255,.07) 1px,transparent 1px);background-size:42px 42px;transform:perspective(500px) rotateX(62deg) scale(1.7);mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent);animation:grid-drift 8s linear infinite}
+.boot-core{position:relative;width:150px;height:150px;display:grid;place-items:center;margin-bottom:28px}
+.boot-ring{position:absolute;border:1px solid rgba(65,224,255,.8);border-radius:50%;box-shadow:0 0 18px rgba(0,204,255,.15),inset 0 0 18px rgba(0,204,255,.08)}
+.ring-one{inset:7px;border-top:3px solid #66f5ff;border-bottom:2px solid transparent;animation:spin 2.6s linear infinite}
+.ring-two{inset:19px;border-left:2px solid #27c8ff;border-right:2px solid transparent;animation:spin-reverse 3.8s linear infinite}
+.ring-three{inset:31px;border-style:dashed;opacity:.7;animation:spin 12s linear infinite}
+.boot-mark{font-size:62px;font-weight:200;letter-spacing:-7px;color:#dffcff;text-shadow:0 0 18px #1ccfff,0 0 42px #058dff}
+.boot-mark span{font-size:20px;vertical-align:top;color:#6cf6ff;letter-spacing:0}
+.boot-title{font-size:clamp(25px,5vw,39px);letter-spacing:.32em;font-weight:300;text-shadow:0 0 25px rgba(36,212,255,.6);padding-left:.32em}
+.boot-subtitle{margin-top:12px;color:#68b8d0;font-size:9px;letter-spacing:.23em;text-align:center}
+.boot-progress{width:min(240px,60vw);height:2px;background:#122c42;margin-top:30px;overflow:hidden}
+.boot-progress i{display:block;width:40%;height:100%;background:#63efff;box-shadow:0 0 12px #42d9f5;animation:boot-load 2.8s ease forwards}
+.boot-caption{margin-top:14px;font-size:8px;letter-spacing:.15em;color:#628ca5;text-align:center}.boot-caption span{color:#6fffd4;margin:0 6px}
+.reactor-panel{position:relative;overflow:hidden;margin:0 0 18px;border:1px solid rgba(51,186,226,.3);border-radius:18px;background:radial-gradient(ellipse at 50% 48%,rgba(0,147,217,.16),transparent 43%),linear-gradient(135deg,rgba(7,27,49,.98),rgba(3,12,27,.98));box-shadow:inset 0 0 45px rgba(0,154,255,.045),0 12px 45px rgba(0,0,0,.12)}
+.reactor-panel:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(65,177,221,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(65,177,221,.045) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent);pointer-events:none}
+.reactor-top,.reactor-bottom{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 17px;color:#8bb7cd;font-size:9px;letter-spacing:.14em}
+.reactor-top{border-bottom:1px solid rgba(71,188,225,.14)}.reactor-top>span:first-child{display:flex;align-items:center;gap:8px}
+.reactor-dot{width:6px;height:6px;border-radius:50%;background:#69ffd0;box-shadow:0 0 10px #69ffd0;display:inline-block}
+.reactor-chip{padding:5px 8px;border:1px solid rgba(63,209,255,.24);border-radius:4px;color:#5cdaf5;font-size:8px}
+.reactor-stage{height:280px;position:relative;display:grid;place-items:center;isolation:isolate}
+.reactor-stage:before,.reactor-stage:after{content:"";position:absolute;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(43,198,255,.35),transparent)}
+.reactor-stage:before{top:22%}.reactor-stage:after{bottom:22%}
+.reactor-orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(62,205,255,.3);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
+.orbit-a{width:190px;height:190px;animation:spin 20s linear infinite;border-top-color:#63f2ff;border-bottom-color:rgba(70,194,255,.08)}
+.orbit-b{width:230px;height:100px;transform:translate(-50%,-50%) rotate(-32deg);border-color:rgba(78,180,255,.42);animation:orbit-breathe 5s ease-in-out infinite}
+.orbit-c{width:230px;height:100px;transform:translate(-50%,-50%) rotate(32deg);border-color:rgba(56,227,255,.25);animation:orbit-breathe 5s ease-in-out infinite reverse}
+.reactor-core{width:126px;height:126px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,rgba(18,160,219,.26),rgba(4,28,54,.92) 60%,rgba(2,13,27,.7));border:1px solid rgba(88,234,255,.8);box-shadow:0 0 16px rgba(0,203,255,.4),0 0 48px rgba(0,132,255,.2),inset 0 0 30px rgba(0,201,255,.25);animation:core-pulse 3.5s ease-in-out infinite;z-index:1}
+.reactor-core-inner{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid rgba(90,225,255,.24);border-radius:50%}
+.reactor-star{font-size:18px;color:#8cfaff;text-shadow:0 0 15px #2bdcff}.reactor-core strong{font-size:18px;letter-spacing:.25em;padding-left:.25em;color:#aaf8ff;text-shadow:0 0 14px #22cfff}.reactor-core small{font-size:8px;letter-spacing:.3em;color:#5cc9eb}
+.reactor-crosshair{position:absolute;background:rgba(60,184,230,.13);z-index:-1}.cross-x{width:85%;height:1px}.cross-y{height:82%;width:1px}
+.reactor-node{position:absolute;width:6px;height:6px;border-radius:50%;background:#a2f9ff;box-shadow:0 0 12px #23d8ff;animation:node-blink 2s ease-in-out infinite}
+.node-a{top:23%;left:28%}.node-b{top:34%;right:23%;animation-delay:.5s}.node-c{bottom:26%;left:24%;animation-delay:1s}.node-d{bottom:24%;right:29%;animation-delay:1.4s}
+.reactor-readout{position:absolute;display:flex;flex-direction:column;gap:5px;max-width:28%;font-size:8px;letter-spacing:.1em;color:#548eab}.reactor-readout strong{font-size:9px;color:#85eaff;font-weight:500}.readout-left{left:17px;top:22%}.readout-right{right:17px;bottom:22%;text-align:right}
+.reactor-bottom{border-top:1px solid rgba(71,188,225,.14);font-size:8px}.reactor-bottom>span:nth-child(2){color:#9deeff}
+.voice-bars{height:18px;display:flex;align-items:center;gap:3px}.voice-bars i{width:2px;height:5px;background:#36dfff;box-shadow:0 0 6px #13c9ff;animation:voice-wave .8s ease-in-out infinite alternate}.voice-bars i:nth-child(3n){animation-delay:.3s}.voice-bars i:nth-child(2n){animation-delay:.5s}.voice-bars i:nth-child(4n){animation-delay:.15s}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes spin-reverse{to{transform:rotate(-360deg)}}@keyframes grid-drift{to{background-position:0 42px,42px 0}}@keyframes boot-load{to{width:100%}}@keyframes boot-exit{to{opacity:0;visibility:hidden}}@keyframes core-pulse{50%{box-shadow:0 0 28px rgba(0,203,255,.55),0 0 70px rgba(0,132,255,.25),inset 0 0 40px rgba(0,201,255,.32)}}@keyframes orbit-breathe{50%{opacity:.45;filter:drop-shadow(0 0 5px #1bcfff)}}@keyframes node-blink{50%{opacity:.25;transform:scale(.6)}}@keyframes voice-wave{to{height:16px}}
+@media(min-width:1000px){.reactor-stage{height:310px}.reactor-core{width:140px;height:140px}.orbit-a{width:210px;height:210px}}
+@media(max-width:600px){.reactor-stage{height:235px}.reactor-core{width:105px;height:105px}.orbit-a{width:160px;height:160px}.orbit-b,.orbit-c{width:185px;height:80px}.reactor-readout{font-size:7px;max-width:31%}.reactor-readout strong{font-size:8px}.readout-left{left:9px}.readout-right{right:9px}.reactor-top,.reactor-bottom{padding:11px 10px}.reactor-bottom{letter-spacing:.06em}.reactor-chip{font-size:7px}.voice-bars{gap:2px}.voice-bars i{width:2px}}
+@media(prefers-reduced-motion:reduce){.boot-grid,.boot-ring,.reactor-orbit,.reactor-core,.reactor-node,.voice-bars i{animation:none!important}.boot-screen{animation:boot-exit .2s ease 1.2s forwards}}
+body.light-theme .reactor-panel{background:radial-gradient(ellipse at 50% 48%,rgba(0,147,217,.12),transparent 43%),linear-gradient(135deg,#e8f8ff,#dbeaf7);color:#12314a}
